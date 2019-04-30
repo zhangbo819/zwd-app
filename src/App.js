@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { AsyncStorage } from 'react-native';
 // import { AsyncStorage } from '@react-native-community/async-storage';
 
-import Root from './Root';
+import Root from './components/Root';
 import Storage from 'react-native-storage';
 
 import { loadStorage, saveStorage, isDev } from './constant/config';
