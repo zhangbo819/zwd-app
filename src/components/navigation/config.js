@@ -19,7 +19,7 @@ export function HOC_NAV_TAB(COM, options = {}) {
         render() {
             const { navigation } = this.props;
             const { isPage = false, navTitle = '' } = options;
-            return <View style={STYLES.commonBg}>
+            return <View style={[STYLES.commonBg]}>
                 {/* {isPage ? <MyHeader title={navTitle} navigation={navigation} /> : null} */}
                 <COM navigation={navigation} />
             </View>

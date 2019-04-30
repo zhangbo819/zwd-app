@@ -11,7 +11,7 @@ import { createMaterialTopTabNavigator, createBottomTabNavigator } from 'react-n
 
 import { HOC_NAV_TAB, getTabNavigatorConfig, tabOptions } from './navigation/config';
 
-import HomeTab from './homeTab';
+import { billListTopTab } from './navigation/topTabNavPages';
 // import MyselfTab from './MyselfTab';
 
 import {
@@ -21,12 +21,11 @@ import {
     COLOR_BLACK
 } from '../constant/UI';
 
-
 const initialRouteName = '首页';
 let mainTabCurrentTab = initialRouteName;
 let mainTabRoute = {
-    首页: { screen: HOC_NAV_TAB(HomeTab) },
-    // 我的: { screen: MyselfTab }
+    首页: { screen: billListTopTab },
+    我的: { screen: billListTopTab }
 };
 
 const MainTabNavigator = createBottomTabNavigator(

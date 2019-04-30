@@ -4,9 +4,9 @@ import {
     View,
     StyleSheet
 } from 'react-native';
-import STYLES from '../constant/STYLES';
+import STYLES from '../../constant/STYLES';
 
-export default class HomeTab extends Component {
+class WarehouseInput extends Component {
 
     constructor(props) {
         super(props);
@@ -29,3 +29,5 @@ export default class HomeTab extends Component {
 // const styles = StyleSheet.create({
 
 // })
+
+export default WarehouseInput;

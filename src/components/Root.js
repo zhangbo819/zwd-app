@@ -48,7 +48,6 @@ export default class Root extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        paddingTop: STATUS_BAR_HEIGHT
+        flex: 1
     },
 });
