@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 import { createMaterialTopTabNavigator, createBottomTabNavigator } from 'react-navigation';
-// import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { HOC_NAV_TAB, getTabNavigatorConfig, tabOptions } from './navigation/config';
 
@@ -55,8 +55,7 @@ const MainTabNavigator = createBottomTabNavigator(
                             name = 'user';
                             break;
                     }
-                    // return <Icon name={name} size={30} color={focused ? COLOR_THEME_COMMON : COLOR_BLACK} />;
-                    return null;
+                    return <Icon name={name} size={30} color={focused ? COLOR_THEME_COMMON : COLOR_BLACK} />;
                 },
                 tabBarLabel: routeName,
                 // tabBarLabel({ focused }) {
