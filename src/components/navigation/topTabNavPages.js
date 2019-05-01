@@ -15,7 +15,7 @@ export const billListTopTab = HOC_NAV_TAB(
     createMaterialTopTabNavigator(
         {
             列表: { screen: WarehouseList },
-            录入: { screen: WarehouseInput }
+            录入: { screen: WarehouseInput },
         }, getTabNavigatorConfig({
             tabBarOptions: {
                 ...tabOptions,
