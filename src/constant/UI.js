@@ -54,5 +54,6 @@ export const MinPix = 1 / PixelRatioWidth;
 
 
 // 图片
+export const IMAGE_ARROW_RIGHT = require('../resource/image/SeemoreGray.png');
 
 

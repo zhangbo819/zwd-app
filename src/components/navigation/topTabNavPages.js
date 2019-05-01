@@ -8,7 +8,7 @@ import { HOC_NAV_TAB, getTabNavigatorConfig, tabOptions } from './config';
 import WarehouseList from '../../pages/warehouse/warehouseList';
 import WarehouseInput from '../../pages/warehouse/warehouseInput';
 
-import { viewportWidth } from '../../constant/UI';
+import { viewportWidth, NAV_COMMON_HEIGHT } from '../../constant/UI';
 
 // billList
 export const billListTopTab = HOC_NAV_TAB(
@@ -21,7 +21,8 @@ export const billListTopTab = HOC_NAV_TAB(
                 ...tabOptions,
                 tabStyle: {
                     width: viewportWidth / 2,
-                    padding: 0
+                    padding: 0,
+                    height: NAV_COMMON_HEIGHT
                 },
                 labelStyle: {
                     fontSize: 14,

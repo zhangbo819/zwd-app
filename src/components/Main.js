@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { HOC_NAV_TAB, getTabNavigatorConfig, tabOptions } from './navigation/config';
 
 import { billListTopTab } from './navigation/topTabNavPages';
-// import MyselfTab from './MyselfTab';
+import Mine from '../pages/mine/Mine';
 
 import {
     viewportWidth,
@@ -25,7 +25,7 @@ const initialRouteName = '首页';
 let mainTabCurrentTab = initialRouteName;
 let mainTabRoute = {
     首页: { screen: billListTopTab },
-    我的: { screen: billListTopTab }
+    我的: { screen: Mine }
 };
 
 const MainTabNavigator = createBottomTabNavigator(

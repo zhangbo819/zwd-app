@@ -10,12 +10,13 @@ import { createStackNavigator } from 'react-navigation';
 
 import MainTabNavigator, { getDiscoverPage } from './Main';
 
-import { loadStorage, saveStorage, isDev } from '../constant/config';
 import { STATUS_BAR_HEIGHT } from '../constant/UI';
+import About from '../pages/mine/About';
 
 //主stack
 const Router = createStackNavigator({
     Home: { screen: MainTabNavigator },
+    About: { screen: About },
 }, {
         initialRouteName: 'Home',
         headerMode: 'none',
@@ -28,11 +29,6 @@ const Router = createStackNavigator({
 export default class Root extends Component {
     constructor(props) {
         super(props);
-    }
-
-    async componentDidMount() {
-        const ListData = await loadStorage('ListData', {});
-        console.log('ListData %o', ListData)
     }
 
     render() {

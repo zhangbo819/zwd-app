@@ -6,6 +6,9 @@ import {
 } from 'react-native';
 import STYLES from '../../constant/STYLES';
 
+import { loadStorage, saveStorage, isDev } from '../../constant/config';
+
+
 class WarehouseList extends Component {
 
     constructor(props) {
@@ -15,6 +18,11 @@ class WarehouseList extends Component {
         this.state = {
 
         }
+    }
+
+    async componentDidMount() {
+        const ListData = await loadStorage('ListData', []);
+        console.log('ListData %o', ListData)
     }
 
 

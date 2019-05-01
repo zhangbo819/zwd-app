@@ -1,5 +1,12 @@
-import { STATUS_BAR_HEIGHT } from "./UI";
-// import { Parsers } from "./moss";
+import { Parsers } from "./moss";
+import {
+    STATUS_BAR_HEIGHT,
+    COLOR_BLACK,
+    COLOR_LINEGRAY,
+    FONT_PFR,
+    MinPix,
+    COLOR_WHITE
+} from "./UI";
 
 
 export default {
@@ -33,9 +40,32 @@ export default {
         // right:0
     },
     contentShadow: {
-        // ...Parsers.shadow(['#000', 0, 0, 12, 0.08]),
+        ...Parsers.shadow(['#000', 0, 0, 12, 0.08]),
         // elevation: 3
         // ...Parsers.shadow(['#000', 20, 20, 12, 0.5]),
+    },
+    panel: {
+        width: '100%',
+        backgroundColor: COLOR_WHITE,
+        borderRadius: 8,
+        ...Parsers.shadow(['#000', 0, 0, 12, 0.08]),
+        // elevation: 1,
+        marginBottom: 20
+    },
+    li: {
+        height: 48,
+        ...Parsers.padding([0, 10, 0, 11])
+    },
+    liText: {
+        ...Parsers.font([COLOR_BLACK, 15, FONT_PFR]),
+    },
+    liBorderView: {
+        flex: 1,
+        ...Parsers.box(['center', 'space-between', 'row']),
+    },
+    hasBorder: {
+        borderColor: COLOR_LINEGRAY,
+        borderBottomWidth: MinPix,
     },
     commonBg: {
         backgroundColor: '#FFF',
