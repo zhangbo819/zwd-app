@@ -16,7 +16,7 @@ import STYLES from '../../constant/STYLES';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { loadStorage, saveStorage, isDev } from '../../constant/config';
+import { loadStorage, saveStorage, isDev, isiOS } from '../../constant/config';
 import {
     MinPix,
     COLOR_LINEGRAY,
@@ -181,14 +181,17 @@ class WarehouseList extends Component {
 
     handleShare = async () => {
         try {
-            const result = await Share.share({
+            const shareConfig = {
                 title: '珍味道',
                 message: this.getStorageDataString(),
-                url: 'http://www.baidu.com'
-            }, {
-                    subject: '通过邮件分享的标题'
-                }
-            )
+            };
+
+            isiOS ? shareConfig.url = 'http://www.baidu.com' : null;
+
+            const result = await Share.share(shareConfig, {
+                subject: '通过邮件分享的标题'
+            })
+            
             console.log('share result', result)
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
