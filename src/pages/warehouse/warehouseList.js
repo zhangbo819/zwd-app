@@ -11,7 +11,8 @@ import {
     Alert,
     Share,
     Clipboard,
-    TextInput
+    TextInput,
+    Animated
 } from 'react-native';
 import STYLES from '../../constant/STYLES';
 
@@ -31,9 +32,15 @@ import {
     STATUS_BAR_HEIGHT
 } from '../../constant/UI';
 import { Parsers } from '../../constant/moss';
-import { getHeight, getWidth } from '../../constant/Util'
+import { getHeight, getWidth } from '../../constant/Util';
+
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 const StorageWHKey = 'warehouseData';
+const headerInputHeight = getHeight(30);
+const headerInputPaddingVertical = getHeight(8);
+const headerInputMarginBottom = getHeight(5);
+const headerInputHeightSum = headerInputHeight + headerInputPaddingVertical * 2 + headerInputMarginBottom;
 
 class WarehouseList extends Component {
 
@@ -46,7 +53,8 @@ class WarehouseList extends Component {
             StorageData: [],
             hasCopy: false,
             mustPositive: true,
-            textInput: ''
+            textInput: '',
+            scrollAnimatedValue: new Animated.Value(0),
         }
     }
 
@@ -82,26 +90,65 @@ class WarehouseList extends Component {
     renderInput = () => {
         const stateKey = 'textInput';
 
-        return <View style={{ ...STYLES.RBC, ...Parsers.padding([0, 10, 0]), borderBottomWidth: MinPix, borderColor: COLOR_LINEGRAY, marginBottom: 5 }}>
-            <TextInput
-                ref={(ref) => { this.TextInput = ref; }}
-                style={[styles.fixedToken.input, { width: '75%' }]}
-                underlineColorAndroid="transparent"
-                // maxLength={maxLength}
-                placeholder={'请输入'}
-                value={this.state[stateKey]}
-                // keyboardType={keyboardType}
-                // onSubmitEditing={this.onSubmit.bind(this, index, data)}
-                onChangeText={this.Input(stateKey)}
-                multiline={false}
-                enablesReturnKeyAutomatically={true}
-                returnKeyType={'send'}
-                // autoFocus={this.state.autoFocus}
-                autoCorrect={false}
-            />
-            {this.renderTouchHight([
-                { text: '添加', handler: this.handleAdd },
-            ], { style: { maxWidth: '20%' } })}
+        return <View>
+            <Animated.View
+                style={[STYLES.REC, {
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    zIndex: 10,
+                    width: '100%',
+                    transform: [
+                        {
+                            translateY: this.state.scrollAnimatedValue.interpolate({
+                                inputRange: [-10, 0, headerInputHeightSum],
+                                outputRange: [headerInputHeightSum, headerInputHeightSum, 0],
+                                extrapolate: 'clamp',
+                            })
+                        }
+                    ],
+                    opacity: this.state.scrollAnimatedValue.interpolate({
+                        inputRange: [-10, 0, headerInputHeightSum],
+                        outputRange: [0, 0, 1],
+                        extrapolate: 'clamp',
+                    }),
+                }]}
+            >
+                {this.renderHeaderComponent()}
+            </Animated.View>
+
+            <Animated.View
+                style={[
+                    { ...STYLES.RBC, ...Parsers.padding([headerInputPaddingVertical, 10, headerInputPaddingVertical]), borderBottomWidth: MinPix, borderColor: COLOR_LINEGRAY, marginBottom: headerInputMarginBottom },
+                    {
+                        opacity: this.state.scrollAnimatedValue.interpolate({
+                            inputRange: [-10, 0, headerInputHeightSum],
+                            outputRange: [1, 1, 0],
+                            extrapolate: 'clamp',
+                        }),
+                    }
+                ]}
+            >
+                <TextInput
+                    ref={(ref) => { this.TextInput = ref; }}
+                    style={[styles.fixedToken.input, { width: '75%', height: headerInputHeight, ...Parsers.padding([getHeight(9), 10]), }]}
+                    underlineColorAndroid="transparent"
+                    // maxLength={maxLength}
+                    placeholder={'请输入'}
+                    value={this.state[stateKey]}
+                    // keyboardType={keyboardType}
+                    // onSubmitEditing={this.onSubmit.bind(this, index, data)}
+                    onChangeText={this.Input(stateKey)}
+                    multiline={false}
+                    enablesReturnKeyAutomatically={true}
+                    returnKeyType={'send'}
+                    // autoFocus={this.state.autoFocus}
+                    autoCorrect={false}
+                />
+                {this.renderTouchHight([
+                    { text: '添加', handler: this.handleAdd },
+                ], { style: { maxWidth: '20%', height: headerInputHeight } })}
+            </Animated.View>
         </View>
     }
 
@@ -163,15 +210,14 @@ class WarehouseList extends Component {
     renderHeaderComponent = () => {
         const { hasCopy } = this.state;
 
-        return <View style={STYLES.REC}>
-
+        return <View style={[STYLES.REC, { width: '100%' }]}>
             {this.renderTouchHight([
                 // { text: '录入', handler: this.handleNavInput },
                 { text: '分享', handler: this.handleShare },
                 // { text: hasCopy ? '已复制' : '复制', handler: this.handleCopy, disabled: hasCopy },
                 { text: this.state.mustPositive ? '全部' : '只要正值', handler: this.handleMustPositive },
                 { text: '长按清空', Longhandler: this.handleDelete.bind(this, { deleteAll: true }) },
-            ], { style: { marginTop: 0 } })}
+            ], { style: {} })}
 
         </View>
     }
@@ -180,12 +226,18 @@ class WarehouseList extends Component {
         // console.log('this.FlatList',this.FlatList)
         // to do length by Screen
         return (<View style={[STYLES.CCC, { marginVertical: 20 }]}>
-            <Text style={styles.footerText}>没有更多了</Text>
+            <Text style={styles.footerText}>没有更多了...</Text>
         </View>);
     }
 
     handleAdd = async () => {
         const { StorageData, textInput } = this.state;
+
+        if (textInput == '') {
+            Alert.alert('提示', '名称不能为空');
+            return;
+        }
+
         StorageData.push({ name: textInput, value: 0 })
         console.log(StorageWHKey, StorageData)
 
@@ -323,8 +375,15 @@ class WarehouseList extends Component {
 
             {this.renderInput()}
 
-            <FlatList
+            <AnimatedFlatList
                 ref={(res) => this.FlatList = res}
+                onScroll={Animated.event(
+                    [{ nativeEvent: { contentOffset: { y: this.state.scrollAnimatedValue } } }],
+                    {
+                        useNativeDriver: true  // <- Native Driver used for animated events
+                    }
+                )}
+                scrollEventThrottle={12}
                 style={styles.warehouseList.ScrollContent}
                 data={this.state.StorageData}
                 renderItem={this.renderList}
@@ -516,7 +575,6 @@ const warehouseList = {
         flex: 1,
         height: getHeight(35),
         // maxWidth: '35%',
-        marginVertical: getHeight(10)
     },
     ItemText: {
         fontFamily: FONT_PFS,
