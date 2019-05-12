@@ -105,8 +105,8 @@ android {
         applicationId "com.zwd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 00002
-        versionName "0.0.2"
+        versionCode 00101
+        versionName "0.1.1"
     }
     signingConfigs {
         release {

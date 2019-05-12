@@ -9,7 +9,7 @@ import {
     NAV_COMMON_HEIGHT,
     COLOR_BLACK,
     MinPix,
-    FONT_PFS
+    FONT_PFS,
 } from '../../constant/UI';
 
 import { VERSION_NUMBER_NORM, loadStorage } from '../../constant/config';
@@ -35,7 +35,7 @@ let css = {
     appIconImage: {
         ...Parsers.size([80]),
         borderRadius: 18,
-        borderWidth: MinPix * 2,
+        // borderWidth: MinPix * 2,
         borderColor: '#B5B7C5'
     },
     appNameTitle: {
@@ -79,7 +79,7 @@ export default class About extends React.Component {
 
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={css.content}>
-                        {/* <Image style={css.appIconImage} source={IMAGE_APP_ICON} /> */}
+                        <Image style={css.appIconImage} source={IMAGE_APP_ICON} resizeMode={'stretch'}/>
                         <Text style={css.appNameTitle}>{'珍味道 V ' + VERSION_NUMBER_NORM}</Text>
                     </View>
 

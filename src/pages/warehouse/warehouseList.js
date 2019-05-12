@@ -78,12 +78,17 @@ class WarehouseList extends Component {
 
     renderList = ({ item, index }) => {
         const { name, value } = item;
+        const isActive = this.state.mustPositive && (value > 0);
         return <View
             key={'warehouseList_' + index}
             style={styles.warehouseList.bg}
             activeOpacity={0.8}
         >
-            <Text style={styles.warehouseList.ItemText}>{name}</Text>
+            <Text
+                style={[styles.warehouseList.ItemText, isActive ? {} : { color: COLOR_GRAY }]}
+            >
+                {name}
+            </Text>
             <View style={styles.warehouseList.chevronBg}>
                 <TouchableOpacity
                     style={styles.warehouseList.chevron}
@@ -114,7 +119,7 @@ class WarehouseList extends Component {
                 { text: '录入', handler: this.handleNavInput },
                 { text: '分享', handler: this.handleShare },
                 { text: hasCopy ? '已复制' : '复制', handler: this.handleCopy, disabled: hasCopy },
-                { text: this.state.mustPositive ? '只要正值' : '全部', handler: this.handleMustPositive },
+                { text: this.state.mustPositive ? '全部' : '只要正值', handler: this.handleMustPositive },
             ].map(({ text = '', disabled = false, handler = () => { }, Longhandler = () => { } }, index, data) => {
                 let maxWidth = 100 / (data.length + 1);
                 maxWidth = maxWidth.toFixed(2) + '%';
@@ -191,7 +196,7 @@ class WarehouseList extends Component {
             const result = await Share.share(shareConfig, {
                 subject: '通过邮件分享的标题'
             })
-            
+
             console.log('share result', result)
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
@@ -213,6 +218,7 @@ class WarehouseList extends Component {
 
 
     render() {
+
         return <View style={styles.container}>
 
             <FlatList
@@ -414,7 +420,8 @@ const warehouseList = {
         fontFamily: FONT_PFS,
         fontSize: 16,
         textAlign: 'center',
-        color: '#000'
+        color: '#000',
+        maxWidth: '75%'
     },
     chevronBg: {
         ...STYLES.RCC,
