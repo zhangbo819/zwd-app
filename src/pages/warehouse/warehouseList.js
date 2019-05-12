@@ -10,7 +10,8 @@ import {
     TouchableHighlight,
     Alert,
     Share,
-    Clipboard
+    Clipboard,
+    TextInput
 } from 'react-native';
 import STYLES from '../../constant/STYLES';
 
@@ -26,7 +27,8 @@ import {
     COLOR_WHITE,
     COLOR_GRAY,
     COLOR_BLACK,
-    COLOR_ORANGE
+    COLOR_ORANGE,
+    STATUS_BAR_HEIGHT
 } from '../../constant/UI';
 import { Parsers } from '../../constant/moss';
 import { getHeight, getWidth } from '../../constant/Util'
@@ -43,7 +45,8 @@ class WarehouseList extends Component {
             refreshing: false,
             StorageData: [],
             hasCopy: false,
-            mustPositive: true
+            mustPositive: true,
+            textInput: ''
         }
     }
 
@@ -76,13 +79,40 @@ class WarehouseList extends Component {
         )
     }
 
+    renderInput = () => {
+        const stateKey = 'textInput';
+
+        return <View style={{ ...STYLES.RBC, ...Parsers.padding([0, 10, 0]), borderBottomWidth: MinPix, borderColor: COLOR_LINEGRAY, marginBottom: 5 }}>
+            <TextInput
+                ref={(ref) => { this.TextInput = ref; }}
+                style={[styles.fixedToken.input, { width: '75%' }]}
+                underlineColorAndroid="transparent"
+                // maxLength={maxLength}
+                placeholder={'请输入'}
+                value={this.state[stateKey]}
+                // keyboardType={keyboardType}
+                // onSubmitEditing={this.onSubmit.bind(this, index, data)}
+                onChangeText={this.Input(stateKey)}
+                multiline={false}
+                enablesReturnKeyAutomatically={true}
+                returnKeyType={'send'}
+                // autoFocus={this.state.autoFocus}
+                autoCorrect={false}
+            />
+            {this.renderTouchHight([
+                { text: '添加', handler: this.handleAdd },
+            ], { style: { maxWidth: '20%' } })}
+        </View>
+    }
+
     renderList = ({ item, index }) => {
         const { name, value } = item;
-        const isActive = this.state.mustPositive && (value > 0);
-        return <View
+        const isActive = !this.state.mustPositive || (value > 0);
+        return <TouchableOpacity
             key={'warehouseList_' + index}
             style={styles.warehouseList.bg}
-            activeOpacity={0.8}
+            // activeOpacity={0.5}
+            onLongPress={this.handleDelete.bind(this, { index })}
         >
             <Text
                 style={[styles.warehouseList.ItemText, isActive ? {} : { color: COLOR_GRAY }]}
@@ -104,36 +134,45 @@ class WarehouseList extends Component {
                     <Icon name={'chevron-down'} size={16} color={COLOR_ORANGE} />
                 </TouchableOpacity>
             </View>
-        </View>
+        </TouchableOpacity>
     }
 
     getkey = (item, index) => { return ('warehouseListItem_' + index) }
 
     renderSeparator = () => <View style={{ height: MinPix * 2, backgroundColor: COLOR_LINEGRAY }} />
 
+    renderTouchHight = (data, { style = {} } = { style: {} }) => {
+        return data.map(({
+            text = '', disabled = false, handler = () => { }, Longhandler = () => { }
+        }, index) => {
+            let maxWidth = 100 / (data.length + 1);
+            maxWidth = maxWidth.toFixed(2) + '%';
+            return <TouchableHighlight
+                onPress={handler}
+                onLongPress={Longhandler}
+                style={[styles.fixedToken.actionButton, styles.warehouseList.headerTouch, { maxWidth }, style]}
+                underlayColor={'rgba(1,167,234, 1)'}
+                disabled={disabled}
+                key={'HeaderComponentBtn_' + index}
+            >
+                <Text style={styles.fixedToken.actionButtonText}>{text}</Text>
+            </TouchableHighlight>
+        })
+    }
+
     renderHeaderComponent = () => {
         const { hasCopy } = this.state;
 
         return <View style={STYLES.REC}>
-            {[
-                { text: '录入', handler: this.handleNavInput },
+
+            {this.renderTouchHight([
+                // { text: '录入', handler: this.handleNavInput },
                 { text: '分享', handler: this.handleShare },
-                { text: hasCopy ? '已复制' : '复制', handler: this.handleCopy, disabled: hasCopy },
+                // { text: hasCopy ? '已复制' : '复制', handler: this.handleCopy, disabled: hasCopy },
                 { text: this.state.mustPositive ? '全部' : '只要正值', handler: this.handleMustPositive },
-            ].map(({ text = '', disabled = false, handler = () => { }, Longhandler = () => { } }, index, data) => {
-                let maxWidth = 100 / (data.length + 1);
-                maxWidth = maxWidth.toFixed(2) + '%';
-                return <TouchableHighlight
-                    onPress={handler}
-                    onLongPress={Longhandler}
-                    style={[styles.fixedToken.actionButton, styles.warehouseList.headerTouch, { maxWidth }]}
-                    underlayColor={'rgba(1,167,234, 1)'}
-                    disabled={disabled}
-                    key={'HeaderComponentBtn_' + index}
-                >
-                    <Text style={styles.fixedToken.actionButtonText}>{text}</Text>
-                </TouchableHighlight>
-            })}
+                { text: '长按清空', Longhandler: this.handleDelete.bind(this, { deleteAll: true }) },
+            ], { style: { marginTop: 0 } })}
+
         </View>
     }
 
@@ -141,8 +180,31 @@ class WarehouseList extends Component {
         // console.log('this.FlatList',this.FlatList)
         // to do length by Screen
         return (<View style={[STYLES.CCC, { marginVertical: 20 }]}>
-            <Text>没有更多了</Text>
+            <Text style={styles.footerText}>没有更多了</Text>
         </View>);
+    }
+
+    handleAdd = async () => {
+        const { StorageData, textInput } = this.state;
+        StorageData.push({ name: textInput, value: 0 })
+        console.log(StorageWHKey, StorageData)
+
+        const res = await saveStorage({ key: StorageWHKey, data: StorageData });
+        Alert.alert(
+            '提示',
+            `添加${res ? '成功' : '失败'}`,
+            [
+                { text: '确定', onPress: () => afterAdd() },
+            ],
+            {
+                onDismiss: () => afterAdd()
+            }
+        )
+
+        const afterAdd = () => {
+            this._onRefresh()
+            this.setState({ textInput: '' })
+        }
     }
 
     handleNavInput = () => { this.props.navigation.navigate('录入') }
@@ -167,6 +229,43 @@ class WarehouseList extends Component {
         this.setState({ StorageData })
     }
 
+    handleDelete = ({ index, deleteAll = false }) => {
+        Alert.alert(
+            '提示',
+            `您确定${deleteAll ? '清空全部' : '删除这条'}记录吗`,
+            [
+                {
+                    text: '确定', onPress: async () => {
+                        const { minLoadingTime } = this;
+                        const inTime = Date.now();
+                        let { StorageData } = this.state;
+                        this.setState({ refreshing: true })
+
+                        if (deleteAll) {
+                            StorageData = [];
+                        } else {
+                            StorageData.splice(index, 1);
+                        }
+                        console.log(StorageData)
+                        let res = await saveStorage({ key: StorageWHKey, data: StorageData })
+
+                        Alert.alert('提示', `删除${res ? '成功' : '失败'}!`)
+
+                        if (!res) { return; }
+
+                        this.setState({ StorageData }, () => {
+                            this.timer = setTimeout(
+                                () => { this.setState({ refreshing: false }) },
+                                (Date.now() - inTime) < minLoadingTime ? minLoadingTime : 0
+                            )
+                        })
+                    }
+                },
+                { text: '取消', onPress: () => console.log('OK Pressed!') },
+            ]
+        )
+    }
+
     getStorageDataString = () => {
         let result = "";
         const { mustPositive, StorageData } = this.state;
@@ -176,7 +275,7 @@ class WarehouseList extends Component {
             result += `${name} ${index === data.length - 1 ? value : (value + ',\n')}`;
         });
         console.log('getStorageDataString  data', result);
-        return result
+        return result;
     }
 
     handleCopy = async () => {
@@ -216,10 +315,13 @@ class WarehouseList extends Component {
         this.setState({ mustPositive: !this.state.mustPositive })
     }
 
+    Input = value => (inputValue) => this.setState({ [value]: inputValue })
 
     render() {
 
         return <View style={styles.container}>
+
+            {this.renderInput()}
 
             <FlatList
                 ref={(res) => this.FlatList = res}
@@ -442,7 +544,13 @@ const warehouseList = {
 const styles = {
     container: {
         flex: 1,
+        paddingTop: STATUS_BAR_HEIGHT,
+        backgroundColor: COLOR_WHITE
         // ...STYLES.CCC,
+    },
+    footerText: {
+        color: '#9AA2B7',
+        fontFamily: FONT_PFS
     },
     warehouseList,
     fixedToken

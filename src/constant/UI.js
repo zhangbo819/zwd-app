@@ -39,7 +39,7 @@ export const COLOR_BLUE = '#16acf8';
 export const COLOR_PEACH = '#ff5779';
 export const COLOR_ORANGE = '#ffbb42';
 export const COLOR_PURPLE = '#916fff';
-export const COLOR_LIGHTGRAY = '#c8c8c8ad';    //浅灰
+export const COLOR_LIGHTGRAY = '#c8c8c8ad';  //浅灰
 export const COLOR_LINEGRAY = '#E8EBF5';     //分割线
 export const COLOR_BGGRAY = '#F9FAFB';       //页面底色灰
 
