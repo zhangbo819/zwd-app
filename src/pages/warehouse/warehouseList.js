@@ -121,6 +121,15 @@ class WarehouseList extends Component {
                 style={[
                     { ...STYLES.RBC, ...Parsers.padding([headerInputPaddingVertical, 10, headerInputPaddingVertical]), borderBottomWidth: MinPix, borderColor: COLOR_LINEGRAY, marginBottom: headerInputMarginBottom },
                     {
+                        transform: [
+                            {
+                                translateY: this.state.scrollAnimatedValue.interpolate({
+                                    inputRange: [-10, 0, headerInputHeightSum],
+                                    outputRange: [0, 0, -headerInputHeightSum],
+                                    extrapolate: 'clamp',
+                                })
+                            }
+                        ],
                         opacity: this.state.scrollAnimatedValue.interpolate({
                             inputRange: [-10, 0, headerInputHeightSum],
                             outputRange: [1, 1, 0],
@@ -369,6 +378,16 @@ class WarehouseList extends Component {
 
     Input = value => (inputValue) => this.setState({ [value]: inputValue })
 
+    handleScrollEnd = e => {
+        let { y } = e.nativeEvent.contentOffset;
+
+        if (y <= headerInputHeightSum) {
+            y = y < headerInputHeightSum / 2 ? 0 : headerInputHeightSum;
+            console.log(this.FlatList)
+            // this.FlatList.scrollToOffset({ y: y, animated: true });
+        }
+    }
+
     render() {
 
         return <View style={styles.container}>
@@ -376,7 +395,7 @@ class WarehouseList extends Component {
             {this.renderInput()}
 
             <AnimatedFlatList
-                ref={(res) => this.FlatList = res}
+                ref={(res) => (this.FlatList = res)}
                 onScroll={Animated.event(
                     [{ nativeEvent: { contentOffset: { y: this.state.scrollAnimatedValue } } }],
                     {
@@ -384,6 +403,8 @@ class WarehouseList extends Component {
                     }
                 )}
                 scrollEventThrottle={12}
+                // onMomentumScrollEnd={isiOS ? null : this.handleScrollEnd}
+                // onScrollEndDrag={isiOS ? this.handleScrollEnd : null}
                 style={styles.warehouseList.ScrollContent}
                 data={this.state.StorageData}
                 renderItem={this.renderList}
@@ -400,6 +421,7 @@ class WarehouseList extends Component {
                 }
                 onRefresh
                 refreshing={this.state.refreshing}
+                keyboardDismissMode={'on-drag'}
             />
         </View>
     }
