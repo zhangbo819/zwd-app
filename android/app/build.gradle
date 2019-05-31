@@ -141,7 +141,8 @@ android {
                 variant.outputs.all {
                     outputFileName = "test_v${defaultConfig.versionName}_${releaseTime()}_${variant.flavorName}.apk"
 
-                    new File("$projectDir/afterBuild.js").text = "var flavorName = '${variant.flavorName}';\nvar outputFileName = '${outputFileName}';"
+                    new File("$projectDir/afterBuild/$variant.flavorName" + ".js").text = "var flavorName = '${variant.flavorName}';\nvar outputFileName = '${outputFileName}';"
+                    new File("$projectDir/afterBuild/afterBuild.sh").text = "echo \"\n\n ${outputFileName} \n\""
                     }
                 }
         }
@@ -162,10 +163,10 @@ android {
 
     flavorDimensions "default"
         productFlavors {
-            beta {
-                applicationId = "com.zwd"
-                manifestPlaceholders = [APP_ICON: '@mipmap/app_icon_beta']
-            }
+            // beta {
+            //     applicationId = "com.zwd"
+            //     manifestPlaceholders = [APP_ICON: '@mipmap/app_icon_beta']
+            // }
             website {
                 applicationId = "com.zwd"
                 manifestPlaceholders = [APP_ICON: '@mipmap/app_icon_online']

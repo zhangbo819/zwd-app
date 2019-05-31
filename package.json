@@ -9,7 +9,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios --configuration Debug",
     "bundle-ios": "react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ./ios/gxb/main.jsbundle --assets-dest ./ios",
-    "release-android": "cd android && sh gradlew assembleRelease && open ./app/build/outputs/apk/",
+    "release-android": "cd android && sh gradlew assembleRelease && sh ./app/afterBuild/afterBuild.sh && open ./app/build/outputs/apk/",
     "link": "react-native link",
     "unlink": "react-native unlink"
   },
