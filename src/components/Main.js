@@ -20,11 +20,13 @@ import { HOC_NAV_TAB, getTabNavigatorConfig, tabOptions } from './navigation/con
 // import { billListTopTab } from './navigation/topTabNavPages';
 import Mine from '../pages/mine/Mine';
 import WarehouseList from '../pages/warehouse/warehouseList';
+import BillScan from '../pages/bill/bill';
 
 const initialRouteName = '首页';
 let mainTabCurrentTab = initialRouteName;
 let mainTabRoute = {
     首页: { screen: WarehouseList },
+    账本: { screen: BillScan },
     我的: { screen: Mine }
 };
 
@@ -42,14 +44,8 @@ const MainTabNavigator = createBottomTabNavigator(
                         case '首页':
                             name = 'home';
                             break;
-                        case '课程':
-                            name = 'calendar';
-                            break;
-                        case '发现':
-                            name = 'bullseye';
-                            break;
-                        case '服务':
-                            name = 'shopping-cart';
+                        case '账本':
+                            name = 'book';
                             break;
                         case '我的':
                             name = 'user';
