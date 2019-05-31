@@ -93,6 +93,10 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 
+def releaseTime() {
+        return new Date().format("MMddHHmm")
+    }
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -131,6 +135,15 @@ android {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
+
+            //多渠道打包配置
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "test_v${defaultConfig.versionName}_${releaseTime()}_${variant.flavorName}.apk"
+
+                    new File("$projectDir/afterBuild.js").text = "var flavorName = '${variant.flavorName}';\nvar outputFileName = '${outputFileName}';"
+                    }
+                }
         }
     }
     // applicationVariants are e.g. debug, release
@@ -146,6 +159,18 @@ android {
             }
         }
     }
+
+    flavorDimensions "default"
+        productFlavors {
+            beta {
+                applicationId = "com.zwd"
+                manifestPlaceholders = [APP_ICON: '@mipmap/app_icon_beta']
+            }
+            website {
+                applicationId = "com.zwd"
+                manifestPlaceholders = [APP_ICON: '@mipmap/app_icon_online']
+            }
+        }
 }
 
 dependencies {
