@@ -107,11 +107,11 @@ class WarehouseList extends Component {
                             })
                         }
                     ],
-                    // opacity: this.state.scrollAnimatedValue.interpolate({
-                    //     inputRange: [-10, 0, headerInputHeightSum],
-                    //     outputRange: [0, 0, 1],
-                    //     extrapolate: 'clamp',
-                    // }),
+                    opacity: this.state.scrollAnimatedValue.interpolate({
+                        inputRange: [-10, 0, headerInputHeightSum],
+                        outputRange: [0, 0, 1],
+                        extrapolate: 'clamp',
+                    }),
                 }]}
             >
                 {this.renderHeaderComponent()}
