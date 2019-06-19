@@ -56,3 +56,5 @@ buck-out/
 *.jsbundle
 
 android/app/afterBuild/*
+
+dist/*
