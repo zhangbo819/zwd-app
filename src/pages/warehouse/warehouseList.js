@@ -119,23 +119,23 @@ class WarehouseList extends Component {
 
             <Animated.View
                 style={[STYLES.RBC,
-                    { ...Parsers.padding([headerInputPaddingVertical, 10, headerInputPaddingVertical]), borderBottomWidth: MinPix, borderColor: COLOR_LINEGRAY, marginBottom: headerInputMarginBottom },
-                    {
-                        transform: [
-                            {
-                                translateY: this.state.scrollAnimatedValue.interpolate({
-                                    inputRange: [-10, 0, headerInputHeightSum],
-                                    outputRange: [0, 0, -headerInputHeightSum],
-                                    extrapolate: 'clamp',
-                                })
-                            }
-                        ],
-                        opacity: this.state.scrollAnimatedValue.interpolate({
-                            inputRange: [-10, 0, headerInputHeightSum],
-                            outputRange: [1, 1, 0],
-                            extrapolate: 'clamp',
-                        }),
-                    }
+                { ...Parsers.padding([headerInputPaddingVertical, 10, headerInputPaddingVertical]), borderBottomWidth: MinPix, borderColor: COLOR_LINEGRAY, marginBottom: headerInputMarginBottom },
+                {
+                    transform: [
+                        {
+                            translateY: this.state.scrollAnimatedValue.interpolate({
+                                inputRange: [-10, 0, headerInputHeightSum],
+                                outputRange: [0, 0, -headerInputHeightSum],
+                                extrapolate: 'clamp',
+                            })
+                        }
+                    ],
+                    opacity: this.state.scrollAnimatedValue.interpolate({
+                        inputRange: [-10, 0, headerInputHeightSum],
+                        outputRange: [1, 1, 0],
+                        extrapolate: 'clamp',
+                    }),
+                }
                 ]}
             >
                 <TextInput
@@ -164,6 +164,7 @@ class WarehouseList extends Component {
     renderList = ({ item, index }) => {
         const { name, value } = item;
         const isActive = !this.state.mustPositive || (value > 0);
+
         return <TouchableOpacity
             key={'warehouseList_' + index}
             style={styles.warehouseList.bg}
@@ -373,7 +374,7 @@ class WarehouseList extends Component {
     }
 
     handleMustPositive = () => {
-        this.setState({ mustPositive: !this.state.mustPositive })
+        this.setState(({ mustPositive }) => ({ mustPositive: !mustPositive }))
     }
 
     Input = value => (inputValue) => this.setState({ [value]: inputValue })
