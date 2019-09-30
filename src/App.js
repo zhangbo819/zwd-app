@@ -8,10 +8,13 @@ import React, { Component } from 'react';
 import { AsyncStorage } from 'react-native';
 // import { AsyncStorage } from '@react-native-community/async-storage';
 
-import Root from './components/Root';
 import Storage from 'react-native-storage';
+import {Provider} from 'react-redux'
+
+import Root from './Root';
 
 import { loadStorage, saveStorage, isDev } from './constant/config';
+import { store } from './store';
 
 /* 为了注释烦人的调试提醒 */
 // console.ignoredYellowBox = ['Remote debugger'];
@@ -55,7 +58,9 @@ export default class App extends Component {
 
   render() {
     return (
-      <Root />
+      <Provider store={store}>
+        <Root />
+      </Provider>
     );
   }
 }

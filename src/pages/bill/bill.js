@@ -13,9 +13,16 @@ import {
     Share,
     Keyboard
 } from 'react-native';
-import STYLES from '../../constant/STYLES';
-import { getTabNavigatorConfig, HOC_NAV_TAB, tabOptions } from '../../components/navigation/config';
+
 import { createMaterialTopTabNavigator } from 'react-navigation';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+import MyHeader from '../../components/Myheader';
+import { ListEmptyComponent } from '../warehouse/WarehouseList';
+
+
+import STYLES from '../../constant/STYLES';
+import { getTabNavigatorConfig, HOC_NAV_TAB, tabOptions } from '../../navigation/config';
 import {
     viewportWidth,
     COLOR_GRAY,
@@ -29,8 +36,7 @@ import {
 import { Parsers } from '../../constant/moss';
 import { saveStorage, loadStorage, isAndroid, isiOS } from '../../constant/config';
 import { getHeight } from '../../constant/Util';
-import MyHeader from '../../components/widget/myheader';
-import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 const fixedToken = {
     hint: {
@@ -536,7 +542,7 @@ class BillListScreen extends Component {
                 renderItem={this.renderList}
                 keyExtractor={this.getkey}
                 ItemSeparatorComponent={this.renderSeparator}
-                ListEmptyComponent={() => <View style={STYLES.CCC}><Text>暂无</Text></View>}
+                ListEmptyComponent={ListEmptyComponent}
                 ListHeaderComponent={this.renderHeaderComponent}
                 ListFooterComponent={this.renderFooterComponent}
                 refreshControl={

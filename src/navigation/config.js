@@ -8,9 +8,9 @@ import {
     COLOR_COMMON_BLACK,
     MinPix,
     NAV_COMMON_HEIGHT
-} from "../../constant/UI";
+} from "../constant/UI";
 // import MyHeader from '../widget/myheader';
-import STYLES from '../../constant/STYLES';
+import STYLES from '../constant/STYLES';
 
 export function HOC_NAV_TAB(COM, options = {}) {
     return class ComTabPage extends Component {

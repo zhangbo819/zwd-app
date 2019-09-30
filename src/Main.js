@@ -9,18 +9,19 @@ import {
 import { createMaterialTopTabNavigator, createBottomTabNavigator } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+// import { billListTopTab } from './navigation/topTabNavPages';
+import Mine from './pages/mine/Mine';
+import WarehouseList from './pages/warehouse/WarehouseList';
+import BillScan from './pages/bill/Bill';
+
 import {
     viewportWidth,
     MinPix,
     COLOR_THEME_COMMON,
     COLOR_BLACK
-} from '../constant/UI';
+} from './constant/UI';
 import { HOC_NAV_TAB, getTabNavigatorConfig, tabOptions } from './navigation/config';
 
-// import { billListTopTab } from './navigation/topTabNavPages';
-import Mine from '../pages/mine/Mine';
-import WarehouseList from '../pages/warehouse/warehouseList';
-import BillScan from '../pages/bill/bill';
 
 const initialRouteName = '首页';
 let mainTabCurrentTab = initialRouteName;

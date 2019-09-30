@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Image, TouchableOpacity, Linking, ScrollView, Text } from 'react-native';
 
+import MyHeader from '../../components/Myheader';
+
 import {
     IMAGE_APP_ICON,
     COLOR_BGGRAY,
@@ -13,14 +15,13 @@ import {
 } from '../../constant/UI';
 
 import { VERSION_NUMBER_NORM, loadStorage } from '../../constant/config';
-import MyHeader from '../../components/widget/myheader';
 import { Parsers } from '../../constant/moss';
 import STYLES from '../../constant/STYLES';
 import { getHeight } from '../../constant/Util';
 
 const navHeight = STATUS_BAR_HEIGHT + NAV_COMMON_HEIGHT;
 
-let css = {
+const css = {
     container: {
         ...STYLES.commonBg,
         paddingTop: 0

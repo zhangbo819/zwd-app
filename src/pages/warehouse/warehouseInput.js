@@ -27,6 +27,7 @@ import {
 } from '../../constant/UI';
 import { Parsers } from '../../constant/moss';
 import { getHeight } from '../../constant/Util'
+import { ListEmptyComponent } from './WarehouseList';
 
 const StorageWHKey = 'warehouseData';
 
@@ -224,7 +225,7 @@ class WarehouseInput extends Component {
                 renderItem={this.renderList}
                 keyExtractor={this.getkey}
                 ItemSeparatorComponent={this.renderSeparator}
-                ListEmptyComponent={() => <View style={STYLES.CCC}><Text>暂无</Text></View>}
+                ListEmptyComponent={ListEmptyComponent}
                 ListHeaderComponent={this.renderHeaderComponent}
                 ListFooterComponent={this.renderFooterComponent}
                 refreshControl={

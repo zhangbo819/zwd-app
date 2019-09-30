@@ -1,9 +1,22 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { NAV_COMMON_HEIGHT, COLOR_WHITE, FONT_PFS, COLOR_THEME_COMMON, STATUS_BAR_HEIGHT } from '../../constant/UI';
+import {
+    Text,
+    View,
+    StyleSheet,
+    TouchableOpacity,
+} from 'react-native';
+
 import Icon from 'react-native-vector-icons/FontAwesome';
-import STYLES from '../../constant/STYLES';
-import { Parsers } from '../../constant/moss';
+
+import {
+    NAV_COMMON_HEIGHT,
+    COLOR_WHITE,
+    FONT_PFS,
+    COLOR_THEME_COMMON,
+    STATUS_BAR_HEIGHT
+} from '../constant/UI';
+import STYLES from '../constant/STYLES';
+import { Parsers } from '../constant/moss';
 
 export default class MyHeader extends Component {
 

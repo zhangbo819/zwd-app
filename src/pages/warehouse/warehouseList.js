@@ -14,11 +14,11 @@ import {
     TextInput,
     Animated
 } from 'react-native';
-import STYLES from '../../constant/STYLES';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { loadStorage, saveStorage, isDev, isiOS } from '../../constant/config';
+import STYLES from '../../constant/STYLES';
 import {
     MinPix,
     COLOR_LINEGRAY,
@@ -410,7 +410,7 @@ class WarehouseList extends Component {
                 renderItem={this.renderList}
                 keyExtractor={this.getkey}
                 ItemSeparatorComponent={this.renderSeparator}
-                ListEmptyComponent={() => <View style={STYLES.CCC}><Text>暂无</Text></View>}
+                ListEmptyComponent={ListEmptyComponent}
                 ListHeaderComponent={this.renderHeaderComponent}
                 ListFooterComponent={this.renderFooterComponent}
                 refreshControl={
@@ -426,6 +426,10 @@ class WarehouseList extends Component {
         </View>
     }
 
+}
+
+export function ListEmptyComponent() {
+    return <View style={[STYLES.CCC, { marginTop: getHeight(10) }]}><Text>暂无</Text></View>
 }
 
 const fixedToken = {
