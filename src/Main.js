@@ -10,9 +10,9 @@ import { createMaterialTopTabNavigator, createBottomTabNavigator } from 'react-n
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 // import { billListTopTab } from './navigation/topTabNavPages';
-import Mine from './pages/mine/Mine';
-import WarehouseList from './pages/warehouse/WarehouseList';
-import BillScan from './pages/bill/Bill';
+import Mine from './pages/Mine/Mine';
+import WarehouseList from './pages/Warehouse/WarehouseList';
+import BillScan from './pages/Bill/Bill';
 
 import {
     viewportWidth,

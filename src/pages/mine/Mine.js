@@ -8,6 +8,7 @@ import {
     ScrollView,
     Alert
 } from 'react-native';
+
 import STYLES from '../../constant/STYLES';
 import {
     IMAGE_ARROW_RIGHT,

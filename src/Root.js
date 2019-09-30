@@ -9,9 +9,10 @@ import {
 import { createStackNavigator } from 'react-navigation';
 
 import MainTabNavigator, { getDiscoverPage } from './Main';
+import About from './pages/Mine/About';
 
 import { STATUS_BAR_HEIGHT } from './constant/UI';
-import About from './pages/mine/About';
+
 
 //主stack
 const Router = createStackNavigator({

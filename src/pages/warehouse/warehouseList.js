@@ -118,8 +118,8 @@ class WarehouseList extends Component {
             </Animated.View>
 
             <Animated.View
-                style={[
-                    { ...STYLES.RBC, ...Parsers.padding([headerInputPaddingVertical, 10, headerInputPaddingVertical]), borderBottomWidth: MinPix, borderColor: COLOR_LINEGRAY, marginBottom: headerInputMarginBottom },
+                style={[STYLES.RBC,
+                    { ...Parsers.padding([headerInputPaddingVertical, 10, headerInputPaddingVertical]), borderBottomWidth: MinPix, borderColor: COLOR_LINEGRAY, marginBottom: headerInputMarginBottom },
                     {
                         transform: [
                             {

@@ -18,7 +18,7 @@ import { createMaterialTopTabNavigator } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import MyHeader from '../../components/Myheader';
-import { ListEmptyComponent } from '../warehouse/WarehouseList';
+import { ListEmptyComponent } from '../Warehouse/WarehouseList';
 
 
 import STYLES from '../../constant/STYLES';

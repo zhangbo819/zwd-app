@@ -11,8 +11,10 @@ import {
     Alert,
     TextInput
 } from 'react-native';
-import STYLES from '../../constant/STYLES';
 
+import { ListEmptyComponent } from './WarehouseList';
+
+import STYLES from '../../constant/STYLES';
 import { loadStorage, saveStorage, isDev } from '../../constant/config';
 import {
     MinPix,
@@ -27,7 +29,7 @@ import {
 } from '../../constant/UI';
 import { Parsers } from '../../constant/moss';
 import { getHeight } from '../../constant/Util'
-import { ListEmptyComponent } from './WarehouseList';
+
 
 const StorageWHKey = 'warehouseData';
 

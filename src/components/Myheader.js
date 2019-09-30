@@ -23,10 +23,6 @@ export default class MyHeader extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-
-        };
-
         this.defaultLeftComponent = (<TouchableOpacity onPress={() => this.props.navigation.goBack()} >
             <Icon style={styles.settingImg} name={'arrow-left'} size={18} color={COLOR_WHITE} />
         </TouchableOpacity>);
