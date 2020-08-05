@@ -26,8 +26,8 @@ import { HOC_NAV_TAB, getTabNavigatorConfig, tabOptions } from './navigation/con
 const initialRouteName = '首页';
 let mainTabCurrentTab = initialRouteName;
 let mainTabRoute = {
-    首页: { screen: WarehouseList },
-    账本: { screen: BillScan },
+    首页: { screen: BillScan },
+    货物: { screen: WarehouseList },
     我的: { screen: Mine }
 };
 
@@ -45,7 +45,7 @@ const MainTabNavigator = createBottomTabNavigator(
                         case '首页':
                             name = 'home';
                             break;
-                        case '账本':
+                        case '货物':
                             name = 'book';
                             break;
                         case '我的':
