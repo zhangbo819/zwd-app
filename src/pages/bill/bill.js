@@ -234,13 +234,13 @@ class BillInputScreen extends Component {
         const now = new Date();
 
         this.defineState = {
-            time: (now.getMonth() + 1) + '.' + now.getDate(),
             content: '',
             money: ''
         }
 
         this.state = {
             disabled: true,
+            time: (now.getMonth() + 1) + '.' + now.getDate(),
             ...this.defineState
         }
 
@@ -435,7 +435,7 @@ class BillListScreen extends Component {
             ].map(({ text = '', disabled = false, handler = () => { }, Longhandler = () => { } }, index, data) => {
                 let maxWidth = 100 / (data.length + 1);
                 maxWidth = maxWidth.toFixed(2) + '%';
-                return <TouchableHighlight
+                return <TouchableOpacity
                     onPress={handler}
                     onLongPress={Longhandler}
                     style={[styles.fixedToken.actionButton, styles.BillList.headerTouch, { maxWidth }]}
@@ -444,7 +444,7 @@ class BillListScreen extends Component {
                     key={'HeaderComponentBtn_' + index}
                 >
                     <Text style={styles.fixedToken.actionButtonText}>{text}</Text>
-                </TouchableHighlight>
+                </TouchableOpacity>
             })}
         </View>
     }
