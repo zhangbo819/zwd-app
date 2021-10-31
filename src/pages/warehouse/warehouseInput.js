@@ -79,11 +79,11 @@ class WarehouseInput extends Component {
     renderList = ({ item, index }) => {
         return <TouchableOpacity
             key={'warehouseList_' + index}
-            style={styles.warehouseList.Touch}
+            style={styles.WarehouseList.Touch}
             activeOpacity={0.8}
             onLongPress={this.handleDelete.bind(this, { index })}
         >
-            <Text style={styles.warehouseList.ItemText}>{item.name}</Text>
+            <Text style={styles.WarehouseList.ItemText}>{item.name}</Text>
         </TouchableOpacity>
     }
 
@@ -102,7 +102,7 @@ class WarehouseInput extends Component {
             return <TouchableHighlight
                 onPress={handler}
                 onLongPress={Longhandler}
-                style={[styles.fixedToken.actionButton, styles.warehouseList.headerTouch, { maxWidth }, style]}
+                style={[styles.fixedToken.actionButton, styles.WarehouseList.headerTouch, { maxWidth }, style]}
                 underlayColor={'rgba(1,167,234, 1)'}
                 disabled={disabled}
                 key={'HeaderComponentBtn_' + index}
@@ -222,7 +222,7 @@ class WarehouseInput extends Component {
 
             <FlatList
                 ref={(res) => this.FlatList = res}
-                style={styles.warehouseList.ScrollContent}
+                style={styles.WarehouseList.ScrollContent}
                 data={this.state.StorageData}
                 renderItem={this.renderList}
                 keyExtractor={this.getkey}
@@ -396,7 +396,7 @@ const fixedToken = {
     }
 
 }
-const warehouseList = {
+const styleWarehouseList = {
     container: {
         flex: 1,
         alignItems: 'center'
@@ -432,7 +432,7 @@ const styles = {
         flex: 1,
         // ...STYLES.CCC,
     },
-    warehouseList,
+    WarehouseList: styleWarehouseList,
     fixedToken
 }
 

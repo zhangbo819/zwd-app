@@ -167,25 +167,25 @@ class WarehouseList extends Component {
 
         return <TouchableOpacity
             key={'warehouseList_' + index}
-            style={styles.warehouseList.bg}
+            style={styles.WarehouseList.bg}
             // activeOpacity={0.5}
             onLongPress={this.handleDelete.bind(this, { index })}
         >
             <Text
-                style={[styles.warehouseList.ItemText, isActive ? {} : { color: COLOR_GRAY }]}
+                style={[styles.WarehouseList.ItemText, isActive ? {} : { color: COLOR_GRAY }]}
             >
                 {name}
             </Text>
-            <View style={styles.warehouseList.chevronBg}>
+            <View style={styles.WarehouseList.chevronBg}>
                 <TouchableOpacity
-                    style={styles.warehouseList.chevron}
+                    style={styles.WarehouseList.chevron}
                     onPress={this.handleChevron.bind(this, { isUp: true, index })}
                 >
                     <Icon name={'chevron-up'} size={16} color={COLOR_ORANGE} />
                 </TouchableOpacity>
-                <Text style={styles.warehouseList.value}>{value}</Text>
+                <Text style={styles.WarehouseList.value}>{value}</Text>
                 <TouchableOpacity
-                    style={styles.warehouseList.chevron}
+                    style={styles.WarehouseList.chevron}
                     onPress={this.handleChevron.bind(this, { isUp: false, index })}
                 >
                     <Icon name={'chevron-down'} size={16} color={COLOR_ORANGE} />
@@ -207,7 +207,7 @@ class WarehouseList extends Component {
             return <TouchableHighlight
                 onPress={handler}
                 onLongPress={Longhandler}
-                style={[styles.fixedToken.actionButton, styles.warehouseList.headerTouch, { maxWidth }, style]}
+                style={[styles.fixedToken.actionButton, styles.WarehouseList.headerTouch, { maxWidth }, style]}
                 underlayColor={'rgba(1,167,234, 1)'}
                 disabled={disabled}
                 key={'HeaderComponentBtn_' + index}
@@ -406,7 +406,7 @@ class WarehouseList extends Component {
                 scrollEventThrottle={12}
                 // onMomentumScrollEnd={isiOS ? null : this.handleScrollEnd}
                 // onScrollEndDrag={isiOS ? this.handleScrollEnd : null}
-                style={styles.warehouseList.ScrollContent}
+                style={styles.WarehouseList.ScrollContent}
                 data={this.state.StorageData}
                 renderItem={this.renderList}
                 keyExtractor={this.getkey}
@@ -584,7 +584,7 @@ const fixedToken = {
     }
 
 }
-const warehouseList = {
+const styleWarehouseList = {
     container: {
         flex: 1,
         alignItems: 'center'
@@ -637,7 +637,7 @@ const styles = {
         color: '#9AA2B7',
         fontFamily: FONT_PFS
     },
-    warehouseList,
+    WarehouseList: styleWarehouseList,
     fixedToken
 }
 

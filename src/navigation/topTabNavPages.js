@@ -5,8 +5,8 @@ import { createMaterialTopTabNavigator } from 'react-navigation';
 import { HOC_NAV_TAB, getTabNavigatorConfig, tabOptions } from './config';
 
 // 账单列表
-import WarehouseList from '../../pages/warehouse/warehouseList';
-import WarehouseInput from '../../pages/warehouse/warehouseInput';
+import WarehouseList from '../../pages/warehouse/WarehouseList';
+import WarehouseInput from '../../pages/warehouse/WarehouseInput';
 
 import { viewportWidth, NAV_COMMON_HEIGHT } from '../../constant/UI';
 
