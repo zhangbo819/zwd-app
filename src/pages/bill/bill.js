@@ -536,7 +536,7 @@ class BillListScreen extends Component {
     render() {
         return <View style={styles.BillList.container}>
             <FlatList
-                ref={(res) => this.FlatList = res}
+                // ref={(res) => this.refFlatList = res}
                 style={styles.BillList.ScrollContent}
                 data={this.state.StorageBillData}
                 renderItem={this.renderList}
