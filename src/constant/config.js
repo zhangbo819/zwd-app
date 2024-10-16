@@ -1,4 +1,6 @@
 import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // import DeviceInfo from 'react-native-device-info'; // TODO
 
 export const OS = Platform.OS;
@@ -30,9 +32,9 @@ if (!isDev) {
 }
 
 
-export const saveStorage = async ({ key, data, expires = null }) => {
+export const saveStorage = async ({ key, data }) => {
     try {
-        await global.storage.save({ key, data, expires });
+        await AsyncStorage.setItem(key, JSON.stringify(data))
         return true;
     }
     catch (err) {
@@ -43,21 +45,22 @@ export const saveStorage = async ({ key, data, expires = null }) => {
 
 export const loadStorage = async (key, defaultValue) => {
     let result = null;
-    // try {
-    //     // console.log('storage', storage)
-    //     // to do
-    //     result = await global.storage.load({ key, autoSync: true, syncInBackground: true });
-    //     if (result === null) {
-    //         result = defaultValue;
-    //         // storage.save({ key, data: result, expires: null });
-    //     }
-    // } catch (err) {
-    //     console.log('loadStorage err', err)
-    //     if (err.name == 'NotFoundError') {
-    //         result = defaultValue;
-    //         storage.save({ key, data: result, expires: null });
-    //     }
-    // }
+    try {
+        // to do
+        result = await AsyncStorage.getItem(key);
+        result = JSON.parse(result)
+        console.log('result', result, typeof result)
+        if (result === null) {
+            result = defaultValue;
+            // storage.save({ key, data: result, expires: null });
+        }
+    } catch (err) {
+        console.log('loadStorage err', err)
+        if (err.name == 'NotFoundError') {
+            result = defaultValue;
+            storage.save({ key, data: result, expires: null });
+        }
+    }
     return result;
 };
 

@@ -15,14 +15,6 @@ import {getTabNavigatorConfig} from './navigation/config';
 
 const Tab = createBottomTabNavigator();
 
-const initialRouteName = '首页';
-let mainTabCurrentTab = initialRouteName;
-let mainTabRoute = {
-  首页: {screen: BillScan},
-  货物: {screen: WarehouseList},
-  我的: {screen: Mine},
-};
-
 // const MainTabNavigator = createBottomTabNavigator(
 //     mainTabRoute,
 //     getTabNavigatorConfig({

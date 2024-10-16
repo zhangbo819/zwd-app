@@ -253,9 +253,8 @@ class BillInputScreen extends Component {
         this.StorageBillData = await loadStorage(StorageBillKey, []);
         if (this.StorageBillData === null) {
             alert('数据读取失败')
-        } else {
-            this.setState({ disabled: false })
         }
+        this.setState({ disabled: false })
     }
 
     Input = value => (inputValue) => this.setState({ [value]: inputValue })
@@ -266,22 +265,27 @@ class BillInputScreen extends Component {
     }
 
     handleSave = async () => {
+        console.log('data 1')
         const input = this.state.time + '@' + this.state.content + '@' + this.state.money;
-
-        let data = this.StorageBillData;
+        console.log('data input', input)
+        
+        const data = this.StorageBillData;
+        console.log('data data', data)
+        
         data.push(input);
-        this.props.navigation.goBack()
-        let res = await saveStorage({ key: StorageBillKey, data })
+        // this.props.navigation.goBack() // TODO
+        const res = await saveStorage({ key: StorageBillKey, data })
+        console.log('data', data)
 
         // to do goBack right
-        const handler = res ? () => { this.props.navigation.navigate('列表'); this.clearInput(); } : this.props.navigation.goBack;
+        // const handler = res ? () => { this.props.navigation.navigate('列表'); this.clearInput(); } : this.props.navigation.goBack;
 
         Alert.alert(
             ('保存' + (res ? '成功' : '失败')),
             (res ? input : '请重试'),
             [
                 { text: '继续', onPress: this.clearInput },
-                { text: '去看看', onPress: handler },
+                // { text: '去看看', onPress: handler },
             ],
             { onDismiss: this.clearInput }
         )
@@ -381,13 +385,13 @@ class BillListScreen extends Component {
     componentDidMount() {
         // this.didFocusSubscription = this.props.navigation.addListener('willFocus', () => {
         //     Keyboard.dismiss();
-        //     this._onRefresh();
+            this._onRefresh();
         // });
         this.minLoadingTime = 0.7 * 1000;
     }
 
     componentWillUnmount() {
-        this.didFocusSubscription.remove();
+        this.didFocusSubscription?.remove();
         clearTimeout(this.timer)
     }
 
