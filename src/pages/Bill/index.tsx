@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {
   Text,
   View,
@@ -11,9 +11,14 @@ import {
   ScrollView,
   RefreshControl,
   Share,
+  ShareContent,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
 } from 'react-native';
 
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import { CompositeScreenProps } from '@react-navigation/native';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 
 // import MyHeader from '../../components/Myheader';
@@ -34,19 +39,20 @@ import {
 import {Parsers} from '../../constant/moss';
 import {saveStorage, loadStorage, isiOS} from '../../constant/config';
 import {getHeight} from '../../constant/Util';
+import {typeRenderItems} from './interface';
 
-const fixedToken = {
+const fixedToken: Record<string, StyleProp<ViewStyle | TextStyle>> = {
   hint: {
     backgroundColor: '#E5EDFA',
     borderRadius: 8,
     ...Parsers.padding([8, 14]),
   },
-  hintText: {
-    // fontFamily: 'SourceCodePro-Regular',
-    fontSize: 13,
-    color: '#666',
-    fontFamily: FONT_PFR,
-  },
+  //   hintText: {
+  //     // fontFamily: 'SourceCodePro-Regular',
+  //     fontSize: 13,
+  //     color: '#666',
+  //     fontFamily: FONT_PFR,
+  //   },
 
   content: {
     backgroundColor: COLOR_WHITE,
@@ -117,13 +123,13 @@ const fixedToken = {
     top: 0,
   },
 
-  get chargeBox() {
-    return {
-      ...this.row,
-      flexDirection: 'row',
-      ...Parsers.margin([16, 0, 10]),
-    };
-  },
+  //   get chargeBox() {
+  //     return {
+  //       ...this.row,
+  //       flexDirection: 'row',
+  //       ...Parsers.margin([16, 0, 10]),
+  //     };
+  //   },
 
   chageTitle: {
     fontFamily: FONT_PFR,
@@ -186,7 +192,7 @@ const fixedToken = {
     color: '#010000',
   },
 };
-const BillList = {
+const BillList: Record<string, StyleProp<ViewStyle | TextStyle>> = {
   container: {
     flex: 1,
     alignItems: 'center',
@@ -221,109 +227,114 @@ const styles = {
 };
 
 const StorageBillKey = 'billData';
+
+let StorageBillData: string[] = []; // TODO
+// TODO CompositeScreenProps<any, any>
 // 输入
-class BillInputScreen extends Component {
-  constructor() {
-    super();
+const BillInputScreen: FC<CompositeScreenProps<any, any>> = (props) => {
+  console.log('props', props);
+  const [disabled, setDisabled] = useState(true);
+  const [time, setTime] = useState(
+    new Date().getMonth() + 1 + '.' + new Date().getDate(),
+  );
+  const [content, setContent] = useState('');
+  const [money, setMoney] = useState('');
 
-    const now = new Date();
+  const renderItemsArr: typeRenderItems[] = [
+    {
+      title: '时间',
+      value: time,
+      set: setTime,
+      placeholder: '请输入时间',
+      keyboardType: 'numeric',
+    },
+    {title: '内容', value: content, set: setContent, placeholder: '请输入内容'},
+    {
+      title: '金额',
+      value: money,
+      set: setMoney,
+      placeholder: '请输入金额',
+      keyboardType: 'numeric',
+    },
+  ];
 
-    this.defineState = {
-      content: '',
-      money: '',
-    };
+  useEffect(() => {
+    // console.log('this.props', props);
+    loadStorage(StorageBillKey, []).then(res => {
+      StorageBillData = res;
+      if (StorageBillData === null) {
+        Alert.alert('数据读取失败');
+      }
+      setDisabled(false);
+    });
+  }, []);
 
-    this.state = {
-      disabled: true,
-      time: now.getMonth() + 1 + '.' + now.getDate(),
-      ...this.defineState,
-    };
-
-    this.renderItemsArr = [
-      {
-        title: '时间',
-        stateKey: 'time',
-        placeholder: '请输入时间',
-        keyboardType: 'numeric',
-      },
-      {title: '内容', stateKey: 'content', placeholder: '请输入内容'},
-      {
-        title: '金额',
-        stateKey: 'money',
-        placeholder: '请输入金额',
-        keyboardType: 'numeric',
-      },
-    ];
-  }
-
-  async componentDidMount() {
-    this.StorageBillData = await loadStorage(StorageBillKey, []);
-    if (this.StorageBillData === null) {
-      alert('数据读取失败');
-    }
-    this.setState({disabled: false});
-  }
-
-  Input = value => inputValue => this.setState({[value]: inputValue});
-
-  clearInput = () => {
-    this.setState(this.defineState);
+  const clearInput = () => {
+    setContent('');
+    setMoney('');
     // to do change List state
   };
 
-  handleSave = async () => {
-    console.log('data 1');
-    const input =
-      this.state.time + '@' + this.state.content + '@' + this.state.money;
-    console.log('data input', input);
+  const handleSave = async () => {
+    const input = time + '@' + content + '@' + money;
+    // console.log('data input', input);
 
-    const data = this.StorageBillData;
-    console.log('data data', data);
+    // console.log('data data', StorageBillData);
 
-    data.push(input);
+    StorageBillData.unshift(input);
     // this.props.navigation.goBack() // TODO
-    const res = await saveStorage({key: StorageBillKey, data});
-    console.log('data', data);
+    const res = await saveStorage({key: StorageBillKey, data: StorageBillData});
+    // console.log('data', StorageBillData);
 
     // to do goBack right
-    // const handler = res ? () => { this.props.navigation.navigate('列表'); this.clearInput(); } : this.props.navigation.goBack;
+    const handler = res
+      ? () => {
+          props.navigation.navigate('list');
+          clearInput();
+        }
+      : props.navigation.goBack;
 
     Alert.alert(
       '保存' + (res ? '成功' : '失败'),
       res ? input : '请重试',
       [
-        {text: '继续', onPress: this.clearInput},
-        // { text: '去看看', onPress: handler },
+        {text: '继续', onPress: clearInput},
+        {text: '去看看', onPress: handler},
       ],
-      {onDismiss: this.clearInput},
+      {onDismiss: clearInput},
     );
   };
 
-  check = () => {
-    const {time, content, money} = this.state;
+  const handleCheck = () => {
     if (!time || !content || !money) {
-      alert('不能为空');
+      Alert.alert('不能为空');
     } else {
-      this.handleSave();
+      handleSave();
     }
   };
 
-  onSubmit = (i, data) => {
+  const onSubmit = (i: number, data: typeRenderItems[]) => {
     if (i !== data.length - 1) {
-      this.refs['Bill_' + (i + 1)].focus();
+      // TODO
+      //   this.refs['Bill_' + (i + 1)].focus();
     } else {
-      this.check();
+      handleCheck();
     }
   };
 
-  randerInput = (item, index, data) => {
+  const randerInput = (
+    item: typeRenderItems,
+    index: number,
+    data: typeRenderItems[],
+  ) => {
     const {
       warn = null,
       placeholder = '',
       inputStyle = {},
       multiline = false,
       keyboardType,
-      stateKey,
+      value,
+      set,
       maxLength,
       title = '',
     } = item;
@@ -342,15 +353,15 @@ class BillInputScreen extends Component {
           )}
         </View>
         <TextInput
-          ref={'Bill_' + index}
+          //   ref={'Bill_' + index}
           style={[styles.fixedToken.input, inputStyle]}
           underlineColorAndroid="transparent"
           maxLength={maxLength}
           placeholder={placeholder}
-          value={this.state[stateKey]}
+          value={value}
           keyboardType={keyboardType}
-          onSubmitEditing={this.onSubmit.bind(this, index, data)}
-          onChangeText={this.Input(stateKey)}
+          onSubmitEditing={() => onSubmit(index, data)}
+          onChangeText={v => set(v)}
           multiline={multiline}
           enablesReturnKeyAutomatically={true}
           returnKeyType={returnKeyType}
@@ -361,117 +372,91 @@ class BillInputScreen extends Component {
     );
   };
 
-  render() {
-    const {disabled} = this.state;
+  return (
+    <View style={styles.container}>
+      {/* <Text>{new Date().toLocaleString()}</Text> */}
 
-    return (
-      <View style={styles.container}>
-        {/* <Text>{new Date().toLocaleString()}</Text> */}
+      <ScrollView>
+        <View style={styles.fixedToken.content}>
+          {renderItemsArr.map(randerInput)}
+        </View>
 
-        <ScrollView>
-          <View style={styles.fixedToken.content}>
-            {this.renderItemsArr.map(this.randerInput)}
-          </View>
-
-          <View style={styles.fixedToken.action}>
-            <TouchableHighlight
-              onPress={this.check}
-              style={[
-                styles.fixedToken.actionButton,
-                disabled && styles.fixedToken.actionButtonDisabled,
-              ]}
-              underlayColor={'rgba(1,167,234, 1)'}
-              disabled={disabled}>
-              <Text style={styles.fixedToken.actionButtonText}>
-                {'确认保存'}
-              </Text>
-            </TouchableHighlight>
-          </View>
-        </ScrollView>
-      </View>
-    );
-  }
+        <View style={styles.fixedToken.action}>
+          <TouchableHighlight
+            onPress={handleCheck}
+            style={[
+              styles.fixedToken.actionButton,
+              disabled && styles.fixedToken.actionButtonDisabled,
+            ]}
+            underlayColor={'rgba(1,167,234, 1)'}
+            disabled={disabled}>
+            <Text style={styles.fixedToken.actionButtonText}>确认保存</Text>
+          </TouchableHighlight>
+        </View>
+      </ScrollView>
+    </View>
+  );
 }
 
+const minLoadingTime = 0.7 * 1000;
 // 列表
-class BillListScreen extends Component {
-  constructor(props) {
-    super(props);
+function BillListScreen() {
+  const [hasCopy, setHasCopy] = useState(false);
+  const [StorageBillData, setStorageBillData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-    this.state = {
-      hasCopy: false,
-      StorageBillData: [],
-      refreshing: false,
-    };
-    this.timer = null;
-  }
+  const refTimer = useRef<NodeJS.Timeout | null>(null);
 
-  componentDidMount() {
+  useEffect(() => {
     // this.didFocusSubscription = this.props.navigation.addListener('willFocus', () => {
     //     Keyboard.dismiss();
-    this._onRefresh();
     // });
-    this.minLoadingTime = 0.7 * 1000;
-  }
+    _onRefresh();
+  }, []);
 
-  componentWillUnmount() {
-    this.didFocusSubscription?.remove();
-    clearTimeout(this.timer);
-  }
+  useEffect(() => {
+    return () => {
+      // this.didFocusSubscription?.remove();
+      refTimer.current && clearTimeout(refTimer.current);
+    };
+  }, []);
 
-  _onRefresh = async (needLoading = true) => {
+  const _onRefresh = async (needLoading = true) => {
     console.log('refresh in');
-    needLoading && this.setState({refreshing: true});
+    needLoading && setRefreshing(true);
     const inTime = Date.now();
-    const StorageBillData = await loadStorage(StorageBillKey, []);
-    if (StorageBillData !== null) {
-      this.setState({StorageBillData});
+    const newStorageBillData = await loadStorage(StorageBillKey, []);
+    if (newStorageBillData !== null) {
+      setStorageBillData(newStorageBillData);
     }
-    if (!needLoading) return;
-    const {minLoadingTime} = this;
-    this.timer = setTimeout(
+    if (!needLoading) {
+      return;
+    }
+    refTimer.current = setTimeout(
       () => {
-        this.setState({refreshing: false});
+        setRefreshing(false);
       },
       Date.now() - inTime < minLoadingTime ? minLoadingTime : 0,
     );
   };
 
-  renderList = ({item, index}) => {
-    return (
-      <TouchableOpacity
-        key={'billList_' + index}
-        style={styles.BillList.Touch}
-        activeOpacity={0.8}
-        onLongPress={this.handleDelete.bind(this, {index})}>
-        <Text style={styles.BillList.ItemText}>{item}</Text>
-      </TouchableOpacity>
-    );
-  };
-
-  getkey = (item, index) => {
-    return 'BillListItem_' + index;
-  };
-
-  renderSeparator = () => (
+  const renderSeparator = () => (
     <View style={{height: MinPix * 2, backgroundColor: COLOR_LINEGRAY}} />
   );
 
-  renderHeaderComponent = () => {
-    const {hasCopy} = this.state;
-
+  const renderHeaderComponent = () => {
     return (
       <View style={STYLES.REC}>
         {[
-          {text: '分享', handler: this.handleShare},
+          {text: '分享', handler: handleShare},
           {
             text: hasCopy ? '已复制' : '复制',
-            handler: this.handleCopy,
+            handler: handleCopy,
             disabled: hasCopy,
           },
           {
             text: '长按清空',
-            Longhandler: this.handleDelete.bind(this, {deleteAll: true}),
+            Longhandler: () => handleDelete({deleteAll: true}),
           },
         ].map(
           (
@@ -484,8 +469,9 @@ class BillListScreen extends Component {
             index,
             data,
           ) => {
-            let maxWidth = 100 / (data.length + 1);
-            maxWidth = maxWidth.toFixed(2) + '%';
+            let maxWidth: `${number}%` = `${Number(
+              (100 / (data.length + 1)).toFixed(2),
+            )}%`;
             return (
               <TouchableOpacity
                 onPress={handler}
@@ -495,7 +481,7 @@ class BillListScreen extends Component {
                   styles.BillList.headerTouch,
                   {maxWidth},
                 ]}
-                underlayColor={'rgba(1,167,234, 1)'}
+                // underlayColor={'rgba(1,167,234, 1)'}
                 disabled={disabled}
                 key={'HeaderComponentBtn_' + index}>
                 <Text style={styles.fixedToken.actionButtonText}>{text}</Text>
@@ -507,47 +493,51 @@ class BillListScreen extends Component {
     );
   };
 
-  renderFooterComponent = () => {
+  const renderFooterComponent = () => {
     // console.log('this.FlatList',this.FlatList)
     // to do length by Screen
-    return this.state.StorageBillData.length < 10 ? null : (
+    return StorageBillData.length < 10 ? null : (
       <View style={[STYLES.CCC, {marginTop: 5}]}>
         <Text style={{fontFamily: FONT_PFS}}>没有更多了...</Text>
       </View>
     );
   };
 
-  handleDelete = ({index, deleteAll = false}) => {
+  const handleDelete = ({
+    index,
+    deleteAll = false,
+  }: {
+    index?: number;
+    deleteAll?: boolean;
+  }) => {
     Alert.alert('提示', `您确定${deleteAll ? '清空全部' : '删除这条'}记录吗`, [
       {
         text: '确定',
         onPress: async () => {
-          const {minLoadingTime} = this;
           const inTime = Date.now();
-          let {StorageBillData} = this.state;
-          this.setState({refreshing: true});
+          let newStorageBillData = [...StorageBillData];
+          setRefreshing(true);
 
           if (deleteAll) {
-            StorageBillData = [];
+            newStorageBillData = [];
           } else {
-            StorageBillData.splice(index, 1);
+            typeof index !== 'undefined' && newStorageBillData.splice(index, 1);
           }
 
           let res = await saveStorage({
             key: StorageBillKey,
-            data: StorageBillData,
+            data: newStorageBillData,
           });
 
           if (res) {
             Alert.alert('提示', '删除成功!');
-            this.setState({StorageBillData}, () => {
-              this.timer = setTimeout(
-                () => {
-                  this.setState({refreshing: false});
-                },
-                Date.now() - inTime < minLoadingTime ? minLoadingTime : 0,
-              );
-            });
+            setStorageBillData(newStorageBillData);
+            refTimer.current = setTimeout(
+              () => {
+                setRefreshing(false);
+              },
+              Date.now() - inTime < minLoadingTime ? minLoadingTime : 0,
+            );
           }
         },
       },
@@ -555,11 +545,11 @@ class BillListScreen extends Component {
     ]);
   };
 
-  handleShare = async () => {
+  const handleShare = async () => {
     try {
-      const shareConfig = {
+      const shareConfig: ShareContent = {
         title: 'Bill',
-        message: this.getBillDataString(),
+        message: getBillDataString(),
       };
 
       isiOS ? (shareConfig.url = 'http://www.baidu.com') : null;
@@ -577,50 +567,55 @@ class BillListScreen extends Component {
       } else if (result.action === Share.dismissedAction) {
         // dismissed
       }
-    } catch (error) {
-      alert(error.message);
+    } catch (error: any) {
+      error?.message && Alert.alert(error?.message);
     }
   };
 
-  handleCopy = async () => {
-    await Clipboard.setString(this.getBillDataString());
-    this.setState({hasCopy: true});
+  const handleCopy = async () => {
+    await Clipboard.setString(getBillDataString());
+    setHasCopy(true);
   };
 
-  getBillDataString = () => {
+  const getBillDataString = () => {
     let result = ',\n';
-    this.state.StorageBillData.forEach((item, index, data) => {
+    StorageBillData.forEach((item, index, data) => {
       result += `"${item}"${index === data.length - 1 ? '' : ',\n'}`;
     });
     console.log('getBillDataString  data', result);
     return result;
   };
 
-  render() {
-    return (
-      <View style={styles.BillList.container}>
-        <FlatList
-          // ref={(res) => this.refFlatList = res}
-          style={styles.BillList.ScrollContent}
-          data={this.state.StorageBillData}
-          renderItem={this.renderList}
-          keyExtractor={this.getkey}
-          ItemSeparatorComponent={this.renderSeparator}
-          ListEmptyComponent={ListEmptyComponent}
-          ListHeaderComponent={this.renderHeaderComponent}
-          ListFooterComponent={this.renderFooterComponent}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
-            />
-          }
-          onRefresh
-          refreshing={this.state.refreshing}
-        />
-      </View>
-    );
-  }
+  return (
+    <View style={styles.BillList.container}>
+      <FlatList
+        // ref={(res) => this.refFlatList = res}
+        style={styles.BillList.ScrollContent}
+        data={StorageBillData}
+        renderItem={({item, index}) => {
+          return (
+            <TouchableOpacity
+              key={'billList_' + index}
+              style={styles.BillList.Touch}
+              activeOpacity={0.8}
+              onLongPress={() => handleDelete({index})}>
+              <Text style={styles.BillList.ItemText}>{item}</Text>
+            </TouchableOpacity>
+          );
+        }}
+        keyExtractor={(item, index) => 'BillListItem_' + index}
+        ItemSeparatorComponent={renderSeparator}
+        ListEmptyComponent={ListEmptyComponent}
+        ListHeaderComponent={renderHeaderComponent}
+        ListFooterComponent={renderFooterComponent}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={_onRefresh} />
+        }
+        // onRefresh
+        refreshing={refreshing}
+      />
+    </View>
+  );
 }
 const Tab = createMaterialTopTabNavigator();
 
