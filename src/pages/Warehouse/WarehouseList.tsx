@@ -59,15 +59,16 @@ class WarehouseList extends Component {
     }
 
     componentDidMount() {
-        this.didFocusSubscription = this.props.navigation.addListener('willFocus', () => {
-            Keyboard.dismiss();
-            this._onRefresh();
-        });
+        // this.didFocusSubscription = this.props.navigation.addListener('willFocus', () => {
+        //     Keyboard.dismiss();
+        //     this._onRefresh();
+        // });
+        this._onRefresh();
         this.minLoadingTime = 0.7 * 1000;
     }
 
     componentWillUnmount() {
-        this.didFocusSubscription.remove();
+        // this.didFocusSubscription.remove();
         clearTimeout(this.timer)
     }
 
@@ -163,7 +164,7 @@ class WarehouseList extends Component {
 
     renderList = ({ item, index }) => {
         const { name, value } = item;
-        const isActive = !this.state.mustPositive || (value > 0);
+        const isActive =  this.state.mustPositive ? true : (value > 0);
 
         return <TouchableOpacity
             key={'warehouseList_' + index}
@@ -182,6 +183,7 @@ class WarehouseList extends Component {
                     onPress={this.handleChevron.bind(this, { isUp: true, index })}
                 >
                     {/* <Icon name={'chevron-up'} size={16} color={COLOR_ORANGE} /> */}
+                    <Text>+</Text>
                 </TouchableOpacity>
                 <Text style={styles.WarehouseList.value}>{value}</Text>
                 <TouchableOpacity
@@ -189,6 +191,7 @@ class WarehouseList extends Component {
                     onPress={this.handleChevron.bind(this, { isUp: false, index })}
                 >
                     {/* <Icon name={'chevron-down'} size={16} color={COLOR_ORANGE} /> */}
+                    <Text>-</Text>
                 </TouchableOpacity>
             </View>
         </TouchableOpacity>
@@ -248,7 +251,7 @@ class WarehouseList extends Component {
             return;
         }
 
-        StorageData.push({ name: textInput, value: 0 })
+        StorageData.unshift({ name: textInput, value: 0 })
         console.log(StorageWHKey, StorageData)
 
         const res = await saveStorage({ key: StorageWHKey, data: StorageData });
@@ -598,7 +601,7 @@ const styleWarehouseList = {
     },
     headerTouch: {
         flex: 1,
-        height: getHeight(35),
+        height: getHeight(30),
         // maxWidth: '35%',
     },
     ItemText: {

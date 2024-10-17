@@ -10,8 +10,8 @@ import Mine from './pages/Mine/Mine';
 import WarehouseList from './pages/Warehouse/WarehouseList';
 import BillScan from './pages/Bill';
 
-import {MinPix, COLOR_THEME_COMMON, COLOR_BLACK} from './constant/UI';
-import {getTabNavigatorConfig} from './navigation/config';
+// import {MinPix, COLOR_THEME_COMMON, COLOR_BLACK} from './constant/UI';
+// import {getTabNavigatorConfig} from './navigation/config';
 
 const Tab = createBottomTabNavigator();
 

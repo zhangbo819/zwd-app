@@ -12,3 +12,8 @@ export type typeRenderItems = {
   maxLength?: number;
   multiline?: boolean;
 };
+
+export enum billScreenName {
+    input = 'input',
+    list = 'list'
+}

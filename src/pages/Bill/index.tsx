@@ -39,7 +39,7 @@ import {
 import {Parsers} from '../../constant/moss';
 import {saveStorage, loadStorage, isiOS} from '../../constant/config';
 import {getHeight} from '../../constant/Util';
-import {typeRenderItems} from './interface';
+import {billScreenName, typeRenderItems} from './interface';
 
 const fixedToken: Record<string, StyleProp<ViewStyle | TextStyle>> = {
   hint: {
@@ -235,7 +235,7 @@ const BillInputScreen: FC<CompositeScreenProps<any, any>> = (props) => {
   console.log('props', props);
   const [disabled, setDisabled] = useState(true);
   const [time, setTime] = useState(
-    new Date().getMonth() + 1 + '.' + new Date().getDate(),
+    new Date().getFullYear() + '.' + (new Date().getMonth() + 1) + '.' + new Date().getDate(),
   );
   const [content, setContent] = useState('');
   const [money, setMoney] = useState('');
@@ -289,7 +289,7 @@ const BillInputScreen: FC<CompositeScreenProps<any, any>> = (props) => {
     // to do goBack right
     const handler = res
       ? () => {
-          props.navigation.navigate('list');
+          props.navigation.navigate(billScreenName.list);
           clearInput();
         }
       : props.navigation.goBack;
@@ -603,7 +603,7 @@ function BillListScreen() {
             </TouchableOpacity>
           );
         }}
-        keyExtractor={(item, index) => 'BillListItem_' + index}
+        keyExtractor={(_, index) => 'BillListItem_' + index}
         ItemSeparatorComponent={renderSeparator}
         ListEmptyComponent={ListEmptyComponent}
         ListHeaderComponent={renderHeaderComponent}
@@ -630,14 +630,14 @@ export default function BillScan() {
                 title={'账本'}
                 navigation={navigation}
             /> */}
-      <Tab.Navigator initialRouteName="input">
+      <Tab.Navigator initialRouteName={billScreenName.list}>
         <Tab.Screen
-          name="input"
+          name={billScreenName.input}
           options={{tabBarLabel: '录入'}}
           component={BillInputScreen}
         />
         <Tab.Screen
-          name="list"
+          name={billScreenName.list}
           options={{tabBarLabel: '列表'}}
           component={BillListScreen}
         />
