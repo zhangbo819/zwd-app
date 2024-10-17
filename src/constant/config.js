@@ -42,7 +42,7 @@ export const saveStorage = async ({key, data}) => {
   try {
     // await AsyncStorage.setItem(key, JSON.stringify(data))
     await storage.set(key, JSON.stringify(data));
-    console.log('data in', data)
+    // console.log('data in', data)
     return true;
   } catch (err) {
     console.log('saveStorage err', err);
@@ -56,7 +56,6 @@ export const loadStorage = async (key, defaultValue) => {
     // to do
     // result = await AsyncStorage.getItem(key);
     result = await storage.getString(key) || null;
-    console.log('result 0', result, typeof result);
     if (result) {
         result = JSON.parse(result);
     }
@@ -64,7 +63,7 @@ export const loadStorage = async (key, defaultValue) => {
         result = defaultValue;
         saveStorage({key, data: result});
     }
-    console.log('result 1', result, typeof result);
+    // console.log('result 1', result, typeof result);
   } catch (err) {
     console.log('loadStorage err', err);
     if (err.name == 'NotFoundError') {

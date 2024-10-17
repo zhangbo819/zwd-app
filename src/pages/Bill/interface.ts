@@ -17,3 +17,5 @@ export enum billScreenName {
     input = 'input',
     list = 'list'
 }
+
+export const StorageBillKey = 'billData';
