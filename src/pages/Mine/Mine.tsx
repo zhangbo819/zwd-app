@@ -21,6 +21,7 @@ import {
   COLOR_BGGRAY,
   NAV_COMMON_HEIGHT,
 } from '../../constant/UI';
+import { HomeBottomTabPages, HomeBottomTabParamList, RootStackParamList, StackPages } from '../../types/interface';
 
 const Mine: FC<
   CompositeScreenProps<

@@ -27,6 +27,7 @@ import {VERSION_NUMBER_NORM} from '../../constant/config';
 import {Parsers} from '../../constant/moss';
 import STYLES from '../../constant/STYLES';
 import {getHeight} from '../../constant/Util';
+import { RootStackParamList, StackPages } from '../../types/interface';
 
 const navHeight = STATUS_BAR_HEIGHT + NAV_COMMON_HEIGHT;
 

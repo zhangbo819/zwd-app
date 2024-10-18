@@ -8,6 +8,7 @@ import {NavigationContainer} from '@react-navigation/native';
 
 import About from './pages/Mine/About';
 import MainTabNavigator from './Main';
+import { RootStackParamList, StackPages } from './types/interface';
 
 // import { STATUS_BAR_HEIGHT } from './constant/UI';
 

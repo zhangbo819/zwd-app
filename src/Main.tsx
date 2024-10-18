@@ -7,6 +7,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Mine from './pages/Mine/Mine';
 import WarehouseList from './pages/Warehouse/WarehouseList';
 import BillScan from './pages/Bill';
+import { HomeBottomTabPages, HomeBottomTabParamList } from './types/interface';
 
 // import {MinPix, COLOR_THEME_COMMON, COLOR_BLACK} from './constant/UI';
 // import {getTabNavigatorConfig} from './navigation/config';
