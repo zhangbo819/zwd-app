@@ -13,9 +13,14 @@ export type typeRenderItems = {
   multiline?: boolean;
 };
 
-export enum billScreenName {
-    input = 'input',
-    list = 'list'
+export enum BillScreenName {
+  input = 'input',
+  list = 'list',
 }
+
+export type MaterialTopTabParamList = {
+  [BillScreenName.input]: undefined;
+  [BillScreenName.list]: undefined;
+};
 
 export const StorageBillKey = 'billData';

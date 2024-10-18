@@ -1,6 +1,5 @@
 import React from 'react';
 
-// import { createBottomTabNavigator } from 'react-navigation';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
@@ -12,7 +11,32 @@ import BillScan from './pages/Bill';
 // import {MinPix, COLOR_THEME_COMMON, COLOR_BLACK} from './constant/UI';
 // import {getTabNavigatorConfig} from './navigation/config';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<HomeBottomTabParamList>();
+
+export default function () {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen
+        name={HomeBottomTabPages.Home}
+        options={{
+          title: '首页',
+          // headerShown:false
+        }}
+        component={BillScan}
+      />
+      <Tab.Screen
+        name={HomeBottomTabPages.WareHouse}
+        options={{title: '货物'}}
+        component={WarehouseList}
+      />
+      <Tab.Screen
+        name={HomeBottomTabPages.Mine}
+        options={{title: '我的'}}
+        component={Mine as React.ComponentType<{}>}
+      />
+    </Tab.Navigator>
+  );
+}
 
 // const MainTabNavigator = createBottomTabNavigator(
 //     mainTabRoute,
@@ -90,16 +114,3 @@ const Tab = createBottomTabNavigator();
 //         }
 //     })
 // );
-
-export default function () {
-  return (
-    // <NavigationContainer>
-    <Tab.Navigator >
-      {/* options={{headerShown:false}} */}
-      <Tab.Screen  name="首页" component={BillScan} />
-      <Tab.Screen name="货物" component={WarehouseList} />
-      <Tab.Screen name="我的" component={Mine} />
-    </Tab.Navigator>
-    // </NavigationContainer>
-  );
-}

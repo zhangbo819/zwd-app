@@ -24,7 +24,7 @@ import MainTabNavigator from './Main';
 //         }
 //     }
 // );
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Root () {
   return (
@@ -41,10 +41,10 @@ export default function Root () {
         <Stack.Navigator>
           <Stack.Screen
             options={{headerShown: false}}
-            name="Home"
+            name={StackPages.Home}
             component={MainTabNavigator}
           />
-          <Stack.Screen name="About" component={About} />
+          <Stack.Screen name={StackPages.About} component={About} />
         </Stack.Navigator>
       </View>
     </NavigationContainer>

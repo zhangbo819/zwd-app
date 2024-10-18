@@ -11,8 +11,10 @@ import {
   TextStyle,
 } from 'react-native';
 
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {CompositeScreenProps} from '@react-navigation/native';
+import {
+  createMaterialTopTabNavigator,
+  MaterialTopTabScreenProps,
+} from '@react-navigation/material-top-tabs';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 
 // import MyHeader from '../../components/Myheader';
@@ -30,14 +32,19 @@ import {
 } from '../../constant/UI';
 import {Parsers} from '../../constant/moss';
 import {saveStorage, loadStorage} from '../../constant/config';
-import { BillListScreen } from './list';
-import {billScreenName, StorageBillKey, typeRenderItems} from './interface';
-
+import {BillListScreen} from './list';
+import {
+  BillScreenName,
+  MaterialTopTabParamList,
+  StorageBillKey,
+  typeRenderItems,
+} from './interface';
 
 let StorageBillData: string[] = [];
-// TODO CompositeScreenProps<any, any>
 // 输入
-const BillInputScreen: FC<CompositeScreenProps<any, any>> = props => {
+const BillInputScreen: FC<
+  MaterialTopTabScreenProps<MaterialTopTabParamList, BillScreenName.input>
+> = props => {
   const [disabled, setDisabled] = useState(true);
   const [time, setTime] = useState(
     new Date().getFullYear() +
@@ -104,7 +111,7 @@ const BillInputScreen: FC<CompositeScreenProps<any, any>> = props => {
     // to do goBack right
     const handler = res
       ? () => {
-          props.navigation.navigate(billScreenName.list);
+          props.navigation.navigate(BillScreenName.list);
           clearInput();
         }
       : props.navigation.goBack;
@@ -213,28 +220,27 @@ const BillInputScreen: FC<CompositeScreenProps<any, any>> = props => {
   );
 };
 
-
-const Tab = createMaterialTopTabNavigator();
+const Tab = createMaterialTopTabNavigator<MaterialTopTabParamList>();
 
 export default function BillScan() {
   // to do share in MyHeader
   return (
     <View style={STYLES.commonBg}>
       {/* <MyHeader
-                // RightComponent={<TouchableOpacity onPress={this.handleShare}>
-                //     <Icon name={'share'} size={18} color={COLOR_WHITE} style={{ textAlign: 'center' }} />
-                // </TouchableOpacity>}
-                title={'账本'}
-                navigation={navigation}
-            /> */}
-      <Tab.Navigator initialRouteName={billScreenName.list}>
+          // RightComponent={<TouchableOpacity onPress={this.handleShare}>
+          //     <Icon name={'share'} size={18} color={COLOR_WHITE} style={{ textAlign: 'center' }} />
+          // </TouchableOpacity>}
+          title={'账本'}
+          navigation={navigation}
+      /> */}
+      <Tab.Navigator initialRouteName={BillScreenName.list}>
         <Tab.Screen
-          name={billScreenName.input}
+          name={BillScreenName.input}
           options={{tabBarLabel: '录入'}}
           component={BillInputScreen}
         />
         <Tab.Screen
-          name={billScreenName.list}
+          name={BillScreenName.list}
           options={{tabBarLabel: '列表'}}
           component={BillListScreen}
         />
@@ -242,7 +248,6 @@ export default function BillScan() {
     </View>
   );
 }
-
 
 const fixedToken: Record<string, StyleProp<ViewStyle | TextStyle>> = {
   hint: {
