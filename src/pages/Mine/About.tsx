@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Image, Linking, ScrollView, Text } from 'react-native';
 
-import MyHeader from '../../components/Myheader';
+// import MyHeader from '../../components/Myheader';
 
 import {
     IMAGE_APP_ICON,
@@ -70,11 +70,11 @@ export default class About extends React.Component {
         return (
             <View style={css.container}>
 
-                <MyHeader
+                {/* <MyHeader
                     title={'关于'}
                     navigation={this.props.navigation}
                     topful
-                />
+                /> */}
 
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={css.content}>

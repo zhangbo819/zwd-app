@@ -1,11 +1,13 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {View, StatusBar, StyleSheet} from 'react-native';
 
 // import { createStackNavigator } from 'react-navigation';
 // import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
 
-import MainTabNavigator from './Main';
 import About from './pages/Mine/About';
+import MainTabNavigator from './Main';
 
 // import { STATUS_BAR_HEIGHT } from './constant/UI';
 
@@ -22,14 +24,11 @@ import About from './pages/Mine/About';
 //         }
 //     }
 // );
+const Stack = createNativeStackNavigator();
 
-export default class Root extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
+export default function Root () {
+  return (
+    <NavigationContainer>
       <View style={styles.container}>
         <StatusBar
           barStyle={'dark-content'}
@@ -39,15 +38,17 @@ export default class Root extends Component {
         />
         {/* <Router /> */}
 
-        <MainTabNavigator></MainTabNavigator>
-
-        {/* <Stack.Navigator>
-          <Stack.Screen name="Home" component={MainTabNavigator} />
+        <Stack.Navigator>
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Home"
+            component={MainTabNavigator}
+          />
           <Stack.Screen name="About" component={About} />
-        </Stack.Navigator> */}
+        </Stack.Navigator>
       </View>
-    );
-  }
+    </NavigationContainer>
+  );
 }
 
 const styles = StyleSheet.create({

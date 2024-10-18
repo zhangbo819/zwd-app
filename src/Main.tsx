@@ -2,7 +2,6 @@ import React from 'react';
 
 // import { createBottomTabNavigator } from 'react-navigation';
 // import Icon from 'react-native-vector-icons/FontAwesome';
-import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 // import { billListTopTab } from './navigation/topTabNavPages';
@@ -94,12 +93,13 @@ const Tab = createBottomTabNavigator();
 
 export default function () {
   return (
-    <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="首页" component={BillScan} />
-        <Tab.Screen name="货物" component={WarehouseList} />
-        <Tab.Screen name="我的" component={Mine} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    // <NavigationContainer>
+    <Tab.Navigator >
+      {/* options={{headerShown:false}} */}
+      <Tab.Screen  name="首页" component={BillScan} />
+      <Tab.Screen name="货物" component={WarehouseList} />
+      <Tab.Screen name="我的" component={Mine} />
+    </Tab.Navigator>
+    // </NavigationContainer>
   );
 }

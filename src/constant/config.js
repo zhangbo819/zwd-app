@@ -16,14 +16,15 @@ export const isAndroid = OS === Android;
 //     return num < 10 ? '0' + num : num;
 // }
 
+
 // export const VERSION_NUMBER = ReadableVersionArr[0] + supplementZero(ReadableVersionArr[1]) + supplementZero(ReadableVersionArr[2]);
-export const VERSION_NUMBER = 'VERSION_NUMBER TODO';
-export const VERSION_NUMBER_NORM =
-  (VERSION_NUMBER - (VERSION_NUMBER % 10000)) / 10000 +
-  '.' +
-  ((VERSION_NUMBER % 10000) - (VERSION_NUMBER % 100)) / 100 +
-  '.' +
-  (VERSION_NUMBER % 100);
+// export const VERSION_NUMBER_NORM =
+//   (VERSION_NUMBER - (VERSION_NUMBER % 10000)) / 10000 +
+//   '.' +
+//   ((VERSION_NUMBER % 10000) - (VERSION_NUMBER % 100)) / 100 +
+//   '.' +
+//   (VERSION_NUMBER % 100);
+export const VERSION_NUMBER_NORM = '0.2.0';
 
 export const isDev = typeof __DEV__ === 'boolean' && __DEV__;
 if (!isDev) {
