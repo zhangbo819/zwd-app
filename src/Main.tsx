@@ -4,10 +4,11 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 // import { billListTopTab } from './navigation/topTabNavPages';
+import {HomeBottomTabPages, HomeBottomTabParamList} from './types/interface';
 import Mine from './pages/Mine/Mine';
 import WarehouseList from './pages/Warehouse/WarehouseList';
 import BillScan from './pages/Bill';
-import { HomeBottomTabPages, HomeBottomTabParamList } from './types/interface';
+import BaziTab from './pages/Bazi';
 
 // import {MinPix, COLOR_THEME_COMMON, COLOR_BLACK} from './constant/UI';
 // import {getTabNavigatorConfig} from './navigation/config';
@@ -16,19 +17,21 @@ const Tab = createBottomTabNavigator<HomeBottomTabParamList>();
 
 export default function () {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator initialRouteName={HomeBottomTabPages.Bazi}>
       <Tab.Screen
         name={HomeBottomTabPages.Home}
-        options={{
-          title: '首页',
-          // headerShown:false
-        }}
+        options={{title: '首页', headerShown: false}}
         component={BillScan}
       />
       <Tab.Screen
         name={HomeBottomTabPages.WareHouse}
         options={{title: '货物'}}
         component={WarehouseList}
+      />
+      <Tab.Screen
+        name={HomeBottomTabPages.Bazi}
+        options={{title: '八字', headerShown: false}}
+        component={BaziTab}
       />
       <Tab.Screen
         name={HomeBottomTabPages.Mine}

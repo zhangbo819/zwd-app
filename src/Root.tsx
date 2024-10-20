@@ -6,9 +6,10 @@ import {View, StatusBar, StyleSheet} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 
-import About from './pages/Mine/About';
-import MainTabNavigator from './Main';
 import { RootStackParamList, StackPages } from './types/interface';
+import About from './pages/Mine/About';
+import BaziInfo from './pages/Bazi/Info';
+import MainTabNavigator from './Main';
 
 // import { STATUS_BAR_HEIGHT } from './constant/UI';
 
@@ -46,6 +47,7 @@ export default function Root () {
             component={MainTabNavigator}
           />
           <Stack.Screen name={StackPages.About} component={About} />
+          <Stack.Screen name={StackPages.BaziInfo} component={BaziInfo} />
         </Stack.Navigator>
       </View>
     </NavigationContainer>
