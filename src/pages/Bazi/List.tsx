@@ -128,8 +128,9 @@ const styles = StyleSheet.create({
     ...Parsers.padding([0, 20]),
   },
   ItemText: {
+    paddingVertical:5,
     fontFamily: FONT_PFR,
-    fontSize: 16,
+    fontSize: 20,
     textAlign: 'center',
     color: '#000',
   },

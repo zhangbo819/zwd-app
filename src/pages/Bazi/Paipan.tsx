@@ -50,7 +50,7 @@ const Paipan: FC<
       date: date.getTime(),
       id: Date.now() * Math.random(),
     };
-    newData.push(newObj);
+    newData.unshift(newObj);
     // 保存本地
     await saveStorage({key: BaziListKey, data: newData});
     // 跳转详情

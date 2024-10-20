@@ -828,7 +828,7 @@ class Paipan {
     '立春',
     '雨水',
     '惊蛰',
-  ]; //JieQi
+  ]; // 24节气
 
   /**
    * 获取公历某个月有多少天
@@ -1238,27 +1238,52 @@ class Paipan {
    * @param int ss 秒数(0-59)
    * @return array
    */
-  GetInfo(
-    gd: 0 | 1,
-    yy: string | number,
-    mm: string | number,
-    dd: string | number,
-    hh: string | number,
-    mt = 0,
-    ss = 0,
-  ) {
-    var ret: Record<string, any> = {};
+  GetInfo(gd: 0 | 1, date: number) {
+    const dateObj = new Date(date);
+
+    const [yy, mm, dd, hh, mt, ss] = [
+      dateObj.getFullYear(),
+      dateObj.getMonth() + 1,
+      dateObj.getDate(),
+      dateObj.getHours(),
+      dateObj.getMinutes(),
+      dateObj.getSeconds(),
+    ];
+
+    const ret: PaipanInfo = {
+      gender: gd,
+      yy,
+      mm,
+      dd,
+      hh,
+      mt,
+      ss,
+      tg: [], // 天干
+      dz: [], // 地支
+      big_tg: [], // 大运的天干
+      big_dz: [], // 大运的地支
+      start_desc: '',
+      start_time: [],
+      years: [],
+      big: [],
+      bazi: [],
+      big_start_time: [],
+      xz: '',
+      sx: '',
+      yinli: [],
+      yangli: [],
+    };
     var big_tg = [];
     var big_dz = []; //大运
     var gd = gd == 0 ? 0 : 1; //非男即女
 
     var gz = this.GetGanZhi(yy, mm, dd, hh, mt, ss);
-    console.log('gz', gz)
-    var tg = gz[0];
-    var dz = gz[1];
-    var jd = gz[2];
-    var jq = gz[3];
-    var ix = gz[4];
+    console.log('gz', gz);
+    var tg = gz[0]; // 天干坐标
+    var dz = gz[1]; // 地支坐标
+    var jd = gz[2]; //
+    var jq = gz[3]; //
+    var ix = gz[4]; //
 
     var pn = tg[0] % 2; //起大运.阴阳年干:0阳年1阴年
 
@@ -1287,33 +1312,31 @@ class Paipan {
     var m = parseInt((days % 360) / 30); //一天折合四个月
     var d = parseInt((days % 360) % 30); //一个小时折合五天
 
-    ret['tg'] = tg;
-    ret['dz'] = dz;
-    ret['big_tg'] = big_tg;
-    ret['big_dz'] = big_dz;
-    ret['start_desc'] = y + '年' + m + '月' + d + '天起运';
+    ret.tg = tg;
+    ret.dz = dz;
+    ret.big_tg = big_tg;
+    ret.big_dz = big_dz;
+    ret.start_desc = y + '年' + m + '月' + d + '天起运';
     var start_jdtime = jd + span * 120; //三天折合一年,一天折合四个月,一个时辰折合十天,一个小时折合五天,反推得到一年按360天算
-    ret['start_time'] = Julian2Solar(start_jdtime); //转换成公历形式,注意这里变成了数组
+    ret.start_time = Julian2Solar(start_jdtime); //转换成公历形式,注意这里变成了数组
 
-    ret['bazi'] = ret['big'] = ret['years'] = ''; //八字,大运,流年的字符表示
-    ret['big_start_time'] = []; //各步大运的起始时间
+    ret.big_start_time = []; //各步大运的起始时间
 
-    ret['xz'] = this.cxz[this.GetZodiac(mm, dd)]; //星座
-    ret['sx'] = this.csa[dz[0]]; //生肖
+    ret.xz = this.cxz[this.GetZodiac(mm, dd)]; //星座
+    ret.sx = this.csa[dz[0]]; //生肖
 
     for (var i = 0; i <= 3; i++) {
-      ret['bazi'] += this.ctg[tg[i]];
-      ret['bazi'] += this.cdz[dz[i]];
+      ret.bazi.push(this.ctg[tg[i]] + this.cdz[dz[i]]);
     }
 
     for (var i = 0; i < 12; i++) {
-      ret['big'] += this.ctg[big_tg[i]];
-      ret['big'] += this.cdz[big_dz[i]];
-      ret['big_start_time'].push(Julian2Solar(start_jdtime + i * 10 * 360));
+      ret.big.push(this.ctg[big_tg[i]] + this.cdz[big_dz[i]]);
+      ret.big_start_time.push(Julian2Solar(start_jdtime + i * 10 * 360));
     }
 
+    let arr = [];
     for (var i = 1, j = 0; ; i++) {
-      if (yy + i < ret['start_time'][0]) {
+      if (yy + i < ret.start_time[0]) {
         //还没到起运年
         continue;
       }
@@ -1324,12 +1347,18 @@ class Paipan {
       var t = (tg[1] + i) % 10;
       var d = (dz[1] + i) % 12;
 
-      ret['years'] += this.ctg[t];
-      ret['years'] += this.cdz[d];
+      arr.push(this.ctg[t] + this.cdz[d]);
       if (j % 10 == 0) {
-        ret['years'] += '\n';
+        // ret.years += '\n';
+        ret.years.push(arr);
+        arr = [];
       }
     }
+
+    // 阴历
+    ret.yinli = this.Solar2Lunar(yy, mm, dd).slice(0, 3);
+    // 阳历
+    ret.yangli = [yy, mm, dd, hh];
 
     return ret;
   }
@@ -1338,3 +1367,27 @@ class Paipan {
 const paipan = new Paipan();
 
 export default paipan;
+
+export type PaipanInfo = {
+  gender: 0 | 1; // 性别 0 男 1 女
+  yy: number;
+  mm: number;
+  dd: number;
+  hh: number;
+  mt: number;
+  ss: number;
+  tg: any; // 天干
+  dz: any; // 地支
+  big_tg: any[]; // 大运的天干
+  big_dz: any[]; // 大运的地支
+  start_desc: string; // 第几天起大运的文字描述
+  start_time: any[]; // 大运开始时间的公历形式
+  years: string[][]; // 每步大运中所有流年
+  big: string[]; // 所有大运文字形式
+  bazi: string[]; // 八字文字形式
+  big_start_time: any[][]; // 各步大运的起始时间
+  xz: string; // 星座
+  sx: string; // 属相
+  yinli: string[]; // 阴历
+  yangli: (string | number)[]; // 阳历
+};
