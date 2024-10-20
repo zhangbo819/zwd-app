@@ -9,7 +9,8 @@ const BaziInfo: FC<{}> = () => {
     <View style={styles.container}>
       <ScrollView>
         <Text>
-          text
+          {JSON.stringify(paipan.GetInfo(0, 1994, 8, 19, 5), null, 4)}
+          {/* {JSON.stringify(paipan.GetInfo(0, 1995, 1, 1, 16), null, 4)} */}
         </Text>
       </ScrollView>
     </View>
