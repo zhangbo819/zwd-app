@@ -1,4 +1,4 @@
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {
   StyleSheet,
   Switch,
@@ -9,8 +9,14 @@ import {
   View,
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {loadStorage, saveStorage} from '../../constant/config';
+import {RootStackParamList, StackPages} from '../../types/interface';
+import {BaziListKey} from '.';
 
-const Paipan: FC<{}> = () => {
+const Paipan: FC<
+  NativeStackScreenProps<RootStackParamList, StackPages.Home>
+> = props => {
   const [name, setName] = useState('');
   const [gender, setGender] = useState(false);
   const [date, setDate] = useState(new Date());
@@ -36,8 +42,19 @@ const Paipan: FC<{}> = () => {
     setIsShowHours(false);
   };
 
-  const onSubmit = () => {
-    // nav
+  const onSubmit = async () => {
+    const newData = await loadStorage(BaziListKey, []);
+    const newObj: RootStackParamList[StackPages.BaziInfo] = {
+      name,
+      gender: gender ? 0 : 1, // 保存时按照那边的规则 0 男 1 女
+      date: date.getTime(),
+      id: Date.now() * Math.random(),
+    };
+    newData.push(newObj);
+    // 保存本地
+    await saveStorage({key: BaziListKey, data: newData});
+    // 跳转详情
+    props.navigation.navigate(StackPages.BaziInfo, newObj);
   };
 
   return (
@@ -119,6 +136,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    backgroundColor: '#fff'
   },
   title: {
     width: '30%',

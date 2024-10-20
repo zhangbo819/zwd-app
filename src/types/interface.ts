@@ -4,13 +4,13 @@
 export enum StackPages {
   Home = 'Home',
   About = 'About',
-  BaziInfo = 'BaziInfo'
+  BaziInfo = 'BaziInfo',
 }
 
 export type RootStackParamList = {
   [StackPages.Home]: undefined;
   [StackPages.About]: undefined;
-  [StackPages.BaziInfo]: undefined;
+  [StackPages.BaziInfo]: PaipanItem;
 };
 
 // 底部 Tab
@@ -36,4 +36,12 @@ export enum BaziScreenName {
 export type BaziMaterialTopTabParamList = {
   [BaziScreenName.Paipan]: undefined;
   [BaziScreenName.List]: undefined;
+};
+
+// 存储到本地数据中的数据类型
+export type PaipanItem = {
+  name: string;
+  gender: 1 | 0;
+  date: number;
+  id: number | string;
 };

@@ -3,7 +3,10 @@ import {View} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
 import STYLES from '../../constant/STYLES';
-import { BaziMaterialTopTabParamList, BaziScreenName } from '../../types/interface';
+import {
+  BaziMaterialTopTabParamList,
+  BaziScreenName,
+} from '../../types/interface';
 import Input from './Paipan';
 import List from './List';
 
@@ -16,7 +19,7 @@ const BaziTab: FC<{}> = () => {
         <Tab.Screen
           name={BaziScreenName.Paipan}
           options={{tabBarLabel: '排盘'}}
-          component={Input}
+          component={Input as React.ComponentType<{}>}
         />
         <Tab.Screen
           name={BaziScreenName.List}
@@ -29,3 +32,5 @@ const BaziTab: FC<{}> = () => {
 };
 
 export default BaziTab;
+
+export const BaziListKey = 'BaziListKey';
