@@ -73,7 +73,7 @@ const List: FC<
         // onLongPress={() => handleDelete({index})}
       >
         <Text style={styles.ItemText}>{`${item.name} ${
-          item.gender == 0 ? '男' : '女'
+          item.gender === 0 ? '男' : '女'
         } ${date.getFullYear()}年${
           date.getMonth() + 1
         }月${date.getDate()}日${date.getHours()}时`}</Text>

@@ -1,5 +1,5 @@
 /**
- * @author szargv@wo.cn
+ * @author szargv@wo.cn 在其基础上改造
  *
  * 此日历转换类完全源于以下项目,感谢这两个项目作者的无私分享:
  * https://github.com/nozomi199/qimen_star (八字排盘,JS源码)
@@ -852,7 +852,7 @@ class Paipan {
    * @param int mm
    * @return number
    */
-  GetSolarDays(yy, mm) {
+  GetSolarDays(yy: number, mm: number) {
     if (yy < -1000 || yy > 3000) {
       //适用于西元-1000年至西元3000年,超出此范围误差较大
       return 0;
@@ -874,7 +874,7 @@ class Paipan {
    * @param bool isLeap
    * @return number
    */
-  GetLunarDays(yy, mm, isLeap) {
+  GetLunarDays(yy: number, mm: number, isLeap: boolean) {
     if (yy < -1000 || yy > 3000) {
       //适用于西元-1000年至西元3000年,超出此范围误差较大
       return 0;
@@ -941,7 +941,7 @@ class Paipan {
    * @param int yy
    * @return number
    */
-  GetLeap(yy) {
+  GetLeap(yy: number) {
     var lm = GetZQandSMandLunarMonthCode(yy);
     var jdzq = lm[0];
     var jdnm = lm[1];
@@ -964,12 +964,12 @@ class Paipan {
    * @param int dd
    * @return int|false
    */
-  GetZodiac(mm, dd) {
+  GetZodiac(mm: number, dd: number) {
     if (mm < 1 || mm > 12) {
-      return false;
+      return -1;
     }
     if (dd < 1 || dd > 31) {
-      return false;
+      return -1;
     }
 
     var dds = [20, 19, 21, 20, 21, 22, 23, 23, 23, 24, 22, 22]; //星座的起始日期
@@ -988,7 +988,7 @@ class Paipan {
    * @param int mm
    * @param int dd
    */
-  GetWeek(yy, mm, dd) {
+  GetWeek(yy: number, mm: number, dd: number) {
     var jd = Solar2Julian(yy, mm, dd, 12);
     if (!jd) {
       //当天12点计算(因为儒略日历是中午12点为起始点)
@@ -1005,7 +1005,7 @@ class Paipan {
    * @param int isLeap 是否闰月
    * @return false/array(年,月,日)
    */
-  Lunar2Solar(yy, mm, dd, isLeap) {
+  Lunar2Solar(yy: number, mm: number, dd: number, isLeap: boolean) {
     if (yy < -7000 || yy > 7000) {
       //超出計算能力
       return false;
@@ -1102,7 +1102,7 @@ class Paipan {
    * @param int dd
    * @return array(年,月,日,是否闰月)
    */
-  Solar2Lunar(yy, mm, dd) {
+  Solar2Lunar(yy: number, mm: number, dd: number) {
     if (!ValidDate(yy, mm, dd)) {
       //驗證輸入日期的正確性
       return [];
@@ -1156,7 +1156,7 @@ class Paipan {
    * @param int yy
    * @return array jq[(k+21)%24]
    */
-  Get24JieQi(yy) {
+  Get24JieQi(yy: number) {
     var jq = [];
 
     var dj = GetAdjustedJQ(yy - 1, 21, 23); //求出含指定年立春開始之3個節氣JD值,以前一年的年值代入
@@ -1187,11 +1187,11 @@ class Paipan {
    * @param int ss 秒数(0-59)
    * @return array(天干, 地支, 对应的儒略日历时间, 对应年的12节+前后N节, 对应时间所处节的索引)
    */
-  GetGanZhi(yy, mm, dd, hh, mt = 0, ss = 0) {
+  GetGanZhi(yy: number, mm: number, dd: number, hh: number, mt = 0, ss = 0) {
     var jd = Solar2Julian(yy, mm, dd, hh, mt, Math.max(1, ss));
     if (!jd) {
       //多加一秒避免精度问题
-      return [];
+      return {tg: [], dz: [], jq: [], jd: 0, ix: 0};
     }
 
     var ix = 0;
@@ -1240,7 +1240,7 @@ class Paipan {
     tg[3] = hgz % 10; //時干
     dz[3] = hgz % 12; //時支
 
-    return [tg, dz, jd, jq, ix];
+    return {tg, dz, jd, jq, ix};
   }
 
   /**
@@ -1254,7 +1254,7 @@ class Paipan {
    * @param int ss 秒数(0-59)
    * @return array
    */
-  GetInfo(gd: 0 | 1, date: number) {
+  GetInfo(gender: 0 | 1, date: number) {
     const dateObj = new Date(date);
 
     const [yy, mm, dd, hh, mt, ss] = [
@@ -1267,7 +1267,7 @@ class Paipan {
     ];
 
     const ret: PaipanInfo = {
-      gender: gd,
+      gender,
       yy,
       mm,
       dd,
@@ -1278,37 +1278,34 @@ class Paipan {
       dz: [], // 地支
       dzcg: [], // 地支藏干
       dzcg_text: [], // 地支藏干文字
-      big_tg: [], // 大运的天干
-      big_dz: [], // 大运的地支
-      start_desc: '',
-      start_time: [],
-      years: [],
-      big: [],
+      big: {
+        big_tg: [], // 大运的天干
+        big_dz: [], // 大运的地支
+        start_desc: '',
+        start_time: [],
+        xiaoyun: [],
+        data: [],
+      },
       bazi: [],
-      big_start_time: [],
       xz: '',
       sx: '',
       yinli: [],
       yangli: [],
       tenMap: [],
     };
-    var big_tg = [];
-    var big_dz = []; //大运
-    var gd = gd == 0 ? 0 : 1; //非男即女
+    const big_tg = [];
+    const big_dz = []; // 大运
+    const gd = gender === 0 ? 0 : 1; // 非男即女
 
-    var gz = this.GetGanZhi(yy, mm, dd, hh, mt, ss);
+    const {tg, dz, jd, jq, ix} = this.GetGanZhi(yy, mm, dd, hh, mt, ss);
     // console.log('gz', gz);
-    var tg = gz[0]; // 天干坐标
-    var dz = gz[1]; // 地支坐标
-    var jd = gz[2]; //
-    var jq = gz[3]; //
-    var ix = gz[4]; //
 
-    var pn = tg[0] % 2; // 起大运.阴阳年干:0阳年 1阴年
+    const pn = tg[0] % 2; // 起大运.阴阳年干:0阳年 1阴年
 
-    if ((gd == 0 && pn == 0) || (gd == 1 && pn == 1)) {
+    let span;
+    if ((gd === 0 && pn === 0) || (gd === 1 && pn === 1)) {
       // 起大运时间,阳男阴女顺排
-      var span = jq[ix + 1] - jd; // 往后数一个节,计算时间跨度
+      span = jq[ix + 1] - jd; // 往后数一个节,计算时间跨度
 
       for (var i = 1; i <= 12; i++) {
         // 大运干支
@@ -1317,7 +1314,7 @@ class Paipan {
       }
     } else {
       // 阴男阳女逆排,往前数一个节
-      var span = jd - jq[ix];
+      span = jd - jq[ix];
 
       for (var i = 1; i <= 12; i++) {
         // 确保是正数
@@ -1326,56 +1323,66 @@ class Paipan {
       }
     }
 
-    var days = parseInt(span * 4 * 30); // 折合成天数:三天折合一年,一天折合四个月,一个时辰折合十天,一个小时折合五天,反推得到一年按360天算,一个月按30天算
-    var y = parseInt(days / 360); // 三天折合一年
-    var m = parseInt((days % 360) / 30); // 一天折合四个月
-    var d = parseInt((days % 360) % 30); // 一个小时折合五天
+    const days = parseInt(String(span * 4 * 30), 10); // 折合成天数:三天折合一年,一天折合四个月,一个时辰折合十天,一个小时折合五天,反推得到一年按360天算,一个月按30天算
+    const y = parseInt(String(days / 360), 10); // 三天折合一年
+    const m = parseInt(String((days % 360) / 30), 10); // 一天折合四个月
+    const day = parseInt(String((days % 360) % 30), 10); // 一个小时折合五天
 
     ret.tg = tg;
     ret.dz = dz;
     ret.dzcg = this.getDzcgByIndex(dz as any[]);
-    ret.dzcg_text = ret.dzcg.map(arr => arr.map(i => this.ctg2[i]));
-    ret.big_tg = big_tg;
-    ret.big_dz = big_dz;
-    ret.start_desc = y + '年' + m + '月' + d + '天起运';
-    var start_jdtime = jd + span * 120; //三天折合一年,一天折合四个月,一个时辰折合十天,一个小时折合五天,反推得到一年按360天算
-    ret.start_time = Julian2Solar(start_jdtime); //转换成公历形式,注意这里变成了数组
+    ret.dzcg_text = ret.dzcg.map(arr => arr.map(j => this.ctg2[j]));
 
-    ret.big_start_time = []; //各步大运的起始时间
-
-    ret.xz = this.cxz[this.GetZodiac(mm, dd)]; //星座
-    ret.sx = this.csa[dz[0]]; //生肖
-
-    for (var i = 0; i <= 3; i++) {
-      ret.bazi.push(this.ctg[tg[i]] + this.cdz[dz[i]]);
-    }
+    // 大运
+    ret.big.big_tg = big_tg;
+    ret.big.big_dz = big_dz;
+    ret.big.start_desc = y + '年' + m + '月' + day + '天起运';
+    const start_jdtime = jd + span * 120; // 三天折合一年,一天折合四个月,一个时辰折合十天,一个小时折合五天,反推得到一年按360天算
+    ret.big.start_time = Julian2Solar(start_jdtime); // 转换成公历形式,注意这里变成了数组
 
     for (var i = 0; i < 12; i++) {
-      ret.big.push(this.ctg[big_tg[i]] + this.cdz[big_dz[i]]);
-      ret.big_start_time.push(Julian2Solar(start_jdtime + i * 10 * 360));
+      ret.big.data.push({
+        name: this.ctg[big_tg[i]] + this.cdz[big_dz[i]],
+        start_time: Julian2Solar(start_jdtime + i * 10 * 360),
+        years: [],
+      });
     }
 
+    const years = [];
+    const xiaoyun: string[] = [];
     let arr = [];
-    for (var i = 1, j = 0; ; i++) {
-      if (yy + i < ret.start_time[0]) {
-        //还没到起运年
+    for (let i = 0; i <= 120; i++) {
+      const t = (tg[0] + i) % 10;
+      const d = (dz[0] + i) % 12;
+      const tgdz_text = this.ctg[t] + this.cdz[d];
+
+      if (yy + i < ret.big.start_time[0]) {
+        // 还没到起运年, 起小运
+        xiaoyun.push(tgdz_text);
         continue;
       }
-      if (j++ >= 120) {
-        break;
-      }
 
-      var t = (tg[1] + i) % 10;
-      var d = (dz[1] + i) % 12;
-
-      arr.push(this.ctg[t] + this.cdz[d]);
-      if (j % 10 == 0) {
-        // ret.years += '\n';
-        ret.years.push(arr);
+      arr.push(tgdz_text);
+      // if (j % 10 === 0) {
+      if (arr.length === 10) {
+        years.push([...arr]);
         arr = [];
       }
     }
+    // console.log('xiaoyun', xiaoyun);
+    ret.big.xiaoyun = xiaoyun;
+    // console.log('years', years)
+    years.forEach((year, index) => {
+      ret.big.data[index].years = year;
+    });
 
+    ret.xz = this.cxz[this.GetZodiac(mm, dd)]; // 星座
+    ret.sx = this.csa[dz[0]]; // 生肖
+
+    // 四柱
+    for (var i = 0; i <= 3; i++) {
+      ret.bazi.push(this.ctg[tg[i]] + this.cdz[dz[i]]);
+    }
     // 阴历
     ret.yinli = this.Solar2Lunar(yy, mm, dd).slice(0, 3);
     // 阳历
@@ -1504,17 +1511,22 @@ export type PaipanInfo = {
   dz: any; // 地支
   dzcg: number[][]; // 藏干索引
   dzcg_text: string[][]; // 藏干文字
-  big_tg: any[]; // 大运的天干
-  big_dz: any[]; // 大运的地支
-  start_desc: string; // 第几天起大运的文字描述
-  start_time: any[]; // 大运开始时间的公历形式
-  years: string[][]; // 每步大运中所有流年
-  big: string[]; // 所有大运文字形式
+  big: {
+    big_tg: any[]; // 大运的天干
+    big_dz: any[]; // 大运的地支
+    start_desc: string; // 第几天起大运的文字描述
+    start_time: any[]; // 大运开始时间的公历形式
+    xiaoyun: string[]; // 小运
+    data: {
+      name: string; // 天干地支
+      start_time: number[]; // 开始时间
+      years: string[]; // 每步大运中所有流年
+    }[];
+  };
   bazi: string[]; // 八字文字形式
-  big_start_time: any[][]; // 各步大运的起始时间
   xz: string; // 星座
   sx: string; // 属相
-  yinli: string[]; // 阴历
+  yinli: number[]; // 阴历
   yangli: (string | number)[]; // 阳历
   tenMap: Ten[]; // 十神关系对应表
 };

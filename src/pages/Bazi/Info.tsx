@@ -1,16 +1,22 @@
 import React, {FC, ReactNode, useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 import paipan, {PaipanInfo} from '../../util/paipan';
 import {RootStackParamList, StackPages} from '../../types/interface';
 
+const init_Data = paipan.GetInfo(1, Date.now());
+
 const BaziInfo: FC<
   NativeStackScreenProps<RootStackParamList, StackPages.BaziInfo>
 > = props => {
-  const [paipanInfo, setPaipanInfo] = useState<PaipanInfo>(
-    paipan.GetInfo(1, Date.now()),
-  );
+  const [paipanInfo, setPaipanInfo] = useState<PaipanInfo>(init_Data);
 
   useEffect(() => {
     const {gender, date} = props.route.params;
@@ -132,18 +138,152 @@ const BaziInfo: FC<
     );
   };
 
+  // 当前的大运
+  const [activeDyIndex, setActiveDyIndex] = useState(-1);
+  const [activeLnIndex, setActiveLnIndex] = useState(0);
+
+  // TODO split Comp
+  // 大运表
+  const renderDayunGrid = () => {
+    return (
+      <View style={styles.dayunGrid}>
+        <View style={styles.dayunTools}>
+          <Text>起运：出生后{paipanInfo.big.start_desc}</Text>
+          <TouchableOpacity style={styles.toolNowBtn}>
+            <Text style={{fontSize: 18}}>今</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.dayunItem}>
+            <Text style={{fontSize: 18}}>大</Text>
+            <Text style={{fontSize: 18}}>运</Text>
+          </View>
+          {paipanInfo.big.data.map((item, index) => {
+            const isActive = activeDyIndex === index;
+            return (
+              <TouchableOpacity
+                key={'dayun_' + item.name + index}
+                style={[styles.dayunItem, isActive && styles.dayunItemActive]}
+                onPress={() => setActiveDyIndex(index)}>
+                <Text
+                  style={[
+                    {fontSize: 14, color: isActive ? '#000' : '#404040'},
+                  ]}>
+                  {item.start_time[0]}
+                </Text>
+                <Text
+                  style={[
+                    {fontSize: 14, color: isActive ? '#000' : '#404040'},
+                  ]}>
+                  {item.start_time[0] - paipanInfo.yy + 1}岁
+                </Text>
+                <Text
+                  style={{
+                    marginTop: 4,
+                    fontSize: 18,
+                    fontWeight: isActive ? 'bold' : 'normal',
+                  }}>
+                  {item.name[0]}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: isActive ? 'bold' : 'normal',
+                  }}>
+                  {item.name[1]}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+          {/* <Row>
+          <Text>{JSON.stringify(paipanInfo.big_start_time)}</Text>
+        </Row> */}
+        </ScrollView>
+      </View>
+    );
+  };
+
+  // 流年
+  const renderLiunian = () => {
+    const activeDyData = paipanInfo.big.data[activeDyIndex];
+    return (
+      <View style={styles.dayunGrid}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.dayunItem}>
+            <Text style={{fontSize: 18}}>流</Text>
+            <Text style={{fontSize: 18}}>年</Text>
+          </View>
+          {activeDyData.years.map((item, index) => {
+            const isActive = activeLnIndex === index;
+            return (
+              <TouchableOpacity
+                key={'liunian_' + item + index}
+                style={[styles.dayunItem, isActive && styles.dayunItemActive]}
+                onPress={() => setActiveLnIndex(index)}>
+                <Text
+                  style={[
+                    {fontSize: 14, color: isActive ? '#000' : '#404040'},
+                  ]}>
+                  {activeDyData.start_time[0] + index + 1}
+                </Text>
+                <Text
+                  style={{
+                    marginTop: 4,
+                    fontSize: 18,
+                    fontWeight: isActive ? 'bold' : 'normal',
+                  }}>
+                  {item[0]}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: isActive ? 'bold' : 'normal',
+                  }}>
+                  {item[1]}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
-        <Text style={styles.yinyangText}>
-          {props.route.params.name || '未命名'}{' '}
-          {paipanInfo.gender ? '女' : '男'}
-        </Text>
-        {/* 阴历阳历 */}
-        {renderDateText(false)}
-        {renderDateText(true)}
-        {/* 八字 */}
+        <View style={styles.topInfo}>
+          <Row>
+            <Col>
+              <Text style={styles.yinyangText}>
+                {props.route.params.name || '未命名'}{' '}
+              </Text>
+            </Col>
+            <Col>
+              <Text style={styles.yinyangText}>
+                {paipanInfo.gender ? '女' : '男'}
+              </Text>
+            </Col>
+          </Row>
+          {/* 阴历阳历 */}
+          {renderDateText(false)}
+          {renderDateText(true)}
+          <Row>
+            <Col>
+              <Text style={styles.yinyangText}>属相：{paipanInfo.sx}</Text>
+            </Col>
+            <Col>
+              <Text style={styles.yinyangText}>星座：{paipanInfo.xz}</Text>
+            </Col>
+          </Row>
+        </View>
+
+        {/* 四柱表 */}
         {renderPillarGrid()}
+
+        {/* 大运表 */}
+        {renderDayunGrid()}
+        {renderLiunian()}
         <Text>{JSON.stringify(paipanInfo, null, 4)}</Text>
       </ScrollView>
     </View>
@@ -211,10 +351,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 60,
     paddingHorizontal: 8,
+    backgroundColor: '#FAFAFA',
+  },
+  topInfo: {
+    padding: 8,
     backgroundColor: '#fff',
   },
   yinyangText: {
-    fontSize: 18,
+    fontSize: 16,
   },
   row: {
     marginVertical: 4,
@@ -227,6 +371,8 @@ const styles = StyleSheet.create({
   },
   pillarGrid: {
     marginTop: 12,
+    paddingVertical: 8,
+    backgroundColor: '#fff',
   },
   subheading: {
     fontSize: 16,
@@ -246,7 +392,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#4B4B4B',
     textAlign: 'center',
-  }
+  },
+
+  // 大运
+  dayunGrid: {
+    marginTop: 12,
+  },
+  dayunTools: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 4,
+    paddingBottom: 16,
+  },
+  toolNowBtn: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+  },
+  dayunItem: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    // height: 50,
+    padding: 8,
+    backgroundColor: '#fff',
+  },
+  dayunItemActive: {
+    backgroundColor: '#EEEEEE',
+  },
 });
 
 export default BaziInfo;
