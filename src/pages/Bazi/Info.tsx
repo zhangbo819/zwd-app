@@ -44,7 +44,7 @@ const BaziInfo: FC<
       }
       return r;
     }, 0);
-    // console.log()
+
     return (
       <View style={styles.pillarGrid}>
         {/* 标题 */}
@@ -138,18 +138,36 @@ const BaziInfo: FC<
     );
   };
 
+  // TODO split Comp
   // 当前的大运
-  const [activeDyIndex, setActiveDyIndex] = useState(-1);
+  const [activeDyIndex, setActiveDyIndex] = useState(0);
   const [activeLnIndex, setActiveLnIndex] = useState(0);
 
-  // TODO split Comp
+  const handleNow = (data = paipanInfo.big.data) => {
+    const nowYears = new Date().getFullYear();
+    let lnIndex = 0;
+    const index = data.findIndex(i => {
+      lnIndex = nowYears - i.start_time[0] - 1;
+      return i.start_time[0] + 10 > nowYears;
+    });
+    setActiveDyIndex(index);
+    setActiveLnIndex(lnIndex);
+  };
+
+  useEffect(() => {
+    handleNow(paipanInfo.big.data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paipanInfo]);
+
   // 大运表
   const renderDayunGrid = () => {
     return (
       <View style={styles.dayunGrid}>
         <View style={styles.dayunTools}>
           <Text>起运：出生后{paipanInfo.big.start_desc}</Text>
-          <TouchableOpacity style={styles.toolNowBtn}>
+          <TouchableOpacity
+            style={styles.toolNowBtn}
+            onPress={() => handleNow()}>
             <Text style={{fontSize: 18}}>今</Text>
           </TouchableOpacity>
         </View>
