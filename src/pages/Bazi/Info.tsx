@@ -29,8 +29,16 @@ const BaziInfo: FC<
   };
 
   //  柱关系表格
-  const renderPillarGrid = (data: string[]) => {
+  const renderPillarGrid = () => {
     // const {length} = data;
+    // 找到藏干中最大的个数，来渲染藏干有几行
+    const cgMaxLength = paipanInfo.dzcg_text.reduce((r, i) => {
+      if (i.length > r) {
+        r = i.length;
+      }
+      return r;
+    }, 0);
+    // console.log()
     return (
       <View style={styles.pillarGrid}>
         {/* 标题 */}
@@ -43,16 +51,19 @@ const BaziInfo: FC<
             );
           })}
         </Row>
-        {/* 十神 todo */}
-        {/* <Row>
-          {['主星', '', '', '', ''].map(item => {
+        {/* 十神 */}
+        <Row>
+          <Col>
+            <Text style={styles.subheading}>主星</Text>
+          </Col>
+          {paipanInfo.tg.map((item: number, index: number) => {
             return (
-              <Col key={item}>
-                <Text style={styles.subheading}>{item}</Text>
+              <Col key={'主星_' + item + index}>
+                <Text style={styles.tenText}>{paipanInfo.tenMap[item]}</Text>
               </Col>
             );
           })}
-        </Row> */}
+        </Row>
         {/* 天干 */}
         <Row>
           <Col>
@@ -73,12 +84,50 @@ const BaziInfo: FC<
           </Col>
           {paipanInfo.bazi.map((item: any, index: number) => {
             return (
-              <Col key={'tg' + item[1] + index}>
+              <Col key={'dz' + item[1] + index}>
                 <WuxingText text={item[1]} />
               </Col>
             );
           })}
         </Row>
+        {/* 藏干 */}
+        {new Array(cgMaxLength).fill(0).map((_, index) => {
+          return (
+            <Row key={'cg_row_' + index}>
+              <Col>
+                {index === 0 && <Text style={styles.subheading}>藏干</Text>}
+              </Col>
+              {paipanInfo.dzcg_text.map((item: any, y) => {
+                const cg = item[index];
+                return (
+                  <Col key={'cg' + cg + index + y}>
+                    <WuxingText text={cg} size="mini" />
+                  </Col>
+                );
+              })}
+            </Row>
+          );
+        })}
+        {/* 副星 */}
+        {new Array(cgMaxLength).fill(0).map((_, index) => {
+          return (
+            <Row key={'fx_row_' + index}>
+              <Col>
+                {index === 0 && <Text style={styles.subheading}>副星</Text>}
+              </Col>
+              {paipanInfo.dzcg.map((item: any, y) => {
+                const cg_index = item[index];
+                return (
+                  <Col key={'fx_' + cg_index + index + y}>
+                    <Text style={styles.tenText}>
+                      {paipanInfo.tenMap[cg_index]}
+                    </Text>
+                  </Col>
+                );
+              })}
+            </Row>
+          );
+        })}
       </View>
     );
   };
@@ -87,14 +136,15 @@ const BaziInfo: FC<
     <View style={styles.container}>
       <ScrollView>
         <Text style={styles.yinyangText}>
-          {props.route.params.name || '未命名'} {paipanInfo.gender ? '女' : '男'}
+          {props.route.params.name || '未命名'}{' '}
+          {paipanInfo.gender ? '女' : '男'}
         </Text>
         {/* 阴历阳历 */}
         {renderDateText(false)}
         {renderDateText(true)}
-        {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
         {/* 八字 */}
-        {renderPillarGrid(paipanInfo.bazi)}
+        {renderPillarGrid()}
+        <Text>{JSON.stringify(paipanInfo, null, 4)}</Text>
       </ScrollView>
     </View>
   );
@@ -113,8 +163,9 @@ const Col: FC<{
 const WuxingText: FC<{
   text: string;
   children?: ReactNode;
-}> = ({text, children}) => {
-  const Colors5 = ['#41A949', '#B31722', '#8B7049', '#D69415', '#3474E9'];
+  size?: 'default' | 'mini';
+}> = ({text = '', children, size = 'default'}) => {
+  const Colors5 = ['#4CAF50', '#F44336', '#795548', '#FFEB3B', '#2196F3'];
   const ColorsMap: Record<string, any> = {
     甲: Colors5[0],
     乙: Colors5[0],
@@ -139,9 +190,17 @@ const WuxingText: FC<{
     戌: Colors5[2],
     亥: Colors5[4],
   };
+  const color_text = text.length > 1 ? text[0] : text;
   return (
     <View style={[styles.col]}>
-      <Text style={[styles.wuxing, {color: ColorsMap[text]}]}>{text}</Text>
+      <Text
+        style={[
+          styles.wuxing,
+          size === 'mini' && styles.wuxing_mini,
+          {color: ColorsMap[color_text]},
+        ]}>
+        {text || ' '}
+      </Text>
       {children}
     </View>
   );
@@ -160,6 +219,7 @@ const styles = StyleSheet.create({
   row: {
     marginVertical: 4,
     flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
   col: {
     flex: 1,
@@ -178,6 +238,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
+  wuxing_mini: {
+    fontSize: 16,
+    fontWeight: 'normal',
+  },
+  tenText: {
+    fontSize: 16,
+    color: '#4B4B4B',
+    textAlign: 'center',
+  }
 });
 
 export default BaziInfo;

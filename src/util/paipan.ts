@@ -707,7 +707,23 @@ class Paipan {
    * 十天干
    * @var array
    */
-  ctg = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']; //char of TianGan
+  ctg = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']; // char of TianGan
+  yang = ['甲', '丙', '戊', '庚', '壬'];
+  yin = ['乙', '丁', '己', '辛', '癸'];
+  // tenGodMap = { 2: '食神', 6: '七杀', 8: '偏印' } // TODO 为什么只有这几个的位置是固定的
+  ctg2 = [
+    '甲木',
+    '乙木',
+    '丙火',
+    '丁火',
+    '戊土',
+    '己土',
+    '庚金',
+    '辛金',
+    '壬水',
+    '癸水',
+  ]; // 全称
+
   /**
    * 五行
    */
@@ -1260,6 +1276,8 @@ class Paipan {
       ss,
       tg: [], // 天干
       dz: [], // 地支
+      dzcg: [], // 地支藏干
+      dzcg_text: [], // 地支藏干文字
       big_tg: [], // 大运的天干
       big_dz: [], // 大运的地支
       start_desc: '',
@@ -1272,27 +1290,28 @@ class Paipan {
       sx: '',
       yinli: [],
       yangli: [],
+      tenMap: [],
     };
     var big_tg = [];
     var big_dz = []; //大运
     var gd = gd == 0 ? 0 : 1; //非男即女
 
     var gz = this.GetGanZhi(yy, mm, dd, hh, mt, ss);
-    console.log('gz', gz);
+    // console.log('gz', gz);
     var tg = gz[0]; // 天干坐标
     var dz = gz[1]; // 地支坐标
     var jd = gz[2]; //
     var jq = gz[3]; //
     var ix = gz[4]; //
 
-    var pn = tg[0] % 2; //起大运.阴阳年干:0阳年1阴年
+    var pn = tg[0] % 2; // 起大运.阴阳年干:0阳年 1阴年
 
     if ((gd == 0 && pn == 0) || (gd == 1 && pn == 1)) {
-      //起大运时间,阳男阴女顺排
-      var span = jq[ix + 1] - jd; //往后数一个节,计算时间跨度
+      // 起大运时间,阳男阴女顺排
+      var span = jq[ix + 1] - jd; // 往后数一个节,计算时间跨度
 
       for (var i = 1; i <= 12; i++) {
-        //大运干支
+        // 大运干支
         big_tg.push((tg[1] + i) % 10);
         big_dz.push((dz[1] + i) % 12);
       }
@@ -1301,19 +1320,21 @@ class Paipan {
       var span = jd - jq[ix];
 
       for (var i = 1; i <= 12; i++) {
-        //确保是正数
+        // 确保是正数
         big_tg.push((tg[1] + 20 - i) % 10);
         big_dz.push((dz[1] + 24 - i) % 12);
       }
     }
 
-    var days = parseInt(span * 4 * 30); //折合成天数:三天折合一年,一天折合四个月,一个时辰折合十天,一个小时折合五天,反推得到一年按360天算,一个月按30天算
-    var y = parseInt(days / 360); //三天折合一年
-    var m = parseInt((days % 360) / 30); //一天折合四个月
-    var d = parseInt((days % 360) % 30); //一个小时折合五天
+    var days = parseInt(span * 4 * 30); // 折合成天数:三天折合一年,一天折合四个月,一个时辰折合十天,一个小时折合五天,反推得到一年按360天算,一个月按30天算
+    var y = parseInt(days / 360); // 三天折合一年
+    var m = parseInt((days % 360) / 30); // 一天折合四个月
+    var d = parseInt((days % 360) % 30); // 一个小时折合五天
 
     ret.tg = tg;
     ret.dz = dz;
+    ret.dzcg = this.getDzcgByIndex(dz as any[]);
+    ret.dzcg_text = ret.dzcg.map(arr => arr.map(i => this.ctg2[i]));
     ret.big_tg = big_tg;
     ret.big_dz = big_dz;
     ret.start_desc = y + '年' + m + '月' + d + '天起运';
@@ -1359,9 +1380,112 @@ class Paipan {
     ret.yinli = this.Solar2Lunar(yy, mm, dd).slice(0, 3);
     // 阳历
     ret.yangli = [yy, mm, dd, hh];
+    // 十神对应关系表
+    ret.tenMap = this.getTenGodMap(ret.bazi[2][0]);
 
     return ret;
   }
+
+  // 根据地支索引找到地支藏干
+  getDzcgByIndex(target: any[]) {
+    const res: number[][] = [];
+    target.forEach(item => {
+      if (this.cdz[item]) {
+        res.push(this.dzcg[item]);
+      } else {
+        res.push([]);
+      }
+    });
+    return res;
+  }
+
+  // // 根据汉字找到地支具体藏干
+  // getCanggan(target: string) {
+  //   const index = this.cdz.findIndex(i => i === target);
+  //   if (index === -1) {
+  //     return [];
+  //   }
+  //   return target[index];
+  // }
+
+  // 找到日元的十神表
+  getTenGodMap(self: number | string = '') {
+    // 拿到(可能会循环)的数组隔位的坐标
+    function _getLoopIndex(targetIndex: number) {
+      const max = 5;
+      if (targetIndex >= max) {
+        targetIndex = targetIndex - max;
+      }
+      return targetIndex;
+    }
+
+    // 参数处理
+    if (!Number.isNaN(Number(self))) {
+      self = this.ctg[Number(self)];
+    }
+
+    // yang = ['甲', '丙', '戊', '庚', '壬'];
+    // yin  = ['乙', '丁', '己', '辛', '癸'];
+    // 1 根据日元 定阴阳表
+    const isYang = this.yang.some(i => i === self);
+    const newYang = isYang ? [...this.yang] : [...this.yin];
+    const newYin = isYang ? [...this.yang] : [...this.yin];
+    const map = isYang ? newYang : newYin;
+    // 2 根据阴阳表 找 日元，偏印，食神，偏财，七杀
+    const self_index = map.findIndex(i => i === self);
+    map[self_index] = Ten.日元;
+    map[_getLoopIndex(self_index + 1)] = Ten.食神;
+    map[_getLoopIndex(self_index + 2)] = Ten.偏财;
+    map[_getLoopIndex(self_index + 3)] = Ten.七杀;
+    map[_getLoopIndex(self_index + 4)] = Ten.偏印;
+    // console.log('map', isYang, map)
+    // 3 对照另一张表 根据相同位置对应 劫财，正印，伤官，正财，正官
+    const otherMap = isYang ? newYin : newYang;
+    map.forEach((i, index) => {
+      switch (i) {
+        case Ten.日元:
+          otherMap[index] = Ten.劫财;
+          break;
+        case Ten.食神:
+          otherMap[index] = Ten.伤官;
+          break;
+        case Ten.偏财:
+          otherMap[index] = Ten.正财;
+          break;
+        case Ten.七杀:
+          otherMap[index] = Ten.正官;
+          break;
+        case Ten.偏印:
+          otherMap[index] = Ten.正印;
+          break;
+      }
+    });
+    // 4 两个表拼接生成完整列表
+    const res: Ten[] = [];
+    map.forEach((_, index) => {
+      if (isYang) {
+        res.push(map[index] as Ten);
+        res.push(otherMap[index] as Ten);
+      } else {
+        res.push(otherMap[index] as Ten);
+        res.push(map[index] as Ten);
+      }
+    });
+    return res;
+  }
+}
+
+enum Ten {
+  '日元' = '日元',
+  '劫财' = '劫财',
+  '食神' = '食神',
+  '伤官' = '伤官',
+  '正印' = '正印',
+  '正官' = '正官',
+  '七杀' = '七杀',
+  '正财' = '正财',
+  '偏印' = '偏印',
+  '偏财' = '偏财',
 }
 
 const paipan = new Paipan();
@@ -1378,6 +1502,8 @@ export type PaipanInfo = {
   ss: number;
   tg: any; // 天干
   dz: any; // 地支
+  dzcg: number[][]; // 藏干索引
+  dzcg_text: string[][]; // 藏干文字
   big_tg: any[]; // 大运的天干
   big_dz: any[]; // 大运的地支
   start_desc: string; // 第几天起大运的文字描述
@@ -1390,4 +1516,5 @@ export type PaipanInfo = {
   sx: string; // 属相
   yinli: string[]; // 阴历
   yangli: (string | number)[]; // 阳历
+  tenMap: Ten[]; // 十神关系对应表
 };
