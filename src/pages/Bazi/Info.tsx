@@ -1,14 +1,16 @@
 import React, {FC, ReactNode, useEffect, useState} from 'react';
 import {
   ScrollView,
+  StyleProp,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-import paipan, {PaipanInfo} from '../../util/paipan';
+import paipan, {PaipanInfo, Ten} from '../../util/paipan';
 import {RootStackParamList, StackPages} from '../../types/interface';
 
 const init_Data = paipan.GetInfo(1, Date.now());
@@ -17,11 +19,35 @@ const BaziInfo: FC<
   NativeStackScreenProps<RootStackParamList, StackPages.BaziInfo>
 > = props => {
   const [paipanInfo, setPaipanInfo] = useState<PaipanInfo>(init_Data);
+  const [gridData, setGridData] = useState<{
+    title: string[];
+    zhuxing: Ten[];
+    tg: string[];
+    dz: string[];
+    dzcg: string[][];
+    fx: number[][];
+  }>({
+    title: ['日期', '年柱', '月柱', '日柱', '时柱'],
+    zhuxing: [],
+    tg: [],
+    dz: [],
+    dzcg: [],
+    fx: [],
+  });
 
   useEffect(() => {
     const {gender, date} = props.route.params;
 
-    setPaipanInfo(paipan.GetInfo(gender, date));
+    const newPaiInfo = paipan.GetInfo(gender, date);
+    setPaipanInfo(newPaiInfo);
+    setGridData({
+      title: ['日期', '年柱', '月柱', '日柱', '时柱'],
+      zhuxing: newPaiInfo.tg.map((item: number) => newPaiInfo.tenMap[item]),
+      tg: newPaiInfo.bazi,
+      dz: newPaiInfo.bazi,
+      dzcg: newPaiInfo.dzcg_text,
+      fx: newPaiInfo.dzcg,
+    });
   }, [props.route.params]);
 
   // 阴阳历日期
@@ -38,7 +64,7 @@ const BaziInfo: FC<
   const renderPillarGrid = () => {
     // const {length} = data;
     // 找到藏干中最大的个数，来渲染藏干有几行
-    const cgMaxLength = paipanInfo.dzcg_text.reduce((r, i) => {
+    const cgMaxLength = gridData.dzcg.reduce((r, i) => {
       if (i.length > r) {
         r = i.length;
       }
@@ -49,7 +75,7 @@ const BaziInfo: FC<
       <View style={styles.pillarGrid}>
         {/* 标题 */}
         <Row>
-          {['日期', '年柱', '月柱', '日柱', '时柱'].map(item => {
+          {gridData.title.map(item => {
             return (
               <Col key={item}>
                 <Text style={styles.subheading}>{item}</Text>
@@ -62,10 +88,10 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>主星</Text>
           </Col>
-          {paipanInfo.tg.map((item: number, index: number) => {
+          {gridData.zhuxing.map((item, index) => {
             return (
               <Col key={'主星_' + item + index}>
-                <Text style={styles.tenText}>{paipanInfo.tenMap[item]}</Text>
+                <Text style={styles.tenText}>{item}</Text>
               </Col>
             );
           })}
@@ -75,10 +101,10 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>天干</Text>
           </Col>
-          {paipanInfo.bazi.map((item: any, index: number) => {
+          {gridData.tg.map((item: any, index: number) => {
             return (
-              <Col key={'tg' + item[0] + index}>
-                <WuxingText text={item[0]} />
+              <Col key={'tg' + item?.[0] + index}>
+                <WuxingText text={item?.[0]} />
               </Col>
             );
           })}
@@ -88,10 +114,10 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>地支</Text>
           </Col>
-          {paipanInfo.bazi.map((item: any, index: number) => {
+          {gridData.dz.map((item: any, index: number) => {
             return (
-              <Col key={'dz' + item[1] + index}>
-                <WuxingText text={item[1]} />
+              <Col key={'dz' + item?.[1] + index}>
+                <WuxingText text={item?.[1]} />
               </Col>
             );
           })}
@@ -103,11 +129,11 @@ const BaziInfo: FC<
               <Col>
                 {index === 0 && <Text style={styles.subheading}>藏干</Text>}
               </Col>
-              {paipanInfo.dzcg_text.map((item: any, y) => {
-                const cg = item[index];
+              {gridData.dzcg.map((item, y) => {
+                const dzcg = item[index];
                 return (
-                  <Col key={'cg' + cg + index + y}>
-                    <WuxingText text={cg} size="mini" />
+                  <Col key={'dzcg' + dzcg + index + y}>
+                    <WuxingText text={dzcg} size="mini" />
                   </Col>
                 );
               })}
@@ -121,7 +147,7 @@ const BaziInfo: FC<
               <Col>
                 {index === 0 && <Text style={styles.subheading}>副星</Text>}
               </Col>
-              {paipanInfo.dzcg.map((item: any, y) => {
+              {gridData.fx.map((item, y) => {
                 const cg_index = item[index];
                 return (
                   <Col key={'fx_' + cg_index + index + y}>
@@ -152,6 +178,37 @@ const BaziInfo: FC<
     });
     setActiveDyIndex(index);
     setActiveLnIndex(lnIndex);
+    updateList(index, lnIndex);
+  };
+
+  const updateList = (index: number, lnIndex: number) => {
+    const dy = paipanInfo.big.data[index];
+    const ln = dy.years[lnIndex];
+    console.log(dy.name, ln);
+    setGridData(s => {
+      // TODO .slice(0, 4).concat
+
+      s.zhuxing = s.zhuxing.slice(0, 4).concat(
+        [dy.name, ln].map((item: any) => {
+          const i = paipan.ctg.findIndex(j => j === item?.[0]);
+          return paipanInfo.tenMap[i];
+        }),
+      );
+      s.title = s.title.slice(0, 5).concat(['大运', '流年']);
+      s.tg = s.tg.slice(0, 4).concat([dy.name, ln]);
+      s.dz = s.dz.slice(0, 4).concat([dy.name, ln]);
+
+      const {dzcg, dzcg_text} = paipan.getDzcgText(
+        [dy.name, ln].map(item => {
+          const i = paipan.cdz.findIndex(j => j === item?.[1]);
+          return i;
+        }),
+      );
+
+      s.dzcg = s.dzcg.slice(0, 4).concat(dzcg_text);
+      s.fx = s.fx.slice(0, 4).concat(dzcg);
+      return s;
+    });
   };
 
   useEffect(() => {
@@ -182,7 +239,10 @@ const BaziInfo: FC<
               <TouchableOpacity
                 key={'dayun_' + item.name + index}
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
-                onPress={() => setActiveDyIndex(index)}>
+                onPress={() => {
+                  setActiveDyIndex(index);
+                  updateList(index, activeLnIndex);
+                }}>
                 <Text
                   style={[
                     {fontSize: 14, color: isActive ? '#000' : '#404040'},
@@ -237,7 +297,10 @@ const BaziInfo: FC<
               <TouchableOpacity
                 key={'liunian_' + item + index}
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
-                onPress={() => setActiveLnIndex(index)}>
+                onPress={() => {
+                  setActiveLnIndex(index);
+                  updateList(activeDyIndex, index);
+                }}>
                 <Text
                   style={[
                     {fontSize: 14, color: isActive ? '#000' : '#404040'},
@@ -297,12 +360,14 @@ const BaziInfo: FC<
         </View>
 
         {/* 四柱表 */}
+        {/* {renderGrid()} */}
         {renderPillarGrid()}
 
         {/* 大运表 */}
         {renderDayunGrid()}
         {renderLiunian()}
-        <Text>{JSON.stringify(paipanInfo, null, 4)}</Text>
+        {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
+        {/* <Text>{JSON.stringify(gridData, null, 4)}</Text> */}
       </ScrollView>
     </View>
   );
@@ -310,8 +375,9 @@ const BaziInfo: FC<
 
 const Row: FC<{
   children?: ReactNode;
-}> = props => {
-  return <View style={styles.row}>{props.children}</View>;
+  style?: StyleProp<ViewStyle>;
+}> = ({style, children}) => {
+  return <View style={[styles.row, style]}>{children}</View>;
 };
 const Col: FC<{
   children?: ReactNode;

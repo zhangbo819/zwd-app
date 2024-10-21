@@ -1330,8 +1330,9 @@ class Paipan {
 
     ret.tg = tg;
     ret.dz = dz;
-    ret.dzcg = this.getDzcgByIndex(dz as any[]);
-    ret.dzcg_text = ret.dzcg.map(arr => arr.map(j => this.ctg2[j]));
+    const {dzcg, dzcg_text} = this.getDzcgText(dz);
+    ret.dzcg = dzcg;
+    ret.dzcg_text = dzcg_text;
 
     // 大运
     ret.big.big_tg = big_tg;
@@ -1391,6 +1392,13 @@ class Paipan {
     ret.tenMap = this.getTenGodMap(ret.bazi[2][0]);
 
     return ret;
+  }
+
+  // 获取地址藏干和文字
+  getDzcgText(target: any[]) {
+    const dzcg = this.getDzcgByIndex(target);
+    const dzcg_text = dzcg.map(arr => arr.map(j => this.ctg2[j]));
+    return {dzcg, dzcg_text};
   }
 
   // 根据地支索引找到地支藏干
@@ -1482,7 +1490,7 @@ class Paipan {
   }
 }
 
-enum Ten {
+export enum Ten {
   '日元' = '日元',
   '劫财' = '劫财',
   '食神' = '食神',
