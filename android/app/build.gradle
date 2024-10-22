@@ -72,6 +72,10 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
 
+def releaseTime() {
+    return new Date().format("YYMMddHHmm")
+}
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -82,8 +86,8 @@ android {
         applicationId "com.zwd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "0.2.1"
+        versionCode 3
+        versionName "0.2.2"
     }
     signingConfigs {
         debug {
@@ -103,6 +107,17 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+
+             //多渠道打包配置
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    // _${variant.flavorName}
+                    outputFileName = "zwd_v${defaultConfig.versionName}_${releaseTime()}.apk"
+
+                    // new File("$projectDir/afterBuild/$variant.flavorName" + ".js").text = "var flavorName = '${variant.flavorName}';\nvar outputFileName = '${outputFileName}';"
+                    // new File("$projectDir/afterBuild/afterBuild.sh").text = "echo \"\n\n ${outputFileName} \n\""
+                    }
+                }
         }
     }
 }
