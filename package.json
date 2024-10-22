@@ -9,7 +9,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios --simulator='iPhone 15 Pro Max'",
     "bundle-ios": "react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ./ios/gxb/main.jsbundle --assets-dest ./ios",
-    "release-android": "cd android && sh gradlew assembleRelease && open ./app/build/outputs/apk/release",
+    "release-android": "node ./updateAndroidVersion.js && cd android && sh gradlew assembleRelease && open ./app/build/outputs/apk/release",
     "link": "react-native link",
     "unlink": "react-native unlink",
     "output-ios": "react-native bundle --entry-file index.js --bundle-output ./dist/index.ios.jsbundle --platform ios --assets-dest ./dist --dev false"
