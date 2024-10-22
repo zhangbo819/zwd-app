@@ -1448,7 +1448,7 @@ class Paipan {
     const map = isYang ? newYang : newYin;
     // 2 根据阴阳表 找 日元，偏印，食神，偏财，七杀
     const self_index = map.findIndex(i => i === self);
-    map[self_index] = Ten.日元;
+    map[self_index] = Ten.比肩;
     map[_getLoopIndex(self_index + 1)] = Ten.食神;
     map[_getLoopIndex(self_index + 2)] = Ten.偏财;
     map[_getLoopIndex(self_index + 3)] = Ten.七杀;
@@ -1458,7 +1458,7 @@ class Paipan {
     const otherMap = isYang ? newYin : newYang;
     map.forEach((i, index) => {
       switch (i) {
-        case Ten.日元:
+        case Ten.比肩:
           otherMap[index] = Ten.劫财;
           break;
         case Ten.食神:
@@ -1472,6 +1472,8 @@ class Paipan {
           break;
         case Ten.偏印:
           otherMap[index] = Ten.正印;
+          break;
+        default:
           break;
       }
     });
@@ -1491,16 +1493,16 @@ class Paipan {
 }
 
 export enum Ten {
-  '日元' = '日元',
-  '劫财' = '劫财',
-  '食神' = '食神',
-  '伤官' = '伤官',
-  '正印' = '正印',
-  '正官' = '正官',
-  '七杀' = '七杀',
-  '正财' = '正财',
-  '偏印' = '偏印',
-  '偏财' = '偏财',
+  比肩 = '比肩',
+  劫财 = '劫财',
+  食神 = '食神',
+  伤官 = '伤官',
+  正印 = '正印',
+  正官 = '正官',
+  七杀 = '七杀',
+  正财 = '正财',
+  偏印 = '偏印',
+  偏财 = '偏财',
 }
 
 const paipan = new Paipan();

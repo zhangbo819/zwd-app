@@ -11,7 +11,9 @@ import {
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 import paipan, {PaipanInfo, Ten} from '../../util/paipan';
+import ytgcg from '../../util/ytgcg';
 import {RootStackParamList, StackPages} from '../../types/interface';
+import {isiOS} from '../../constant/config';
 
 const init_Data = paipan.GetInfo(1, Date.now());
 
@@ -34,6 +36,10 @@ const BaziInfo: FC<
     dzcg: [],
     fx: [],
   });
+  const [ytgcgData, setYtgcgData] = useState({
+    weight_text: '',
+    comment: '',
+  });
 
   useEffect(() => {
     const {gender, date} = props.route.params;
@@ -48,6 +54,12 @@ const BaziInfo: FC<
       dzcg: newPaiInfo.dzcg_text,
       fx: newPaiInfo.dzcg,
     });
+    const newYtgcgData = ytgcg.getData(
+      newPaiInfo.bazi,
+      newPaiInfo.yinli[1],
+      newPaiInfo.yinli[2],
+    );
+    setYtgcgData(newYtgcgData);
   }, [props.route.params]);
 
   // 阴阳历日期
@@ -331,8 +343,9 @@ const BaziInfo: FC<
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
+    <View style={[styles.container, isiOS && {paddingTop: 60}]}>
+      <ScrollView style={styles.pagesScrollView}>
+        {/* 基础信息 */}
         <View style={styles.topInfo}>
           <Row>
             <Col>
@@ -366,6 +379,18 @@ const BaziInfo: FC<
         {/* 大运表 */}
         {renderDayunGrid()}
         {renderLiunian()}
+
+        {/* 袁天罡称骨： */}
+        <View style={{marginVertical: 16}}>
+          <Row>
+            <Text style={styles.yinyangText}>
+              袁天罡称骨：{ytgcgData.weight_text}
+            </Text>
+          </Row>
+          <Row>
+            <Text style={styles.yinyangText}>{ytgcgData.comment}</Text>
+          </Row>
+        </View>
         {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
         {/* <Text>{JSON.stringify(gridData, null, 4)}</Text> */}
       </ScrollView>
@@ -433,9 +458,11 @@ const WuxingText: FC<{
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 60,
-    paddingHorizontal: 8,
     backgroundColor: '#FAFAFA',
+  },
+  pagesScrollView: {
+    paddingHorizontal: 8,
+    // paddingBottom: 16,
   },
   topInfo: {
     padding: 8,
