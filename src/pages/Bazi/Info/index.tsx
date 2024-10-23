@@ -10,10 +10,10 @@ import {
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-import paipan, {PaipanInfo, Ten} from '../../util/paipan';
-import ytgcg from '../../util/ytgcg';
-import {RootStackParamList, StackPages} from '../../types/interface';
-import {isiOS} from '../../constant/config';
+import paipan, {PaipanInfo, Ten} from '../../../util/paipan';
+import ytgcg from '../../../util/ytgcg';
+import {RootStackParamList, StackPages} from '../../../types/interface';
+import {isiOS} from '../../../constant/config';
 
 const init_Data = paipan.GetInfo(1, Date.now());
 
