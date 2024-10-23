@@ -183,11 +183,17 @@ const BaziInfo: FC<
 
   const handleNow = (data = paipanInfo.big.data) => {
     const nowYears = new Date().getFullYear();
-    let lnIndex = 0;
+    let lnIndex = -1;
     const index = data.findIndex(i => {
-      lnIndex = nowYears - i.start_time[0] - 1;
-      return i.start_time[0] + 10 > nowYears;
+      return i.years.find((j, yearsIndex) => {
+        if (j.year === nowYears) {
+          lnIndex = yearsIndex;
+          return true;
+        }
+        return false;
+      });
     });
+    if (index < 0 || lnIndex < 0) return;
     setActiveDyIndex(index);
     setActiveLnIndex(lnIndex);
     updateList(index, lnIndex);
@@ -196,22 +202,22 @@ const BaziInfo: FC<
   const updateList = (index: number, lnIndex: number) => {
     const dy = paipanInfo.big.data[index];
     const ln = dy.years[lnIndex];
-    console.log(dy.name, ln);
+    // console.log(dy.name, ln);
     setGridData(s => {
-      // TODO .slice(0, 4).concat
+      // TODO .slice(0, 4).concat, use new data render
 
       s.zhuxing = s.zhuxing.slice(0, 4).concat(
-        [dy.name, ln].map((item: any) => {
+        [dy.name, ln.name].map((item: any) => {
           const i = paipan.ctg.findIndex(j => j === item?.[0]);
           return paipanInfo.tenMap[i];
         }),
       );
       s.title = s.title.slice(0, 5).concat(['大运', '流年']);
-      s.tg = s.tg.slice(0, 4).concat([dy.name, ln]);
-      s.dz = s.dz.slice(0, 4).concat([dy.name, ln]);
+      s.tg = s.tg.slice(0, 4).concat([dy.name, ln.name]);
+      s.dz = s.dz.slice(0, 4).concat([dy.name, ln.name]);
 
       const {dzcg, dzcg_text} = paipan.getDzcgText(
-        [dy.name, ln].map(item => {
+        [dy.name, ln.name].map(item => {
           const i = paipan.cdz.findIndex(j => j === item?.[1]);
           return i;
         }),
@@ -265,7 +271,7 @@ const BaziInfo: FC<
                   style={[
                     {fontSize: 14, color: isActive ? '#000' : '#404040'},
                   ]}>
-                  {item.start_time[0] - paipanInfo.yy + 1}岁
+                  {item.start_time[0] - paipanInfo.yinli[0] + 1}岁
                 </Text>
                 <Text
                   style={{
@@ -307,7 +313,7 @@ const BaziInfo: FC<
             const isActive = activeLnIndex === index;
             return (
               <TouchableOpacity
-                key={'liunian_' + item + index}
+                key={'liunian_' + item.year}
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
                 onPress={() => {
                   setActiveLnIndex(index);
@@ -317,7 +323,7 @@ const BaziInfo: FC<
                   style={[
                     {fontSize: 14, color: isActive ? '#000' : '#404040'},
                   ]}>
-                  {activeDyData.start_time[0] + index + 1}
+                  {item.year}
                 </Text>
                 <Text
                   style={{
@@ -325,14 +331,14 @@ const BaziInfo: FC<
                     fontSize: 18,
                     fontWeight: isActive ? 'bold' : 'normal',
                   }}>
-                  {item[0]}
+                  {item.name[0]}
                 </Text>
                 <Text
                   style={{
                     fontSize: 18,
                     fontWeight: isActive ? 'bold' : 'normal',
                   }}>
-                  {item[1]}
+                  {item.name[1]}
                 </Text>
               </TouchableOpacity>
             );
@@ -391,7 +397,7 @@ const BaziInfo: FC<
             <Text style={styles.yinyangText}>{ytgcgData.comment}</Text>
           </Row>
         </View>
-        {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
+        <Text>{JSON.stringify(paipanInfo, null, 4)}</Text>
         {/* <Text>{JSON.stringify(gridData, null, 4)}</Text> */}
       </ScrollView>
     </View>
