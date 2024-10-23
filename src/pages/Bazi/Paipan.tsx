@@ -18,7 +18,7 @@ const Paipan: FC<
   NativeStackScreenProps<RootStackParamList, StackPages.Home>
 > = props => {
   const [name, setName] = useState('');
-  const [gender, setGender] = useState(false);
+  const [gender, setGender] = useState(true);
   const [date, setDate] = useState(new Date());
   const [isShowDays, setIsShowDays] = useState(false);
   const [isShowHours, setIsShowHours] = useState(false);

@@ -9,6 +9,8 @@
  * 儒略日历(Julian day),以西元前4713年(或-4712年)1月1日12時為起點,方便各历法间的转换
  */
 
+import {DZ_12, Ten, TG_10} from './wuxing';
+
 /**
  * 均值朔望月長(mean length of synodic month)
  * @var float
@@ -707,9 +709,20 @@ class Paipan {
    * 十天干
    * @var array
    */
-  ctg = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']; // char of TianGan
-  yang = ['甲', '丙', '戊', '庚', '壬'];
-  yin = ['乙', '丁', '己', '辛', '癸'];
+  ctg = [
+    TG_10.甲,
+    TG_10.乙,
+    TG_10.丙,
+    TG_10.丁,
+    TG_10.戊,
+    TG_10.己,
+    TG_10.庚,
+    TG_10.辛,
+    TG_10.壬,
+    TG_10.癸,
+  ]; // char of TianGan
+  yang = [TG_10.甲, TG_10.丙, TG_10.戊, TG_10.庚, TG_10.壬];
+  yin = [TG_10.乙, TG_10.丁, TG_10.己, TG_10.辛, TG_10.癸];
   // tenGodMap = { 2: '食神', 6: '七杀', 8: '偏印' } // TODO 为什么只有这几个的位置是固定的
   ctg2 = [
     '甲木',
@@ -738,18 +751,18 @@ class Paipan {
    * @var array
    */
   cdz = [
-    '子',
-    '丑',
-    '寅',
-    '卯',
-    '辰',
-    '巳',
-    '午',
-    '未',
-    '申',
-    '酉',
-    '戌',
-    '亥',
+    DZ_12.子,
+    DZ_12.丑,
+    DZ_12.寅,
+    DZ_12.卯,
+    DZ_12.辰,
+    DZ_12.巳,
+    DZ_12.午,
+    DZ_12.未,
+    DZ_12.申,
+    DZ_12.酉,
+    DZ_12.戌,
+    DZ_12.亥,
   ]; //char of DiZhi
   /**
    * 地支对应五行
@@ -1266,7 +1279,7 @@ class Paipan {
       dateObj.getSeconds(),
     ];
 
-    const ret: PaipanInfo = {
+    const res: PaipanInfo = {
       gender,
       yy,
       mm,
@@ -1283,7 +1296,7 @@ class Paipan {
         big_dz: [], // 大运的地支
         start_desc: '',
         start_time: [],
-        xiaoyun: [],
+        // xiaoyun: [],
         data: [],
       },
       bazi: [],
@@ -1328,23 +1341,23 @@ class Paipan {
     const m = parseInt(String((days % 360) / 30), 10); // 一天折合四个月
     const day = parseInt(String((days % 360) % 30), 10); // 一个小时折合五天
 
-    ret.tg = tg;
-    ret.dz = dz;
+    res.tg = tg;
+    res.dz = dz;
     const {dzcg, dzcg_text} = this.getDzcgText(dz);
-    ret.dzcg = dzcg;
-    ret.dzcg_text = dzcg_text;
-    ret.yinli = this.Solar2Lunar(yy, mm, dd).slice(0, 3); // 阴历
-    ret.yangli = [yy, mm, dd, hh]; // 阳历
+    res.dzcg = dzcg;
+    res.dzcg_text = dzcg_text;
+    res.yinli = this.Solar2Lunar(yy, mm, dd).slice(0, 3); // 阴历
+    res.yangli = [yy, mm, dd, hh]; // 阳历
 
     // 大运
-    ret.big.big_tg = big_tg;
-    ret.big.big_dz = big_dz;
-    ret.big.start_desc = y + '年' + m + '月' + day + '天起运';
+    res.big.big_tg = big_tg;
+    res.big.big_dz = big_dz;
+    res.big.start_desc = y + '年' + m + '月' + day + '天起运';
     const start_jdtime = jd + span * 120; // 三天折合一年,一天折合四个月,一个时辰折合十天,一个小时折合五天,反推得到一年按360天算
-    ret.big.start_time = Julian2Solar(start_jdtime); // 转换成公历形式,注意这里变成了数组
+    res.big.start_time = Julian2Solar(start_jdtime); // 转换成公历形式,注意这里变成了数组
 
     for (var i = 0; i < 12; i++) {
-      ret.big.data.push({
+      res.big.data.push({
         name: this.ctg[big_tg[i]] + this.cdz[big_dz[i]],
         start_time: Julian2Solar(start_jdtime + i * 10 * 360),
         years: [],
@@ -1352,15 +1365,15 @@ class Paipan {
     }
 
     const years = [];
-    const xiaoyun: PaipanInfo['big']['xiaoyun'] = [];
+    const xiaoyun: {name: string; year: number}[] = [];
     let arr = [];
     for (let i = 0; i <= 120; i++) {
       const t = (tg[0] + i) % 10;
       const d = (dz[0] + i) % 12;
       const tgdz_text = this.ctg[t] + this.cdz[d];
-      const item = {name: tgdz_text, year: ret.yinli[0] + i};
+      const item = {name: tgdz_text, year: res.yinli[0] + i};
 
-      if (ret.yinli[0] + i < ret.big.start_time[0]) {
+      if (res.yinli[0] + i < res.big.start_time[0]) {
         // 还没到起运年, 起小运
         xiaoyun.push(item);
         continue;
@@ -1373,25 +1386,27 @@ class Paipan {
         arr = [];
       }
     }
-    // console.log('xiaoyun', xiaoyun);
-    ret.big.xiaoyun = xiaoyun;
+    // res.big.xiaoyun = xiaoyun;
     // console.log('years', years)
     years.forEach((year, index) => {
-      ret.big.data[index].years = year;
+      res.big.data[index].years = year;
     });
+    // console.log('xiaoyun', xiaoyun);
+    // 小运
+    res.big.data.unshift({name: '小运', start_time: [], years: xiaoyun});
 
-    ret.xz = this.cxz[this.GetZodiac(mm, dd)]; // 星座
-    ret.sx = this.csa[dz[0]]; // 生肖
+    res.xz = this.cxz[this.GetZodiac(mm, dd)]; // 星座
+    res.sx = this.csa[dz[0]]; // 生肖
 
     // 四柱
     for (var i = 0; i <= 3; i++) {
-      ret.bazi.push(this.ctg[tg[i]] + this.cdz[dz[i]]);
+      res.bazi.push(this.ctg[tg[i]] + this.cdz[dz[i]]);
     }
 
     // 十神对应关系表
-    ret.tenMap = this.getTenGodMap(ret.bazi[2][0]);
+    res.tenMap = this.getTenGodMap(res.bazi[2][0]);
 
-    return ret;
+    return res;
   }
 
   // 获取地址藏干和文字
@@ -1413,6 +1428,11 @@ class Paipan {
     });
     return res;
   }
+
+  // TODO
+  // 根据传入的天干或地址得到对应的十神
+  // getD(gz: string, map: Record<string, string>, needShort = false) {
+  // }
 
   // // 根据汉字找到地支具体藏干
   // getCanggan(target: string) {
@@ -1443,11 +1463,11 @@ class Paipan {
     // yin  = ['乙', '丁', '己', '辛', '癸'];
     // 1 根据日元 定阴阳表
     const isYang = this.yang.some(i => i === self);
-    const newYang = isYang ? [...this.yang] : [...this.yin];
-    const newYin = isYang ? [...this.yang] : [...this.yin];
-    const map = isYang ? newYang : newYin;
+    const map = new Array(5);
     // 2 根据阴阳表 找 日元，偏印，食神，偏财，七杀
-    const self_index = map.findIndex(i => i === self);
+    const self_index = (isYang ? this.yang : this.yin).findIndex(
+      i => i === self,
+    );
     map[self_index] = Ten.比肩;
     map[_getLoopIndex(self_index + 1)] = Ten.食神;
     map[_getLoopIndex(self_index + 2)] = Ten.偏财;
@@ -1455,7 +1475,7 @@ class Paipan {
     map[_getLoopIndex(self_index + 4)] = Ten.偏印;
     // console.log('map', isYang, map)
     // 3 对照另一张表 根据相同位置对应 劫财，正印，伤官，正财，正官
-    const otherMap = isYang ? newYin : newYang;
+    const otherMap = new Array(5);
     map.forEach((i, index) => {
       switch (i) {
         case Ten.比肩:
@@ -1481,28 +1501,15 @@ class Paipan {
     const res: Ten[] = [];
     map.forEach((_, index) => {
       if (isYang) {
-        res.push(map[index] as Ten);
-        res.push(otherMap[index] as Ten);
+        res.push(map[index]);
+        res.push(otherMap[index]);
       } else {
-        res.push(otherMap[index] as Ten);
-        res.push(map[index] as Ten);
+        res.push(otherMap[index]);
+        res.push(map[index]);
       }
     });
     return res;
   }
-}
-
-export enum Ten {
-  比肩 = '比肩',
-  劫财 = '劫财',
-  食神 = '食神',
-  伤官 = '伤官',
-  正印 = '正印',
-  正官 = '正官',
-  七杀 = '七杀',
-  正财 = '正财',
-  偏印 = '偏印',
-  偏财 = '偏财',
 }
 
 const paipan = new Paipan();
@@ -1526,11 +1533,11 @@ export type PaipanInfo = {
     big_dz: any[]; // 大运的地支
     start_desc: string; // 第几天起大运的文字描述
     start_time: any[]; // 大运开始时间的公历形式
-    xiaoyun: {name: string; year: number}[]; // 小运
+    // xiaoyun: {name: string; year: number}[]; // 小运
     data: {
       name: string; // 天干地支
       start_time: number[]; // 开始时间
-      years: PaipanInfo['big']['xiaoyun']; // 每步大运中所有流年
+      years: {name: string; year: number}[]; // 每步大运中所有流年
     }[];
   };
   bazi: string[]; // 八字文字形式

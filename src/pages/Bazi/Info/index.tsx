@@ -10,10 +10,11 @@ import {
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-import paipan, {PaipanInfo, Ten} from '../../../util/paipan';
+import paipan, {PaipanInfo} from '../../../util/paipan';
 import ytgcg from '../../../util/ytgcg';
 import {RootStackParamList, StackPages} from '../../../types/interface';
 import {isiOS} from '../../../constant/config';
+import {JZ_60, NaYin, Ten} from '../../../util/wuxing';
 
 const init_Data = paipan.GetInfo(1, Date.now());
 enum PillarTitle {
@@ -38,6 +39,7 @@ const BaziInfo: FC<
       dz: string;
       dzcg: string[];
       fx: number[];
+      nayin: string;
     }[]
   >([]);
   const [ytgcgData, setYtgcgData] = useState({
@@ -58,13 +60,18 @@ const BaziInfo: FC<
         PillarTitle.日柱,
         PillarTitle.时柱,
       ].map((title, i) => {
+        let zhuxing = newPaiInfo.tenMap[newPaiInfo.tg[i]];
+        if (title === PillarTitle.日柱) {
+          zhuxing = gender === 0 ? Ten.元男 : Ten.元女;
+        }
         return {
           title,
-          zhuxing: newPaiInfo.tenMap[newPaiInfo.tg[i]],
+          zhuxing: zhuxing,
           tg: newPaiInfo.bazi[i][0],
           dz: newPaiInfo.bazi[i][1],
           dzcg: newPaiInfo.dzcg_text[i],
           fx: newPaiInfo.dzcg[i],
+          nayin: NaYin.getNayin(newPaiInfo.bazi[i] as JZ_60), // TODO remove as
         };
       }),
     );
@@ -188,6 +195,19 @@ const BaziInfo: FC<
             </Row>
           );
         })}
+        {/* 纳音 */}
+        <Row>
+          <Col>
+            <Text style={styles.subheading}>纳音</Text>
+          </Col>
+          {pillarData.map((item, index) => {
+            return (
+              <Col key={'nayin' + item.nayin + index}>
+                <Text style={styles.tenText}>{item.nayin}</Text>
+              </Col>
+            );
+          })}
+        </Row>
       </View>
     );
   };
@@ -197,7 +217,8 @@ const BaziInfo: FC<
   const [activeDyIndex, setActiveDyIndex] = useState(0);
   const [activeLnIndex, setActiveLnIndex] = useState(0);
 
-  const handleNow = (data = paipanInfo.big.data) => {
+  const handleNow = () => {
+    const data = paipanInfo.big.data;
     const nowYears = new Date().getFullYear();
     let lnIndex = -1;
     const index = data.findIndex(i => {
@@ -217,8 +238,14 @@ const BaziInfo: FC<
 
   const updateList = (index: number, lnIndex: number) => {
     const dy = paipanInfo.big.data[index];
-    const ln = dy.years[lnIndex];
-    console.log(dy.name, ln);
+    let ln = dy.years[lnIndex];
+    if (!ln) {
+      // 这种情况一般是点到了小运
+      lnIndex = 0;
+      ln = dy.years[lnIndex];
+      setActiveLnIndex(lnIndex);
+    }
+    // console.log(dy.name, ln);
 
     const {dzcg, dzcg_text} = paipan.getDzcgText(
       [dy.name, ln.name].map(item => {
@@ -238,6 +265,7 @@ const BaziInfo: FC<
         dz: dy.name[1],
         dzcg: dzcg_text[0],
         fx: dzcg[0],
+        nayin: NaYin.getNayin(dy.name as JZ_60), // TODO remove as,
       };
       if (dyIndex < 0) {
         s.push(dyItem);
@@ -254,6 +282,7 @@ const BaziInfo: FC<
         dz: ln.name[1],
         dzcg: dzcg_text[1],
         fx: dzcg[1],
+        nayin: NaYin.getNayin(ln.name as JZ_60), // TODO remove as,
       };
       if (LnIndex < 0) {
         s.push(LnItem);
@@ -265,10 +294,10 @@ const BaziInfo: FC<
     });
   };
 
-  useEffect(() => {
-    handleNow(paipanInfo.big.data);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paipanInfo]);
+  //   useEffect(() => {
+  //     handleNow(paipanInfo.big.data);
+  //     // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   }, [paipanInfo]);
 
   // 大运表
   const renderDayunGrid = () => {
@@ -276,9 +305,7 @@ const BaziInfo: FC<
       <View style={styles.dayunGrid}>
         <View style={styles.dayunTools}>
           <Text>起运：出生后{paipanInfo.big.start_desc}</Text>
-          <TouchableOpacity
-            style={styles.toolNowBtn}
-            onPress={() => handleNow()}>
+          <TouchableOpacity style={styles.toolNowBtn} onPress={handleNow}>
             <Text style={{fontSize: 18}}>今</Text>
           </TouchableOpacity>
         </View>
@@ -289,6 +316,8 @@ const BaziInfo: FC<
           </View>
           {paipanInfo.big.data.map((item, index) => {
             const isActive = activeDyIndex === index;
+            const color = isActive ? '#000' : '#404040';
+            const isXiaoYun = item.name === '小运';
             return (
               <TouchableOpacity
                 key={'dayun_' + item.name + index}
@@ -297,33 +326,30 @@ const BaziInfo: FC<
                   setActiveDyIndex(index);
                   updateList(index, activeLnIndex);
                 }}>
-                <Text
-                  style={[
-                    {fontSize: 14, color: isActive ? '#000' : '#404040'},
-                  ]}>
-                  {item.start_time[0]}
+                <Text style={[{fontSize: 14, color}]}>
+                  {isXiaoYun ? paipanInfo.yy : item.start_time[0]}
                 </Text>
                 <Text
                   style={[
-                    {fontSize: 14, color: isActive ? '#000' : '#404040'},
+                    {
+                      marginBottom: 4,
+                      fontSize: 14,
+                      color,
+                    },
                   ]}>
-                  {item.start_time[0] - paipanInfo.yinli[0] + 1}岁
+                  {isXiaoYun
+                    ? `1~${item.years.length}`
+                    : item.start_time[0] - paipanInfo.yy + 1}
+                  岁
                 </Text>
-                <Text
-                  style={{
-                    marginTop: 4,
-                    fontSize: 18,
-                    fontWeight: isActive ? 'bold' : 'normal',
-                  }}>
-                  {item.name[0]}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: isActive ? 'bold' : 'normal',
-                  }}>
-                  {item.name[1]}
-                </Text>
+                <WuxingText text={item.name[0]} size="mini">
+                  {/* {!isXiaoYun && (
+                    <Text style={{color: '#000'}}>
+                      {paipan.}
+                    </Text>
+                  )} */}
+                </WuxingText>
+                <WuxingText text={item.name[1]} size="mini" />
               </TouchableOpacity>
             );
           })}
@@ -357,25 +383,16 @@ const BaziInfo: FC<
                 }}>
                 <Text
                   style={[
-                    {fontSize: 14, color: isActive ? '#000' : '#404040'},
+                    {
+                      marginBottom: 4,
+                      fontSize: 14,
+                      color: isActive ? '#000' : '#404040',
+                    },
                   ]}>
                   {item.year}
                 </Text>
-                <Text
-                  style={{
-                    marginTop: 4,
-                    fontSize: 18,
-                    fontWeight: isActive ? 'bold' : 'normal',
-                  }}>
-                  {item.name[0]}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: isActive ? 'bold' : 'normal',
-                  }}>
-                  {item.name[1]}
-                </Text>
+                <WuxingText text={item.name[0]} size="mini" />
+                <WuxingText text={item.name[1]} size="mini" />
               </TouchableOpacity>
             );
           })}
@@ -432,8 +449,8 @@ const BaziInfo: FC<
             <Text style={styles.yinyangText}>{ytgcgData.comment}</Text>
           </Row>
         </View>
-        <Text>{JSON.stringify(paipanInfo, null, 4)}</Text>
-        {/* <Text>{JSON.stringify(pillarData, null, 4)}</Text> */}
+        {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
+        <Text>{JSON.stringify(pillarData, null, 4)}</Text>
       </ScrollView>
     </View>
   );
@@ -455,7 +472,8 @@ const WuxingText: FC<{
   children?: ReactNode;
   size?: 'default' | 'mini';
 }> = ({text = '', children, size = 'default'}) => {
-  const Colors5 = ['#4CAF50', '#F44336', '#795548', '#FFEB3B', '#2196F3'];
+  const Colors5 = ['#4CAF50', '#F44336', '#795548', '#FDD835', '#2196F3'];
+  // TODO 按五行简化
   const ColorsMap: Record<string, any> = {
     甲: Colors5[0],
     乙: Colors5[0],
@@ -490,8 +508,8 @@ const WuxingText: FC<{
           {color: ColorsMap[color_text]},
         ]}>
         {text || ' '}
+        {children}
       </Text>
-      {children}
     </View>
   );
 };
@@ -532,7 +550,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   wuxing: {
-    fontSize: 20,
+    fontSize: 24,
     textAlign: 'center',
     fontWeight: 'bold',
   },
