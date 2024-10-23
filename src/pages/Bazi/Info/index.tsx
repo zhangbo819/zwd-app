@@ -16,26 +16,30 @@ import {RootStackParamList, StackPages} from '../../../types/interface';
 import {isiOS} from '../../../constant/config';
 
 const init_Data = paipan.GetInfo(1, Date.now());
+enum PillarTitle {
+  年柱 = '年柱',
+  月柱 = '月柱',
+  日柱 = '日柱',
+  时柱 = '时柱',
+  大运 = '大运',
+  流年 = '流年',
+}
 
 const BaziInfo: FC<
   NativeStackScreenProps<RootStackParamList, StackPages.BaziInfo>
 > = props => {
   const [paipanInfo, setPaipanInfo] = useState<PaipanInfo>(init_Data);
-  const [gridData, setGridData] = useState<{
-    title: string[];
-    zhuxing: Ten[];
-    tg: string[];
-    dz: string[];
-    dzcg: string[][];
-    fx: number[][];
-  }>({
-    title: ['日期', '年柱', '月柱', '日柱', '时柱'],
-    zhuxing: [],
-    tg: [],
-    dz: [],
-    dzcg: [],
-    fx: [],
-  });
+  // 所有柱数据
+  const [pillarData, setPillarData] = useState<
+    {
+      title: string;
+      zhuxing: Ten;
+      tg: string;
+      dz: string;
+      dzcg: string[];
+      fx: number[];
+    }[]
+  >([]);
   const [ytgcgData, setYtgcgData] = useState({
     weight_text: '',
     comment: '',
@@ -46,14 +50,24 @@ const BaziInfo: FC<
 
     const newPaiInfo = paipan.GetInfo(gender, date);
     setPaipanInfo(newPaiInfo);
-    setGridData({
-      title: ['日期', '年柱', '月柱', '日柱', '时柱'],
-      zhuxing: newPaiInfo.tg.map((item: number) => newPaiInfo.tenMap[item]),
-      tg: newPaiInfo.bazi,
-      dz: newPaiInfo.bazi,
-      dzcg: newPaiInfo.dzcg_text,
-      fx: newPaiInfo.dzcg,
-    });
+
+    setPillarData(
+      [
+        PillarTitle.年柱,
+        PillarTitle.月柱,
+        PillarTitle.日柱,
+        PillarTitle.时柱,
+      ].map((title, i) => {
+        return {
+          title,
+          zhuxing: newPaiInfo.tenMap[newPaiInfo.tg[i]],
+          tg: newPaiInfo.bazi[i][0],
+          dz: newPaiInfo.bazi[i][1],
+          dzcg: newPaiInfo.dzcg_text[i],
+          fx: newPaiInfo.dzcg[i],
+        };
+      }),
+    );
     const newYtgcgData = ytgcg.getData(
       newPaiInfo.bazi,
       newPaiInfo.yinli[1],
@@ -74,11 +88,10 @@ const BaziInfo: FC<
 
   //  柱关系表格
   const renderPillarGrid = () => {
-    // const {length} = data;
     // 找到藏干中最大的个数，来渲染藏干有几行
-    const cgMaxLength = gridData.dzcg.reduce((r, i) => {
-      if (i.length > r) {
-        r = i.length;
+    const cgMaxLength = pillarData.reduce((r, i) => {
+      if (i.dzcg.length > r) {
+        r = i.dzcg.length;
       }
       return r;
     }, 0);
@@ -87,10 +100,13 @@ const BaziInfo: FC<
       <View style={styles.pillarGrid}>
         {/* 标题 */}
         <Row>
-          {gridData.title.map(item => {
+          <Col>
+            <Text style={styles.subheading}>日期</Text>
+          </Col>
+          {pillarData.map(item => {
             return (
-              <Col key={item}>
-                <Text style={styles.subheading}>{item}</Text>
+              <Col key={item.title}>
+                <Text style={styles.subheading}>{item.title}</Text>
               </Col>
             );
           })}
@@ -100,10 +116,10 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>主星</Text>
           </Col>
-          {gridData.zhuxing.map((item, index) => {
+          {pillarData.map((item, index) => {
             return (
               <Col key={'主星_' + item + index}>
-                <Text style={styles.tenText}>{item}</Text>
+                <Text style={styles.tenText}>{item.zhuxing}</Text>
               </Col>
             );
           })}
@@ -113,10 +129,10 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>天干</Text>
           </Col>
-          {gridData.tg.map((item: any, index: number) => {
+          {pillarData.map((item, index) => {
             return (
-              <Col key={'tg' + item?.[0] + index}>
-                <WuxingText text={item?.[0]} />
+              <Col key={'tg' + item.tg + index}>
+                <WuxingText text={item.tg} />
               </Col>
             );
           })}
@@ -126,10 +142,10 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>地支</Text>
           </Col>
-          {gridData.dz.map((item: any, index: number) => {
+          {pillarData.map((item, index) => {
             return (
-              <Col key={'dz' + item?.[1] + index}>
-                <WuxingText text={item?.[1]} />
+              <Col key={'dz' + item.dz + index}>
+                <WuxingText text={item.dz} />
               </Col>
             );
           })}
@@ -141,8 +157,8 @@ const BaziInfo: FC<
               <Col>
                 {index === 0 && <Text style={styles.subheading}>藏干</Text>}
               </Col>
-              {gridData.dzcg.map((item, y) => {
-                const dzcg = item[index];
+              {pillarData.map((item, y) => {
+                const dzcg = item.dzcg[index];
                 return (
                   <Col key={'dzcg' + dzcg + index + y}>
                     <WuxingText text={dzcg} size="mini" />
@@ -159,8 +175,8 @@ const BaziInfo: FC<
               <Col>
                 {index === 0 && <Text style={styles.subheading}>副星</Text>}
               </Col>
-              {gridData.fx.map((item, y) => {
-                const cg_index = item[index];
+              {pillarData.map((item, y) => {
+                const cg_index = item.fx[index];
                 return (
                   <Col key={'fx_' + cg_index + index + y}>
                     <Text style={styles.tenText}>
@@ -202,29 +218,49 @@ const BaziInfo: FC<
   const updateList = (index: number, lnIndex: number) => {
     const dy = paipanInfo.big.data[index];
     const ln = dy.years[lnIndex];
-    // console.log(dy.name, ln);
-    setGridData(s => {
-      // TODO .slice(0, 4).concat, use new data render
+    console.log(dy.name, ln);
 
-      s.zhuxing = s.zhuxing.slice(0, 4).concat(
-        [dy.name, ln.name].map((item: any) => {
-          const i = paipan.ctg.findIndex(j => j === item?.[0]);
-          return paipanInfo.tenMap[i];
-        }),
-      );
-      s.title = s.title.slice(0, 5).concat(['大运', '流年']);
-      s.tg = s.tg.slice(0, 4).concat([dy.name, ln.name]);
-      s.dz = s.dz.slice(0, 4).concat([dy.name, ln.name]);
+    const {dzcg, dzcg_text} = paipan.getDzcgText(
+      [dy.name, ln.name].map(item => {
+        const i = paipan.cdz.findIndex(j => j === item?.[1]);
+        return i;
+      }),
+    );
 
-      const {dzcg, dzcg_text} = paipan.getDzcgText(
-        [dy.name, ln.name].map(item => {
-          const i = paipan.cdz.findIndex(j => j === item?.[1]);
-          return i;
-        }),
-      );
+    setPillarData(s => {
+      // 大运
+      const dyIndex = s.findIndex(i => i.title === PillarTitle.大运);
+      const dyZhuxingIndex = paipan.ctg.findIndex(j => j === dy.name[0]);
+      const dyItem = {
+        title: PillarTitle.大运,
+        zhuxing: paipanInfo.tenMap[dyZhuxingIndex],
+        tg: dy.name[0],
+        dz: dy.name[1],
+        dzcg: dzcg_text[0],
+        fx: dzcg[0],
+      };
+      if (dyIndex < 0) {
+        s.push(dyItem);
+      } else {
+        s[dyIndex] = dyItem;
+      }
+      // 流年
+      const LnIndex = s.findIndex(i => i.title === PillarTitle.流年);
+      const LnZhuxingIndex = paipan.ctg.findIndex(j => j === ln.name[0]);
+      const LnItem = {
+        title: PillarTitle.流年,
+        zhuxing: paipanInfo.tenMap[LnZhuxingIndex],
+        tg: ln.name[0],
+        dz: ln.name[1],
+        dzcg: dzcg_text[1],
+        fx: dzcg[1],
+      };
+      if (LnIndex < 0) {
+        s.push(LnItem);
+      } else {
+        s[LnIndex] = LnItem;
+      }
 
-      s.dzcg = s.dzcg.slice(0, 4).concat(dzcg_text);
-      s.fx = s.fx.slice(0, 4).concat(dzcg);
       return s;
     });
   };
@@ -379,7 +415,6 @@ const BaziInfo: FC<
         </View>
 
         {/* 四柱表 */}
-        {/* {renderGrid()} */}
         {renderPillarGrid()}
 
         {/* 大运表 */}
@@ -398,7 +433,7 @@ const BaziInfo: FC<
           </Row>
         </View>
         <Text>{JSON.stringify(paipanInfo, null, 4)}</Text>
-        {/* <Text>{JSON.stringify(gridData, null, 4)}</Text> */}
+        {/* <Text>{JSON.stringify(pillarData, null, 4)}</Text> */}
       </ScrollView>
     </View>
   );
