@@ -24,7 +24,7 @@ const BaziTab: FC<{}> = () => {
         <Tab.Screen
           name={BaziScreenName.List}
           options={{tabBarLabel: '用户列表'}}
-          component={List}
+          component={List as React.ComponentType<{}>}
         />
       </Tab.Navigator>
     </View>

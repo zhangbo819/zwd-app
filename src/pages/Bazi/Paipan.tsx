@@ -45,7 +45,7 @@ const Paipan: FC<
   const onSubmit = async () => {
     const newData = await loadStorage(BaziListKey, []);
     const newObj: RootStackParamList[StackPages.BaziInfo] = {
-      name,
+      name: name === '' ? '未命名' : name,
       gender: gender ? 0 : 1, // 保存时按照那边的规则 0 男 1 女
       date: date.getTime(),
       id: Date.now() * Math.random(),
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   title: {
     width: '30%',

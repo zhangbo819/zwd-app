@@ -8,7 +8,7 @@ import {NavigationContainer} from '@react-navigation/native';
 
 import { RootStackParamList, StackPages } from './types/interface';
 import About from './pages/Mine/About';
-import BaziInfo from './pages/Bazi/Info';
+import DownloadApk from './pages/Mine/DownloadApk';
 import MainTabNavigator from './Main';
 
 // import { STATUS_BAR_HEIGHT } from './constant/UI';
@@ -47,7 +47,6 @@ export default function Root () {
             component={MainTabNavigator}
           />
           <Stack.Screen name={StackPages.About} component={About} />
-          <Stack.Screen name={StackPages.BaziInfo} component={BaziInfo} />
         </Stack.Navigator>
       </View>
     </NavigationContainer>
