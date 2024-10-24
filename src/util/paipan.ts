@@ -9,7 +9,7 @@
  * 儒略日历(Julian day),以西元前4713年(或-4712年)1月1日12時為起點,方便各历法间的转换
  */
 
-import {DZ_12, Ten, TG_10} from './wuxing';
+import {DZ_12, JZ_60, Ten, TG_10, WuXing} from './wuxing';
 
 /**
  * 均值朔望月長(mean length of synodic month)
@@ -740,7 +740,7 @@ class Paipan {
   /**
    * 五行
    */
-  cwx = ['金', '木', '水', '火', '土']; //char of WuXing
+  cwx = [WuXing.金, WuXing.木, WuXing.水, WuXing.火, WuXing.土]; //char of WuXing
   /**
    * 天干对应五行
    * @var array
@@ -1358,19 +1358,19 @@ class Paipan {
 
     for (var i = 0; i < 12; i++) {
       res.big.data.push({
-        name: this.ctg[big_tg[i]] + this.cdz[big_dz[i]],
+        name: (this.ctg[big_tg[i]] + this.cdz[big_dz[i]]) as JZ_60,
         start_time: Julian2Solar(start_jdtime + i * 10 * 360),
         years: [],
       });
     }
 
     const years = [];
-    const xiaoyun: {name: string; year: number}[] = [];
+    const xiaoyun: {name: JZ_60; year: number}[] = [];
     let arr = [];
     for (let i = 0; i <= 120; i++) {
       const t = (tg[0] + i) % 10;
       const d = (dz[0] + i) % 12;
-      const tgdz_text = this.ctg[t] + this.cdz[d];
+      const tgdz_text = (this.ctg[t] + this.cdz[d]) as JZ_60;
       const item = {name: tgdz_text, year: res.yinli[0] + i};
 
       if (res.yinli[0] + i < res.big.start_time[0]) {
@@ -1400,7 +1400,7 @@ class Paipan {
 
     // 四柱
     for (var i = 0; i <= 3; i++) {
-      res.bazi.push(this.ctg[tg[i]] + this.cdz[dz[i]]);
+      res.bazi.push((this.ctg[tg[i]] + this.cdz[dz[i]]) as JZ_60);
     }
 
     // 十神对应关系表
@@ -1535,12 +1535,12 @@ export type PaipanInfo = {
     start_time: any[]; // 大运开始时间的公历形式
     // xiaoyun: {name: string; year: number}[]; // 小运
     data: {
-      name: string; // 天干地支
+      name: JZ_60 | '小运'; // 天干地支
       start_time: number[]; // 开始时间
-      years: {name: string; year: number}[]; // 每步大运中所有流年
+      years: {name: JZ_60; year: number}[]; // 每步大运中所有流年
     }[];
   };
-  bazi: string[]; // 八字文字形式
+  bazi: JZ_60[]; // 八字文字形式
   xz: string; // 星座
   sx: string; // 属相
   yinli: number[]; // 阴历

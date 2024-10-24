@@ -1,8 +1,8 @@
 import {DZ_12, JZ_60} from './wuxing';
 
 // 袁天罡称骨
-class Ytgcg {
-  weight = {
+export default class Ytgcg {
+  static weight = {
     year: {
       [JZ_60.甲子]: 1.2,
       [JZ_60.丙子]: 1.6,
@@ -126,7 +126,7 @@ class Ytgcg {
       [DZ_12.亥]: 0.6,
     },
   };
-  comment = {
+  static comment = {
     2.1: `终身行乞孤苦之命。
       短命非业谓大空，平生灾难事重重，凶祸频临陷逆境，终世困苦事不成。
       《注解》身寒骨冷苦伶仃，此命推来行乞人，碌碌苦苦无乐日，终生孤单过一生。`,
@@ -376,7 +376,7 @@ class Ytgcg {
       天上紫微来照命，统治万民乐太平。`,
   };
 
-  chineseDigits = [
+  static chineseDigits = [
     '零',
     '一',
     '二',
@@ -391,13 +391,14 @@ class Ytgcg {
   ];
 
   // 获取评语和重量
-  public getData(bazi: any[], yinMouth: any, yinDay: any) {
+  static getData(bazi: any[], yinMouth: any, yinDay: any) {
     const [yy, , , hh] = bazi;
-    this.weight.year;
+    // this.weight.year;
+    // console.log('this.weight', this.weight)
     const [weight_y, weight_m, weight_d, weight_h] = [
       this.weight.year[yy as JZ_60],
-      this.weight.mouth[yinMouth as keyof Ytgcg['weight']['mouth']],
-      this.weight.day[yinDay as keyof Ytgcg['weight']['day']],
+      this.weight.mouth[yinMouth as keyof Ytgcg],
+      this.weight.day[yinDay as keyof Ytgcg],
       this.weight.hour[hh[1] as DZ_12],
     ];
     const weight = weight_y + weight_m + weight_d + weight_h;
@@ -410,7 +411,7 @@ class Ytgcg {
 
     return {
       weight_text,
-      comment: this.comment[weight as keyof Ytgcg['comment']],
+      comment: this.comment[weight as keyof Ytgcg],
       weight,
       weight_y,
       weight_m,
@@ -419,7 +420,3 @@ class Ytgcg {
     };
   }
 }
-
-const ytgcg = new Ytgcg();
-
-export default ytgcg;

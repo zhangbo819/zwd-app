@@ -102,6 +102,52 @@ export enum Ten {
   元女 = '元女',
 }
 
+export enum WuXing {
+  金 = '金',
+  木 = '木',
+  水 = '水',
+  火 = '火',
+  土 = '土',
+}
+
+export function getWuxing(text: TG_10 | DZ_12 | string) {
+  const wuxingArr = [WuXing.金, WuXing.木, WuXing.水, WuXing.火, WuXing.土];
+  if (text in TG_10) {
+    const index = [
+      TG_10.甲,
+      TG_10.乙,
+      TG_10.丙,
+      TG_10.丁,
+      TG_10.戊,
+      TG_10.己,
+      TG_10.庚,
+      TG_10.辛,
+      TG_10.壬,
+      TG_10.癸,
+    ].findIndex(i => i === text);
+    const wuxingIndex = [1, 1, 3, 3, 4, 4, 0, 0, 2, 2][index];
+    return wuxingArr[wuxingIndex];
+  } else if (text in DZ_12) {
+    const index = [
+      DZ_12.子,
+      DZ_12.丑,
+      DZ_12.寅,
+      DZ_12.卯,
+      DZ_12.辰,
+      DZ_12.巳,
+      DZ_12.午,
+      DZ_12.未,
+      DZ_12.申,
+      DZ_12.酉,
+      DZ_12.戌,
+      DZ_12.亥,
+    ].findIndex(i => i === text);
+    const wuxingIndex = [2, 4, 1, 1, 4, 3, 3, 4, 0, 0, 4, 2][index];
+    return wuxingArr[wuxingIndex];
+  }
+  return '';
+}
+
 export class NaYin {
   static map: Record<string, JZ_60[]> = {
     海中金: [JZ_60.甲子, JZ_60.乙丑],

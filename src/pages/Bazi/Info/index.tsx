@@ -11,10 +11,17 @@ import {
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 import paipan, {PaipanInfo} from '../../../util/paipan';
-import ytgcg from '../../../util/ytgcg';
+import Ytgcg from '../../../util/ytgcg';
 import {RootStackParamList, StackPages} from '../../../types/interface';
 import {isiOS} from '../../../constant/config';
-import {JZ_60, NaYin, Ten} from '../../../util/wuxing';
+import {
+  DZ_12,
+  getWuxing,
+  NaYin,
+  Ten,
+  TG_10,
+  WuXing,
+} from '../../../util/wuxing';
 
 const init_Data = paipan.GetInfo(1, Date.now());
 enum PillarTitle {
@@ -71,11 +78,11 @@ const BaziInfo: FC<
           dz: newPaiInfo.bazi[i][1],
           dzcg: newPaiInfo.dzcg_text[i],
           fx: newPaiInfo.dzcg[i],
-          nayin: NaYin.getNayin(newPaiInfo.bazi[i] as JZ_60), // TODO remove as
+          nayin: NaYin.getNayin(newPaiInfo.bazi[i]),
         };
       }),
     );
-    const newYtgcgData = ytgcg.getData(
+    const newYtgcgData = Ytgcg.getData(
       newPaiInfo.bazi,
       newPaiInfo.yinli[1],
       newPaiInfo.yinli[2],
@@ -265,7 +272,7 @@ const BaziInfo: FC<
         dz: dy.name[1],
         dzcg: dzcg_text[0],
         fx: dzcg[0],
-        nayin: NaYin.getNayin(dy.name as JZ_60), // TODO remove as,
+        nayin: dy.name === '小运' ? '' : NaYin.getNayin(dy.name),
       };
       if (dyIndex < 0) {
         s.push(dyItem);
@@ -282,7 +289,7 @@ const BaziInfo: FC<
         dz: ln.name[1],
         dzcg: dzcg_text[1],
         fx: dzcg[1],
-        nayin: NaYin.getNayin(ln.name as JZ_60), // TODO remove as,
+        nayin: NaYin.getNayin(ln.name),
       };
       if (LnIndex < 0) {
         s.push(LnItem);
@@ -290,7 +297,7 @@ const BaziInfo: FC<
         s[LnIndex] = LnItem;
       }
 
-      return s;
+      return [...s];
     });
   };
 
@@ -298,6 +305,16 @@ const BaziInfo: FC<
   //     handleNow(paipanInfo.big.data);
   //     // eslint-disable-next-line react-hooks/exhaustive-deps
   //   }, [paipanInfo]);
+
+  const handleHiddenDy = () => {
+    setPillarData(s => {
+      const dyIndex = s.findIndex(i => i.title === PillarTitle.大运);
+      dyIndex !== -1 && s.splice(dyIndex, 1);
+      const lnIndex = s.findIndex(i => i.title === PillarTitle.流年);
+      lnIndex !== -1 && s.splice(lnIndex, 1);
+      return [...s];
+    });
+  };
 
   // 大运表
   const renderDayunGrid = () => {
@@ -310,10 +327,10 @@ const BaziInfo: FC<
           </TouchableOpacity>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.dayunItem}>
+          <TouchableOpacity style={styles.dayunItem} onPress={handleHiddenDy}>
             <Text style={{fontSize: 18}}>大</Text>
             <Text style={{fontSize: 18}}>运</Text>
-          </View>
+          </TouchableOpacity>
           {paipanInfo.big.data.map((item, index) => {
             const isActive = activeDyIndex === index;
             const color = isActive ? '#000' : '#404040';
@@ -468,44 +485,27 @@ const Col: FC<{
   return <View style={[styles.col]}>{children}</View>;
 };
 const WuxingText: FC<{
-  text: string;
+  text: TG_10 | DZ_12 | string;
   children?: ReactNode;
   size?: 'default' | 'mini';
 }> = ({text = '', children, size = 'default'}) => {
-  const Colors5 = ['#4CAF50', '#F44336', '#795548', '#FDD835', '#2196F3'];
-  // TODO 按五行简化
-  const ColorsMap: Record<string, any> = {
-    甲: Colors5[0],
-    乙: Colors5[0],
-    丙: Colors5[1],
-    丁: Colors5[1],
-    戊: Colors5[2],
-    己: Colors5[2],
-    庚: Colors5[3],
-    辛: Colors5[3],
-    壬: Colors5[4],
-    癸: Colors5[4],
-    子: Colors5[4],
-    丑: Colors5[2],
-    寅: Colors5[0],
-    卯: Colors5[0],
-    辰: Colors5[2],
-    巳: Colors5[1],
-    午: Colors5[1],
-    未: Colors5[2],
-    申: Colors5[3],
-    酉: Colors5[3],
-    戌: Colors5[2],
-    亥: Colors5[4],
+  // 五行颜色
+  const ColorsMap: Record<WuXing | string, any> = {
+    [WuXing.木]: '#4CAF50',
+    [WuXing.火]: '#F44336',
+    [WuXing.土]: '#795548',
+    [WuXing.金]: '#FDD835',
+    [WuXing.水]: '#2196F3',
   };
   const color_text = text.length > 1 ? text[0] : text;
+
   return (
     <View style={[styles.col]}>
       <Text
         style={[
           styles.wuxing,
           size === 'mini' && styles.wuxing_mini,
-          {color: ColorsMap[color_text]},
+          {color: ColorsMap[getWuxing(color_text)]},
         ]}>
         {text || ' '}
         {children}
