@@ -1540,7 +1540,7 @@ export type PaipanInfo = {
       years: {name: JZ_60; year: number}[]; // 每步大运中所有流年
     }[];
   };
-  bazi: JZ_60[]; // 八字文字形式
+  bazi: [JZ_60, JZ_60, JZ_60, JZ_60]; // 八字文字形式
   xz: string; // 星座
   sx: string; // 属相
   yinli: number[]; // 阴历
