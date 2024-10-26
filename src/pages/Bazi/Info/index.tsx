@@ -1,6 +1,6 @@
-import React, {FC, ReactNode, useCallback, useEffect, useRef, useState} from 'react';
+import React, {FC, ReactNode, useEffect, useState} from 'react';
 import {
-  Button,
+  Alert,
   ScrollView,
   StyleProp,
   StyleSheet,
@@ -24,8 +24,6 @@ import {
   WuXing,
 } from '../../../util/wuxing';
 import Shensha from '../../../util/shensha';
-
-
 
 const init_Data = paipan.GetInfo(1, Date.now());
 enum PillarTitle {
@@ -57,6 +55,10 @@ const BaziInfo: FC<
   const [ytgcgData, setYtgcgData] = useState({
     weight_text: '',
     comment: '',
+    weight_y: 0,
+    weight_m: 0,
+    weight_d: 0,
+    weight_h: 0,
   });
 
   useEffect(() => {
@@ -503,16 +505,24 @@ const BaziInfo: FC<
         {/* 袁天罡称骨： */}
         <View style={{marginVertical: 16}}>
           <Row>
-            <Text style={styles.yinyangText}>
-              袁天罡称骨：{ytgcgData.weight_text}
-            </Text>
+            <TouchableOpacity
+              onPress={() =>
+                Alert.alert(
+                  ytgcgData.weight_text,
+                  `年${ytgcgData.weight_y} + 月${ytgcgData.weight_m} + 日${ytgcgData.weight_d} + 时${ytgcgData.weight_h}`,
+                )
+              }>
+              <Text style={styles.yinyangText}>
+                袁天罡称骨：{ytgcgData.weight_text}
+              </Text>
+            </TouchableOpacity>
           </Row>
           <Row>
             <Text style={styles.yinyangText}>{ytgcgData.comment}</Text>
           </Row>
         </View>
 
-        <Text>{JSON.stringify(paipanInfo, null, 4)}</Text>
+        <Text>{JSON.stringify(ytgcgData, null, 4)}</Text>
         {/* <Text>{JSON.stringify(pillarData, null, 4)}</Text> */}
       </ScrollView>
     </View>
