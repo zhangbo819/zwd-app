@@ -1,5 +1,6 @@
-import React, {FC, ReactNode, useEffect, useState} from 'react';
+import React, {FC, ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import {
+  Button,
   ScrollView,
   StyleProp,
   StyleSheet,
@@ -23,6 +24,8 @@ import {
   WuXing,
 } from '../../../util/wuxing';
 import Shensha from '../../../util/shensha';
+
+
 
 const init_Data = paipan.GetInfo(1, Date.now());
 enum PillarTitle {
@@ -81,7 +84,11 @@ const BaziInfo: FC<
           dzcg: newPaiInfo.dzcg_text[i],
           fx: newPaiInfo.dzcg[i],
           nayin: NaYin.getNayin(newPaiInfo.bazi[i]),
-          ss: Shensha.getData(newPaiInfo.bazi, newPaiInfo.bazi[i], newPaiInfo.yinli),
+          ss: Shensha.getData(
+            newPaiInfo.bazi,
+            newPaiInfo.bazi[i],
+            newPaiInfo.yinli,
+          ),
         };
       }),
     );
@@ -236,7 +243,9 @@ const BaziInfo: FC<
                 const ss_text = item.ss[index];
                 return (
                   <Col key={'ss_' + ss_text + index + y}>
-                    <Text style={styles.tenText}>{ss_text}</Text>
+                    <TouchableOpacity>
+                      <Text style={styles.tenText}>{ss_text}</Text>
+                    </TouchableOpacity>
                   </Col>
                 );
               })}
@@ -301,7 +310,10 @@ const BaziInfo: FC<
         dzcg: dzcg_text[0],
         fx: dzcg[0],
         nayin: dy.name === '小运' ? '' : NaYin.getNayin(dy.name),
-        ss: dy.name === '小运' ? [] : Shensha.getData(paipanInfo.bazi, dy.name, paipanInfo.yinli),
+        ss:
+          dy.name === '小运'
+            ? []
+            : Shensha.getData(paipanInfo.bazi, dy.name, paipanInfo.yinli),
       };
       if (dyIndex < 0) {
         s.push(dyItem);
@@ -319,7 +331,10 @@ const BaziInfo: FC<
         dzcg: dzcg_text[1],
         fx: dzcg[1],
         nayin: NaYin.getNayin(ln.name),
-        ss: dy.name === '小运' ? [] : Shensha.getData(paipanInfo.bazi, ln.name, paipanInfo.yinli),
+        ss:
+          dy.name === '小运'
+            ? []
+            : Shensha.getData(paipanInfo.bazi, ln.name, paipanInfo.yinli),
       };
       if (LnIndex < 0) {
         s.push(LnItem);
@@ -496,8 +511,9 @@ const BaziInfo: FC<
             <Text style={styles.yinyangText}>{ytgcgData.comment}</Text>
           </Row>
         </View>
-        {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
-        <Text>{JSON.stringify(pillarData, null, 4)}</Text>
+
+        <Text>{JSON.stringify(paipanInfo, null, 4)}</Text>
+        {/* <Text>{JSON.stringify(pillarData, null, 4)}</Text> */}
       </ScrollView>
     </View>
   );
@@ -545,6 +561,11 @@ const WuxingText: FC<{
 };
 
 const styles = StyleSheet.create({
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#FAFAFA',

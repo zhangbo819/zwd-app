@@ -1,5 +1,7 @@
 import React, {FC, useEffect, useRef, useState} from 'react';
 import {
+  Alert,
+  Button,
   FlatList,
   RefreshControl,
   StyleSheet,
@@ -18,7 +20,7 @@ import {
   RootStackParamList,
   StackPages,
 } from '../../types/interface';
-import {loadStorage} from '../../constant/config';
+import {loadStorage, saveStorage} from '../../constant/config';
 import {Parsers} from '../../constant/moss';
 import {COLOR_LINEGRAY, FONT_PFR, FONT_PFS, MinPix} from '../../constant/UI';
 import {ListEmptyComponent} from '../../components/ListEmptyComp';
@@ -51,6 +53,7 @@ const List: FC<
     console.log('refresh in');
     needLoading && setRefreshing(true);
     const newStorageBaziData = await loadStorage(BaziListKey, []);
+    await new Promise(resolve => setTimeout(resolve, 300));
     if (newStorageBaziData !== null) {
       setList(newStorageBaziData);
     }
@@ -62,7 +65,28 @@ const List: FC<
     props.navigation.navigate(StackPages.BaziInfo, item);
   };
 
-  const renderItem = ({item}: {item: PaipanItem; index: number}) => {
+  const handleDelete = (item: PaipanItem, index: number) => {
+    Alert.alert('提示', `确定要删除${item.name}`, [
+      {text: '取消', onPress: () => console.log('OK Pressed!')},
+      {
+        text: '确定',
+        onPress: async () => {
+          const newList = [...list];
+          newList.splice(index, 1);
+
+          const res = await saveStorage({key: BaziListKey, data: newList});
+
+          if (res) {
+            Alert.alert('提示', '删除成功!');
+
+            _onRefresh();
+          }
+        },
+      },
+    ]);
+  };
+
+  const renderItem = ({item, index}: {item: PaipanItem; index: number}) => {
     const date = new Date(item.date);
     return (
       <TouchableOpacity
@@ -72,11 +96,19 @@ const List: FC<
         onPress={() => handleItem(item)}
         // onLongPress={() => handleDelete({index})}
       >
-        <Text style={styles.ItemText}>{`${item.name} ${
-          item.gender === 0 ? '男' : '女'
-        } ${date.getFullYear()}年${
-          date.getMonth() + 1
-        }月${date.getDate()}日${date.getHours()}时`}</Text>
+        <Text style={styles.ItemText}>
+          {`${item.name} `}
+          <Text style={styles.ItemSmallText}>{`${
+            item.gender === 0 ? '男' : '女'
+          } ${date.getFullYear()}年${
+            date.getMonth() + 1
+          }月${date.getDate()}日${date.getHours()}时`}</Text>
+        </Text>
+        <Button
+          onPress={() => handleDelete(item, index)}
+          title="删除"
+          color="#f00"
+        />
       </TouchableOpacity>
     );
   };
@@ -125,14 +157,20 @@ const styles = StyleSheet.create({
   Touch: {
     flex: 1,
     marginVertical: 5,
-    ...Parsers.padding([0, 20]),
+    ...Parsers.padding([5, 20]),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   ItemText: {
-    paddingVertical:5,
+    paddingVertical: 5,
     fontFamily: FONT_PFR,
     fontSize: 20,
     textAlign: 'center',
     color: '#000',
+  },
+  ItemSmallText: {
+    fontSize: 16,
   },
 });
 
