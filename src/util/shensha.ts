@@ -1,7 +1,7 @@
 import {DZ_12, JZ_60, TG_10} from './wuxing';
 
 // TODO add more
-enum ShenshaItem {
+export enum ShenshaItem {
   天乙贵人 = '天乙贵人',
   天德贵人 = '天德贵人',
   月德贵人 = '月德贵人',
@@ -11,6 +11,12 @@ enum ShenshaItem {
   禄神 = '禄神',
   驿马 = '驿马',
   太极贵人 = '太极贵人',
+  将星 = '将星',
+  //   学堂 = '学堂',
+  //   词馆 = '词馆',
+  国印 = '国印',
+  三奇贵人 = '三奇贵人',
+  文昌贵人 = '文昌贵人',
 }
 
 export default class Shensha {
@@ -183,7 +189,6 @@ export default class Shensha {
             }
             break;
           case DZ_12.申:
-            console.log('target', target);
             if (target[0] === TG_10.戊) {
               res = ShenshaItem.天德合;
             }
@@ -389,31 +394,53 @@ export default class Shensha {
         const [, rizhi] = rizhu;
         let res: false | ShenshaItem.驿马 = false;
 
-        switch (true) {
-          case [DZ_12.申, DZ_12.子, DZ_12.辰].some(
+        console.log(
+          'target',
+          target,
+          [DZ_12.巳, DZ_12.酉, DZ_12.丑].some(
             i => i === nianzhi || i === rizhi,
-          ):
+          ),
+        );
+
+        switch (true) {
+          case [DZ_12.申, DZ_12.子, DZ_12.辰].includes(nianzhi as DZ_12):
             if (target[1] === DZ_12.寅) {
               res = ShenshaItem.驿马;
             }
             break;
-          case [DZ_12.寅, DZ_12.午, DZ_12.戌].some(
-            i => i === nianzhi || i === rizhi,
-          ):
+          case [DZ_12.寅, DZ_12.午, DZ_12.戌].includes(nianzhi as DZ_12):
             if (target[1] === DZ_12.申) {
               res = ShenshaItem.驿马;
             }
             break;
-          case [DZ_12.巳, DZ_12.酉, DZ_12.丑].some(
-            i => i === nianzhi || i === rizhi,
-          ):
+          case [DZ_12.巳, DZ_12.酉, DZ_12.丑].includes(nianzhi as DZ_12):
             if (target[1] === DZ_12.亥) {
               res = ShenshaItem.驿马;
             }
             break;
-          case [DZ_12.亥, DZ_12.卯, DZ_12.未].some(
-            i => i === nianzhi || i === rizhi,
-          ):
+          case [DZ_12.亥, DZ_12.卯, DZ_12.未].includes(nianzhi as DZ_12):
+            if (target[1] === DZ_12.巳) {
+              res = ShenshaItem.驿马;
+            }
+            break;
+        }
+        switch (true) {
+          case [DZ_12.申, DZ_12.子, DZ_12.辰].includes(rizhi as DZ_12):
+            if (target[1] === DZ_12.寅) {
+              res = ShenshaItem.驿马;
+            }
+            break;
+          case [DZ_12.寅, DZ_12.午, DZ_12.戌].includes(rizhi as DZ_12):
+            if (target[1] === DZ_12.申) {
+              res = ShenshaItem.驿马;
+            }
+            break;
+          case [DZ_12.巳, DZ_12.酉, DZ_12.丑].includes(rizhi as DZ_12):
+            if (target[1] === DZ_12.亥) {
+              res = ShenshaItem.驿马;
+            }
+            break;
+          case [DZ_12.亥, DZ_12.卯, DZ_12.未].includes(rizhi as DZ_12):
             if (target[1] === DZ_12.巳) {
               res = ShenshaItem.驿马;
             }
@@ -476,7 +503,223 @@ export default class Shensha {
         return res;
       },
     },
+    [ShenshaItem.将星]: {
+      text: `子日子。丑日酉。寅日午。卯日卯。辰日子。巳日酉。午日午。未日卯。申日子。酉日酉。戌日午。亥日卯。
+        将星入命：能文能武，一生有权柄威信，具有组织领导能力，会见掌权之机。将星为真格：须正官、七杀有力，或印星有力。将星入命，岁运为财官：大权在握，利禄亨通。
+将星与亡神同现：才智过人，深具谋略，会是栋梁之才。将星无破：财、官运亨通。将星三合为忌神：奔波多劳。将星逢冲克，权利事职有变动。
+将星跟权力地位有关，命带将星的人，给人不可侵犯的感觉，很自然的散发出一种无形、难以言喻的权威感，让人望而生敬。很多做官的人或工商高层主管八字里面大都带有将星，所以也称为将权，八字带有将星，称做将权入命。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [, , rizhu] = bazi;
+        const [, rizhi] = rizhu;
+        let res: false | ShenshaItem.将星 = false;
+
+        switch (rizhi) {
+          case DZ_12.寅:
+          case DZ_12.午:
+          case DZ_12.戌:
+            if (target[1] === DZ_12.午) {
+              res = ShenshaItem.将星;
+            }
+            break;
+          case DZ_12.申:
+          case DZ_12.子:
+          case DZ_12.辰:
+            if (target[1] === DZ_12.子) {
+              res = ShenshaItem.将星;
+            }
+            break;
+          case DZ_12.亥:
+          case DZ_12.卯:
+          case DZ_12.未:
+            if (target[1] === DZ_12.卯) {
+              res = ShenshaItem.将星;
+            }
+            break;
+          case DZ_12.巳:
+          case DZ_12.酉:
+          case DZ_12.丑:
+            if (target[1] === DZ_12.酉) {
+              res = ShenshaItem.将星;
+            }
+            break;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.国印]: {
+      text: `甲见戌, 乙见亥, 丙见丑,丁见寅,戊见丑, 己见寅, 庚见辰, 辛见巳。壬见未, 癸见申。
+          正直忠信，若生旺得其他吉神辅助，可得掌印之权。四柱带国印者， 主人诚实可靠，严守清规， 照章行事，办事公道。为人和悦，礼义仁慈，气质轩昂。如国印逢生旺，有其它吉星相助，不逢冲破克害，不仅可以有掌印之能，可亦为官掌实权。
+        亦主一生工作，生活环境多动，若流年岁运逢之即主工作变动或家庭搬迁。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu, , rizhu] = bazi;
+        const [niangan] = nianzhu;
+        const [rigan] = rizhu;
+        let res: false | ShenshaItem.国印 = false;
+
+        switch (true) {
+          case [niangan, rigan].includes(TG_10.甲):
+            if (target[1] === DZ_12.戌) {
+              res = ShenshaItem.国印;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.乙):
+            if (target[1] === DZ_12.亥) {
+              res = ShenshaItem.国印;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.丙):
+            if (target[1] === DZ_12.丑) {
+              res = ShenshaItem.国印;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.丁):
+            if (target[1] === DZ_12.寅) {
+              res = ShenshaItem.国印;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.戊):
+            if (target[1] === DZ_12.丑) {
+              res = ShenshaItem.国印;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.己):
+            if (target[1] === DZ_12.寅) {
+              res = ShenshaItem.国印;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.庚):
+            if (target[1] === DZ_12.辰) {
+              res = ShenshaItem.国印;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.辛):
+            if (target[1] === DZ_12.巳) {
+              res = ShenshaItem.国印;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.壬):
+            if (target[1] === DZ_12.未) {
+              res = ShenshaItem.国印;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.癸):
+            if (target[1] === DZ_12.申) {
+              res = ShenshaItem.国印;
+            }
+            break;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.三奇贵人]: {
+      text: `天上三奇甲戊庚，地下三奇乙丙丁，人中三奇壬癸辛。
+          胸怀坦荡，博学多才。（与天乙并用，则建功立业，功勋卓著。居空亡，则为隐士高人。凡命遇三奇，主人精神异常，襟怀卓越，好奇尚大，博学多能。
+学艺专精、精力旺盛、脑力灵敏、机智灵巧、易成专业技能人才、如工程师、信息家、计算机软件设计、属技能专精之人。
+三奇在什么条件下才能真正为奇? 无非是:
+（一）顺布而排。即，年乙月丙日丁,或月乙日丙时丁。
+（二）三奇必须得时得地, 不得死绝。
+（三）三奇必有吉星贵人, 如天乙, 天月德贵人扶助。
+（四）带元辰, 桃花, 天罗地网为无用。三奇具有特殊奇材的作用。
+带天乙贵人者, 勋业超群。带天月二德者,不犯意外事故。带三合入局者,国家柱石。带官符劫煞者, 器识宏远。带空生旺者,脱尘离俗,不因有钱有势而惑乱，不因武力或权势而胁迫屈服。
+三奇必须命局配合得体, 并有其它贵人吉星扶持才有荣华福寿,如果只有三奇无贵地, 命局组合不好, 势必钱财不丰，容易受欺负。即使命局较清粹,若三奇不落贵地而落空亡, 较为孤独, 即是蓬莱三岛客,万里走江山了。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60]) {
+        const [nianzhu, yuezhi, rizhu, shizhu] = bazi;
+        let res: false | ShenshaItem.三奇贵人 = false;
+
+        if (
+          [
+            nianzhu[0] + yuezhi[0] + rizhu[0],
+            yuezhi[0] + rizhu[0] + shizhu[0],
+          ].includes(TG_10.甲 + TG_10.戊 + TG_10.庚) ||
+          [
+            nianzhu[0] + yuezhi[0] + rizhu[0],
+            yuezhi[0] + rizhu[0] + shizhu[0],
+          ].includes(TG_10.乙 + TG_10.丙 + TG_10.丁) ||
+          [
+            nianzhu[0] + yuezhi[0] + rizhu[0],
+            yuezhi[0] + rizhu[0] + shizhu[0],
+          ].includes(TG_10.壬 + TG_10.癸 + TG_10.辛)
+        ) {
+          res = ShenshaItem.三奇贵人;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.文昌贵人]: {
+      text: `甲乙巳午报君知, 丙戊申宫丁己鸡。庚猪辛鼠壬逢虎, 癸人见卯入云梯。甲日巳。乙日午。丙日申。丁日酉。戊日申。己日酉。庚日亥。辛日子。壬日寅。癸日卯。
+            聪明有才华，文笔能力强，利读书考学著书。文昌多取食神之临官为贵, 为食神建禄之称。文昌入命,主聪明过人,又主化险为夷。气质雅秀,举止温文,男命逢着内涵,女命逢着仪容得体；具有上进心，不与粗俗之辈乱交朋友。
+            文昌逢合为喜：富加且贵。文昌逢合为忌：多见忙碌，劳苦功高。文昌坐旺地：身体健康，幸福如意，利考试，贵气十足。文昌逢刑冲：劳累辛苦。
+            文昌入命：心性聪明，出入近贵，气质文雅，好学新知，一生可以近贵利官。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu, , rizhu] = bazi;
+        const [niangan] = nianzhu;
+        const [rigan] = rizhu;
+        let res: false | ShenshaItem.文昌贵人 = false;
+
+        switch (true) {
+          case [niangan, rigan].includes(TG_10.甲):
+            if (target[1] === DZ_12.巳) {
+              res = ShenshaItem.文昌贵人;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.乙):
+            if (target[1] === DZ_12.午) {
+              res = ShenshaItem.文昌贵人;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.丙):
+            if (target[1] === DZ_12.申) {
+              res = ShenshaItem.文昌贵人;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.丁):
+            if (target[1] === DZ_12.酉) {
+              res = ShenshaItem.文昌贵人;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.戊):
+            if (target[1] === DZ_12.申) {
+              res = ShenshaItem.文昌贵人;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.己):
+            if (target[1] === DZ_12.酉) {
+              res = ShenshaItem.文昌贵人;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.庚):
+            if (target[1] === DZ_12.亥) {
+              res = ShenshaItem.文昌贵人;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.辛):
+            if (target[1] === DZ_12.子) {
+              res = ShenshaItem.文昌贵人;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.壬):
+            if (target[1] === DZ_12.寅) {
+              res = ShenshaItem.文昌贵人;
+            }
+            break;
+          case [niangan, rigan].includes(TG_10.癸):
+            if (target[1] === DZ_12.卯) {
+              res = ShenshaItem.文昌贵人;
+            }
+            break;
+        }
+
+        return res;
+      },
+    },
   };
+
+  static getDetails(key: ShenshaItem) {
+    return this.Map[key].text;
+  }
 
   static getData(
     bazi: [JZ_60, JZ_60, JZ_60, JZ_60],

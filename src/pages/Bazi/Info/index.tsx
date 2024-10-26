@@ -23,7 +23,8 @@ import {
   TG_10,
   WuXing,
 } from '../../../util/wuxing';
-import Shensha from '../../../util/shensha';
+import Shensha, {ShenshaItem} from '../../../util/shensha';
+import MyModal from '../../../components/MyModal';
 
 const init_Data = paipan.GetInfo(1, Date.now());
 enum PillarTitle {
@@ -49,7 +50,7 @@ const BaziInfo: FC<
       dzcg: string[];
       fx: number[];
       nayin: string;
-      ss: string[];
+      ss: ShenshaItem[];
     }[]
   >([]);
   const [ytgcgData, setYtgcgData] = useState({
@@ -60,6 +61,10 @@ const BaziInfo: FC<
     weight_d: 0,
     weight_h: 0,
   });
+
+  // 公共弹窗
+  const [isShowModal, setIsShowMoal] = useState(false);
+  const [modalText, setModalText] = useState('');
 
   useEffect(() => {
     const {gender, date} = props.route.params;
@@ -245,7 +250,11 @@ const BaziInfo: FC<
                 const ss_text = item.ss[index];
                 return (
                   <Col key={'ss_' + ss_text + index + y}>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setModalText(Shensha.getDetails(ss_text));
+                        setIsShowMoal(true);
+                      }}>
                       <Text style={styles.tenText}>{ss_text}</Text>
                     </TouchableOpacity>
                   </Col>
@@ -522,8 +531,12 @@ const BaziInfo: FC<
           </Row>
         </View>
 
-        <Text>{JSON.stringify(ytgcgData, null, 4)}</Text>
+        {/* <Text>{JSON.stringify(ytgcgData, null, 4)}</Text> */}
         {/* <Text>{JSON.stringify(pillarData, null, 4)}</Text> */}
+        {/* 弹窗 */}
+        <MyModal isShow={isShowModal} onClose={() => setIsShowMoal(false)}>
+          <Text>{modalText}</Text>
+        </MyModal>
       </ScrollView>
     </View>
   );
