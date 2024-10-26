@@ -81,7 +81,7 @@ export default class Ytgcg {
     },
     day: {
       1: 0.5,
-      2: 0.1,
+      2: 1.0,
       3: 0.8,
       4: 1.5,
       5: 1.6,
@@ -401,7 +401,7 @@ export default class Ytgcg {
       this.weight.day[yinDay as keyof Ytgcg],
       this.weight.hour[hh[1] as DZ_12],
     ];
-    const weight = weight_y + weight_m + weight_d + weight_h;
+    const weight = Math.round((weight_y + weight_m + weight_d + weight_h) * 10) / 10;
 
     const weight_text =
       this.chineseDigits[+String(weight * 10)[0]] +

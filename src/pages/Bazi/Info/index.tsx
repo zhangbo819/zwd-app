@@ -90,6 +90,7 @@ const BaziInfo: FC<
       newPaiInfo.yinli[1],
       newPaiInfo.yinli[2],
     );
+    // console.log('newYtgcgData', newYtgcgData)
     setYtgcgData(newYtgcgData);
   }, [props.route.params]);
 
@@ -495,8 +496,8 @@ const BaziInfo: FC<
             <Text style={styles.yinyangText}>{ytgcgData.comment}</Text>
           </Row>
         </View>
-        <Text>{JSON.stringify(paipanInfo, null, 4)}</Text>
-        {/* <Text>{JSON.stringify(pillarData, null, 4)}</Text> */}
+        {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
+        <Text>{JSON.stringify(pillarData, null, 4)}</Text>
       </ScrollView>
     </View>
   );
