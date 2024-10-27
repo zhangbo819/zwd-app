@@ -1,4 +1,4 @@
-import {DZ_12, JZ_60} from './wuxing';
+import {DZ, JZ_60} from './wuxing';
 
 // 袁天罡称骨
 export default class Ytgcg {
@@ -112,18 +112,18 @@ export default class Ytgcg {
       30: 0.6,
     },
     hour: {
-      [DZ_12.子]: 1.6,
-      [DZ_12.丑]: 0.6,
-      [DZ_12.寅]: 0.7,
-      [DZ_12.卯]: 1.0,
-      [DZ_12.辰]: 0.9,
-      [DZ_12.巳]: 1.6,
-      [DZ_12.午]: 0.1,
-      [DZ_12.未]: 0.8,
-      [DZ_12.申]: 0.8,
-      [DZ_12.酉]: 0.9,
-      [DZ_12.戌]: 0.6,
-      [DZ_12.亥]: 0.6,
+      [DZ.子]: 1.6,
+      [DZ.丑]: 0.6,
+      [DZ.寅]: 0.7,
+      [DZ.卯]: 1.0,
+      [DZ.辰]: 0.9,
+      [DZ.巳]: 1.6,
+      [DZ.午]: 0.1,
+      [DZ.未]: 0.8,
+      [DZ.申]: 0.8,
+      [DZ.酉]: 0.9,
+      [DZ.戌]: 0.6,
+      [DZ.亥]: 0.6,
     },
   };
   static comment = {
@@ -399,7 +399,7 @@ export default class Ytgcg {
       this.weight.year[yy as JZ_60],
       this.weight.mouth[yinMouth as keyof Ytgcg],
       this.weight.day[yinDay as keyof Ytgcg],
-      this.weight.hour[hh[1] as DZ_12],
+      this.weight.hour[hh[1] as DZ],
     ];
     const weight = Math.round((weight_y + weight_m + weight_d + weight_h) * 10) / 10;
 

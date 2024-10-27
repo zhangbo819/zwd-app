@@ -1,4 +1,4 @@
-import {DZ_12, JZ_60, TG_10} from './wuxing';
+import {DZ, getXun, JZ_60, TG} from './wuxing';
 
 // TODO add more
 export enum ShenshaItem {
@@ -17,6 +17,16 @@ export enum ShenshaItem {
   国印 = '国印',
   三奇贵人 = '三奇贵人',
   文昌贵人 = '文昌贵人',
+  华盖 = '华盖',
+  天医 = '天医',
+  金舆 = '金舆',
+  空亡 = '空亡',
+  灾煞 = '灾煞',
+  劫煞 = '劫煞',
+  亡神 = '亡神',
+  羊刃 = '羊刃',
+  飞刃 = '飞刃',
+  血刃 = '血刃',
 }
 
 export default class Shensha {
@@ -31,40 +41,40 @@ export default class Shensha {
         let res: false | ShenshaItem.天乙贵人 = false;
         // console.log('bazi, target', bazi, target);
 
-        [nz[0] as TG_10, rz[0] as TG_10].forEach(i => {
-          const target_dz = target[1] as DZ_12;
+        [nz[0] as TG, rz[0] as TG].forEach(i => {
+          const target_dz = target[1] as DZ;
           switch (i) {
-            case TG_10.甲:
-            case TG_10.戊: {
-              if ([DZ_12.丑, DZ_12.未].includes(target_dz)) {
+            case TG.甲:
+            case TG.戊: {
+              if ([DZ.丑, DZ.未].includes(target_dz)) {
                 res = ShenshaItem.天乙贵人;
               }
               break;
             }
-            case TG_10.乙:
-            case TG_10.己: {
-              if ([DZ_12.子, DZ_12.申].includes(target_dz)) {
+            case TG.乙:
+            case TG.己: {
+              if ([DZ.子, DZ.申].includes(target_dz)) {
                 res = ShenshaItem.天乙贵人;
               }
               break;
             }
-            case TG_10.丙:
-            case TG_10.丁: {
-              if ([DZ_12.亥, DZ_12.酉].includes(target_dz)) {
+            case TG.丙:
+            case TG.丁: {
+              if ([DZ.亥, DZ.酉].includes(target_dz)) {
                 res = ShenshaItem.天乙贵人;
               }
               break;
             }
-            case TG_10.壬:
-            case TG_10.癸: {
-              if ([DZ_12.卯, DZ_12.巳].includes(target_dz)) {
+            case TG.壬:
+            case TG.癸: {
+              if ([DZ.卯, DZ.巳].includes(target_dz)) {
                 res = ShenshaItem.天乙贵人;
               }
               break;
             }
-            case TG_10.庚:
-            case TG_10.辛: {
-              if ([DZ_12.寅, DZ_12.午].includes(target_dz)) {
+            case TG.庚:
+            case TG.辛: {
+              if ([DZ.寅, DZ.午].includes(target_dz)) {
                 res = ShenshaItem.天乙贵人;
               }
               break;
@@ -84,18 +94,18 @@ export default class Shensha {
 
         const map = [
           '',
-          TG_10.丁,
-          DZ_12.申,
-          TG_10.壬,
-          TG_10.辛,
-          DZ_12.亥,
-          TG_10.甲,
-          TG_10.癸,
-          DZ_12.寅,
-          TG_10.丙,
-          TG_10.乙,
-          DZ_12.巳,
-          TG_10.庚,
+          TG.丁,
+          DZ.申,
+          TG.壬,
+          TG.辛,
+          DZ.亥,
+          TG.甲,
+          TG.癸,
+          DZ.寅,
+          TG.丙,
+          TG.乙,
+          DZ.巳,
+          TG.庚,
         ];
 
         // console.log('yinli', yinli, map[mm]);
@@ -116,31 +126,31 @@ export default class Shensha {
         let res: false | ShenshaItem.月德贵人 = false;
 
         switch (yuezhi) {
-          case DZ_12.寅:
-          case DZ_12.午:
-          case DZ_12.戌:
-            if (target[0] === TG_10.丙) {
+          case DZ.寅:
+          case DZ.午:
+          case DZ.戌:
+            if (target[0] === TG.丙) {
               res = ShenshaItem.月德贵人;
             }
             break;
-          case DZ_12.申:
-          case DZ_12.子:
-          case DZ_12.辰:
-            if (target[0] === TG_10.壬) {
+          case DZ.申:
+          case DZ.子:
+          case DZ.辰:
+            if (target[0] === TG.壬) {
               res = ShenshaItem.月德贵人;
             }
             break;
-          case DZ_12.亥:
-          case DZ_12.卯:
-          case DZ_12.未:
-            if (target[0] === TG_10.甲) {
+          case DZ.亥:
+          case DZ.卯:
+          case DZ.未:
+            if (target[0] === TG.甲) {
               res = ShenshaItem.月德贵人;
             }
             break;
-          case DZ_12.巳:
-          case DZ_12.酉:
-          case DZ_12.丑:
-            if (target[0] === TG_10.庚) {
+          case DZ.巳:
+          case DZ.酉:
+          case DZ.丑:
+            if (target[0] === TG.庚) {
               res = ShenshaItem.月德贵人;
             }
             break;
@@ -158,63 +168,63 @@ export default class Shensha {
         let res: false | ShenshaItem.天德合 = false;
 
         switch (yuezhi) {
-          case DZ_12.寅:
-            if (target[0] === TG_10.壬) {
+          case DZ.寅:
+            if (target[0] === TG.壬) {
               res = ShenshaItem.天德合;
             }
             break;
-          case DZ_12.卯:
-            if (target[1] === DZ_12.巳) {
+          case DZ.卯:
+            if (target[1] === DZ.巳) {
               res = ShenshaItem.天德合;
             }
             break;
-          case DZ_12.辰:
-            if (target[0] === TG_10.丁) {
+          case DZ.辰:
+            if (target[0] === TG.丁) {
               res = ShenshaItem.天德合;
             }
             break;
-          case DZ_12.巳:
-            if (target[0] === TG_10.丙) {
+          case DZ.巳:
+            if (target[0] === TG.丙) {
               res = ShenshaItem.天德合;
             }
             break;
-          case DZ_12.午:
-            if (target[1] === DZ_12.寅) {
+          case DZ.午:
+            if (target[1] === DZ.寅) {
               res = ShenshaItem.天德合;
             }
             break;
-          case DZ_12.未:
-            if (target[0] === TG_10.己) {
+          case DZ.未:
+            if (target[0] === TG.己) {
               res = ShenshaItem.天德合;
             }
             break;
-          case DZ_12.申:
-            if (target[0] === TG_10.戊) {
+          case DZ.申:
+            if (target[0] === TG.戊) {
               res = ShenshaItem.天德合;
             }
             break;
-          case DZ_12.酉:
-            if (target[1] === DZ_12.亥) {
+          case DZ.酉:
+            if (target[1] === DZ.亥) {
               res = ShenshaItem.天德合;
             }
             break;
-          case DZ_12.戌:
-            if (target[0] === TG_10.辛) {
+          case DZ.戌:
+            if (target[0] === TG.辛) {
               res = ShenshaItem.天德合;
             }
             break;
-          case DZ_12.亥:
-            if (target[0] === TG_10.庚) {
+          case DZ.亥:
+            if (target[0] === TG.庚) {
               res = ShenshaItem.天德合;
             }
             break;
-          case DZ_12.子:
-            if (target[1] === DZ_12.申) {
+          case DZ.子:
+            if (target[1] === DZ.申) {
               res = ShenshaItem.天德合;
             }
             break;
-          case DZ_12.丑:
-            if (target[0] === TG_10.乙) {
+          case DZ.丑:
+            if (target[0] === TG.乙) {
               res = ShenshaItem.天德合;
             }
             break;
@@ -231,31 +241,31 @@ export default class Shensha {
         let res: false | ShenshaItem.月德合 = false;
 
         switch (yuezhi) {
-          case DZ_12.寅:
-          case DZ_12.午:
-          case DZ_12.戌:
-            if (target[0] === TG_10.辛) {
+          case DZ.寅:
+          case DZ.午:
+          case DZ.戌:
+            if (target[0] === TG.辛) {
               res = ShenshaItem.月德合;
             }
             break;
-          case DZ_12.申:
-          case DZ_12.子:
-          case DZ_12.辰:
-            if (target[0] === TG_10.丁) {
+          case DZ.申:
+          case DZ.子:
+          case DZ.辰:
+            if (target[0] === TG.丁) {
               res = ShenshaItem.月德合;
             }
             break;
-          case DZ_12.亥:
-          case DZ_12.卯:
-          case DZ_12.未:
-            if (target[0] === TG_10.己) {
+          case DZ.亥:
+          case DZ.卯:
+          case DZ.未:
+            if (target[0] === TG.己) {
               res = ShenshaItem.月德合;
             }
             break;
-          case DZ_12.巳:
-          case DZ_12.酉:
-          case DZ_12.丑:
-            if (target[0] === TG_10.乙) {
+          case DZ.巳:
+          case DZ.酉:
+          case DZ.丑:
+            if (target[0] === TG.乙) {
               res = ShenshaItem.月德合;
             }
             break;
@@ -268,35 +278,36 @@ export default class Shensha {
       text: `春戊寅, 夏甲午, 秋戊申, 冬甲子。
         化险为夷之神，可解危难，处世无忧，对犯有刑事信息的人尤为有利。天赦是化险为夷之星，能解人危难。尤其对犯法之人，有宽大处理之可能。纵有过错也可得到宽恕或赦免。`,
       rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
-        const [, yuezhu] = bazi;
+        const [, yuezhu, rizhu] = bazi;
         const [, yuezhi] = yuezhu;
         let res: false | ShenshaItem.天赦日 = false;
 
+        if (rizhu !== target) return false;
         switch (yuezhi) {
-          case DZ_12.寅:
-          case DZ_12.卯:
-          case DZ_12.辰:
+          case DZ.寅:
+          case DZ.卯:
+          case DZ.辰:
             if (target === JZ_60.戊寅) {
               res = ShenshaItem.天赦日;
             }
             break;
-          case DZ_12.巳:
-          case DZ_12.午:
-          case DZ_12.未:
+          case DZ.巳:
+          case DZ.午:
+          case DZ.未:
             if (target === JZ_60.甲午) {
               res = ShenshaItem.天赦日;
             }
             break;
-          case DZ_12.申:
-          case DZ_12.酉:
-          case DZ_12.戌:
+          case DZ.申:
+          case DZ.酉:
+          case DZ.戌:
             if (target === JZ_60.戊申) {
               res = ShenshaItem.天赦日;
             }
             break;
-          case DZ_12.亥:
-          case DZ_12.子:
-          case DZ_12.丑:
+          case DZ.亥:
+          case DZ.子:
+          case DZ.丑:
             if (target === JZ_60.甲子) {
               res = ShenshaItem.天赦日;
             }
@@ -324,53 +335,45 @@ export default class Shensha {
         let res: false | ShenshaItem.禄神 = false;
 
         switch (rigan) {
-          case TG_10.甲:
-            if (target[1] === DZ_12.寅) {
+          case TG.甲:
+            if (target[1] === DZ.寅) {
               res = ShenshaItem.禄神;
             }
             break;
-          case TG_10.乙:
-            if (target[1] === DZ_12.卯) {
+          case TG.乙:
+            if (target[1] === DZ.卯) {
               res = ShenshaItem.禄神;
             }
             break;
-          case TG_10.丙:
-            if (target[1] === DZ_12.巳) {
+          case TG.丙:
+          case TG.戊:
+            if (target[1] === DZ.巳) {
               res = ShenshaItem.禄神;
             }
             break;
-          case TG_10.丁:
-            if (target[1] === DZ_12.午) {
+          case TG.丁:
+          case TG.己:
+            if (target[1] === DZ.午) {
               res = ShenshaItem.禄神;
             }
             break;
-          case TG_10.戊:
-            if (target[1] === DZ_12.巳) {
+          case TG.庚:
+            if (target[1] === DZ.申) {
               res = ShenshaItem.禄神;
             }
             break;
-          case TG_10.己:
-            if (target[1] === DZ_12.午) {
+          case TG.辛:
+            if (target[1] === DZ.酉) {
               res = ShenshaItem.禄神;
             }
             break;
-          case TG_10.庚:
-            if (target[1] === DZ_12.申) {
+          case TG.壬:
+            if (target[1] === DZ.亥) {
               res = ShenshaItem.禄神;
             }
             break;
-          case TG_10.辛:
-            if (target[1] === DZ_12.酉) {
-              res = ShenshaItem.禄神;
-            }
-            break;
-          case TG_10.壬:
-            if (target[1] === DZ_12.亥) {
-              res = ShenshaItem.禄神;
-            }
-            break;
-          case TG_10.癸:
-            if (target[1] === DZ_12.子) {
+          case TG.癸:
+            if (target[1] === DZ.子) {
               res = ShenshaItem.禄神;
             }
             break;
@@ -394,58 +397,33 @@ export default class Shensha {
         const [, rizhi] = rizhu;
         let res: false | ShenshaItem.驿马 = false;
 
-        console.log(
-          'target',
-          target,
-          [DZ_12.巳, DZ_12.酉, DZ_12.丑].some(
-            i => i === nianzhi || i === rizhi,
-          ),
-        );
+        function verify(t: DZ) {
+          switch (true) {
+            case [DZ.申, DZ.子, DZ.辰].includes(t):
+              if (target[1] === DZ.寅) {
+                res = ShenshaItem.驿马;
+              }
+              break;
+            case [DZ.寅, DZ.午, DZ.戌].includes(t):
+              if (target[1] === DZ.申) {
+                res = ShenshaItem.驿马;
+              }
+              break;
+            case [DZ.巳, DZ.酉, DZ.丑].includes(t):
+              if (target[1] === DZ.亥) {
+                res = ShenshaItem.驿马;
+              }
+              break;
+            case [DZ.亥, DZ.卯, DZ.未].includes(t):
+              if (target[1] === DZ.巳) {
+                res = ShenshaItem.驿马;
+              }
+              break;
+          }
+        }
 
-        switch (true) {
-          case [DZ_12.申, DZ_12.子, DZ_12.辰].includes(nianzhi as DZ_12):
-            if (target[1] === DZ_12.寅) {
-              res = ShenshaItem.驿马;
-            }
-            break;
-          case [DZ_12.寅, DZ_12.午, DZ_12.戌].includes(nianzhi as DZ_12):
-            if (target[1] === DZ_12.申) {
-              res = ShenshaItem.驿马;
-            }
-            break;
-          case [DZ_12.巳, DZ_12.酉, DZ_12.丑].includes(nianzhi as DZ_12):
-            if (target[1] === DZ_12.亥) {
-              res = ShenshaItem.驿马;
-            }
-            break;
-          case [DZ_12.亥, DZ_12.卯, DZ_12.未].includes(nianzhi as DZ_12):
-            if (target[1] === DZ_12.巳) {
-              res = ShenshaItem.驿马;
-            }
-            break;
-        }
-        switch (true) {
-          case [DZ_12.申, DZ_12.子, DZ_12.辰].includes(rizhi as DZ_12):
-            if (target[1] === DZ_12.寅) {
-              res = ShenshaItem.驿马;
-            }
-            break;
-          case [DZ_12.寅, DZ_12.午, DZ_12.戌].includes(rizhi as DZ_12):
-            if (target[1] === DZ_12.申) {
-              res = ShenshaItem.驿马;
-            }
-            break;
-          case [DZ_12.巳, DZ_12.酉, DZ_12.丑].includes(rizhi as DZ_12):
-            if (target[1] === DZ_12.亥) {
-              res = ShenshaItem.驿马;
-            }
-            break;
-          case [DZ_12.亥, DZ_12.卯, DZ_12.未].includes(rizhi as DZ_12):
-            if (target[1] === DZ_12.巳) {
-              res = ShenshaItem.驿马;
-            }
-            break;
-        }
+        verify(nianzhi as DZ);
+        verify(rizhi as DZ);
 
         return res;
       },
@@ -457,42 +435,40 @@ export default class Shensha {
         let res: false | ShenshaItem.太极贵人 = false;
         // console.log('bazi, target', bazi, target);
 
-        [nz[0] as TG_10, rz[0] as TG_10].forEach(i => {
-          const target_dz = target[1] as DZ_12;
+        [nz[0] as TG, rz[0] as TG].forEach(i => {
+          const target_dz = target[1] as DZ;
           switch (i) {
-            case TG_10.甲:
-            case TG_10.乙: {
-              if ([DZ_12.子, DZ_12.午].includes(target_dz)) {
+            case TG.甲:
+            case TG.乙: {
+              if ([DZ.子, DZ.午].includes(target_dz)) {
                 res = ShenshaItem.太极贵人;
               }
               break;
             }
-            case TG_10.丙:
-            case TG_10.丁: {
-              if ([DZ_12.酉, DZ_12.卯].includes(target_dz)) {
+            case TG.丙:
+            case TG.丁: {
+              if ([DZ.酉, DZ.卯].includes(target_dz)) {
                 res = ShenshaItem.太极贵人;
               }
               break;
             }
-            case TG_10.戊:
-            case TG_10.己: {
-              if (
-                [DZ_12.辰, DZ_12.戌, DZ_12.丑, DZ_12.未].includes(target_dz)
-              ) {
+            case TG.戊:
+            case TG.己: {
+              if ([DZ.辰, DZ.戌, DZ.丑, DZ.未].includes(target_dz)) {
                 res = ShenshaItem.太极贵人;
               }
               break;
             }
-            case TG_10.庚:
-            case TG_10.辛: {
-              if ([DZ_12.寅, DZ_12.亥].includes(target_dz)) {
+            case TG.庚:
+            case TG.辛: {
+              if ([DZ.寅, DZ.亥].includes(target_dz)) {
                 res = ShenshaItem.太极贵人;
               }
               break;
             }
-            case TG_10.壬:
-            case TG_10.癸: {
-              if ([DZ_12.申, DZ_12.巳].includes(target_dz)) {
+            case TG.壬:
+            case TG.癸: {
+              if ([DZ.申, DZ.巳].includes(target_dz)) {
                 res = ShenshaItem.太极贵人;
               }
               break;
@@ -514,31 +490,31 @@ export default class Shensha {
         let res: false | ShenshaItem.将星 = false;
 
         switch (rizhi) {
-          case DZ_12.寅:
-          case DZ_12.午:
-          case DZ_12.戌:
-            if (target[1] === DZ_12.午) {
+          case DZ.寅:
+          case DZ.午:
+          case DZ.戌:
+            if (target[1] === DZ.午) {
               res = ShenshaItem.将星;
             }
             break;
-          case DZ_12.申:
-          case DZ_12.子:
-          case DZ_12.辰:
-            if (target[1] === DZ_12.子) {
+          case DZ.申:
+          case DZ.子:
+          case DZ.辰:
+            if (target[1] === DZ.子) {
               res = ShenshaItem.将星;
             }
             break;
-          case DZ_12.亥:
-          case DZ_12.卯:
-          case DZ_12.未:
-            if (target[1] === DZ_12.卯) {
+          case DZ.亥:
+          case DZ.卯:
+          case DZ.未:
+            if (target[1] === DZ.卯) {
               res = ShenshaItem.将星;
             }
             break;
-          case DZ_12.巳:
-          case DZ_12.酉:
-          case DZ_12.丑:
-            if (target[1] === DZ_12.酉) {
+          case DZ.巳:
+          case DZ.酉:
+          case DZ.丑:
+            if (target[1] === DZ.酉) {
               res = ShenshaItem.将星;
             }
             break;
@@ -558,53 +534,53 @@ export default class Shensha {
         let res: false | ShenshaItem.国印 = false;
 
         switch (true) {
-          case [niangan, rigan].includes(TG_10.甲):
-            if (target[1] === DZ_12.戌) {
+          case [niangan, rigan].includes(TG.甲):
+            if (target[1] === DZ.戌) {
               res = ShenshaItem.国印;
             }
             break;
-          case [niangan, rigan].includes(TG_10.乙):
-            if (target[1] === DZ_12.亥) {
+          case [niangan, rigan].includes(TG.乙):
+            if (target[1] === DZ.亥) {
               res = ShenshaItem.国印;
             }
             break;
-          case [niangan, rigan].includes(TG_10.丙):
-            if (target[1] === DZ_12.丑) {
+          case [niangan, rigan].includes(TG.丙):
+            if (target[1] === DZ.丑) {
               res = ShenshaItem.国印;
             }
             break;
-          case [niangan, rigan].includes(TG_10.丁):
-            if (target[1] === DZ_12.寅) {
+          case [niangan, rigan].includes(TG.丁):
+            if (target[1] === DZ.寅) {
               res = ShenshaItem.国印;
             }
             break;
-          case [niangan, rigan].includes(TG_10.戊):
-            if (target[1] === DZ_12.丑) {
+          case [niangan, rigan].includes(TG.戊):
+            if (target[1] === DZ.丑) {
               res = ShenshaItem.国印;
             }
             break;
-          case [niangan, rigan].includes(TG_10.己):
-            if (target[1] === DZ_12.寅) {
+          case [niangan, rigan].includes(TG.己):
+            if (target[1] === DZ.寅) {
               res = ShenshaItem.国印;
             }
             break;
-          case [niangan, rigan].includes(TG_10.庚):
-            if (target[1] === DZ_12.辰) {
+          case [niangan, rigan].includes(TG.庚):
+            if (target[1] === DZ.辰) {
               res = ShenshaItem.国印;
             }
             break;
-          case [niangan, rigan].includes(TG_10.辛):
-            if (target[1] === DZ_12.巳) {
+          case [niangan, rigan].includes(TG.辛):
+            if (target[1] === DZ.巳) {
               res = ShenshaItem.国印;
             }
             break;
-          case [niangan, rigan].includes(TG_10.壬):
-            if (target[1] === DZ_12.未) {
+          case [niangan, rigan].includes(TG.壬):
+            if (target[1] === DZ.未) {
               res = ShenshaItem.国印;
             }
             break;
-          case [niangan, rigan].includes(TG_10.癸):
-            if (target[1] === DZ_12.申) {
+          case [niangan, rigan].includes(TG.癸):
+            if (target[1] === DZ.申) {
               res = ShenshaItem.国印;
             }
             break;
@@ -624,23 +600,25 @@ export default class Shensha {
 （四）带元辰, 桃花, 天罗地网为无用。三奇具有特殊奇材的作用。
 带天乙贵人者, 勋业超群。带天月二德者,不犯意外事故。带三合入局者,国家柱石。带官符劫煞者, 器识宏远。带空生旺者,脱尘离俗,不因有钱有势而惑乱，不因武力或权势而胁迫屈服。
 三奇必须命局配合得体, 并有其它贵人吉星扶持才有荣华福寿,如果只有三奇无贵地, 命局组合不好, 势必钱财不丰，容易受欺负。即使命局较清粹,若三奇不落贵地而落空亡, 较为孤独, 即是蓬莱三岛客,万里走江山了。`,
-      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60]) {
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
         const [nianzhu, yuezhi, rizhu, shizhu] = bazi;
         let res: false | ShenshaItem.三奇贵人 = false;
+
+        if (target !== rizhu) return false;
 
         if (
           [
             nianzhu[0] + yuezhi[0] + rizhu[0],
             yuezhi[0] + rizhu[0] + shizhu[0],
-          ].includes(TG_10.甲 + TG_10.戊 + TG_10.庚) ||
+          ].includes(TG.甲 + TG.戊 + TG.庚) ||
           [
             nianzhu[0] + yuezhi[0] + rizhu[0],
             yuezhi[0] + rizhu[0] + shizhu[0],
-          ].includes(TG_10.乙 + TG_10.丙 + TG_10.丁) ||
+          ].includes(TG.乙 + TG.丙 + TG.丁) ||
           [
             nianzhu[0] + yuezhi[0] + rizhu[0],
             yuezhi[0] + rizhu[0] + shizhu[0],
-          ].includes(TG_10.壬 + TG_10.癸 + TG_10.辛)
+          ].includes(TG.壬 + TG.癸 + TG.辛)
         ) {
           res = ShenshaItem.三奇贵人;
         }
@@ -660,58 +638,597 @@ export default class Shensha {
         let res: false | ShenshaItem.文昌贵人 = false;
 
         switch (true) {
-          case [niangan, rigan].includes(TG_10.甲):
-            if (target[1] === DZ_12.巳) {
+          case [niangan, rigan].includes(TG.甲):
+            if (target[1] === DZ.巳) {
               res = ShenshaItem.文昌贵人;
             }
             break;
-          case [niangan, rigan].includes(TG_10.乙):
-            if (target[1] === DZ_12.午) {
+          case [niangan, rigan].includes(TG.乙):
+            if (target[1] === DZ.午) {
               res = ShenshaItem.文昌贵人;
             }
             break;
-          case [niangan, rigan].includes(TG_10.丙):
-            if (target[1] === DZ_12.申) {
+          case [niangan, rigan].includes(TG.丙):
+            if (target[1] === DZ.申) {
               res = ShenshaItem.文昌贵人;
             }
             break;
-          case [niangan, rigan].includes(TG_10.丁):
-            if (target[1] === DZ_12.酉) {
+          case [niangan, rigan].includes(TG.丁):
+            if (target[1] === DZ.酉) {
               res = ShenshaItem.文昌贵人;
             }
             break;
-          case [niangan, rigan].includes(TG_10.戊):
-            if (target[1] === DZ_12.申) {
+          case [niangan, rigan].includes(TG.戊):
+            if (target[1] === DZ.申) {
               res = ShenshaItem.文昌贵人;
             }
             break;
-          case [niangan, rigan].includes(TG_10.己):
-            if (target[1] === DZ_12.酉) {
+          case [niangan, rigan].includes(TG.己):
+            if (target[1] === DZ.酉) {
               res = ShenshaItem.文昌贵人;
             }
             break;
-          case [niangan, rigan].includes(TG_10.庚):
-            if (target[1] === DZ_12.亥) {
+          case [niangan, rigan].includes(TG.庚):
+            if (target[1] === DZ.亥) {
               res = ShenshaItem.文昌贵人;
             }
             break;
-          case [niangan, rigan].includes(TG_10.辛):
-            if (target[1] === DZ_12.子) {
+          case [niangan, rigan].includes(TG.辛):
+            if (target[1] === DZ.子) {
               res = ShenshaItem.文昌贵人;
             }
             break;
-          case [niangan, rigan].includes(TG_10.壬):
-            if (target[1] === DZ_12.寅) {
+          case [niangan, rigan].includes(TG.壬):
+            if (target[1] === DZ.寅) {
               res = ShenshaItem.文昌贵人;
             }
             break;
-          case [niangan, rigan].includes(TG_10.癸):
-            if (target[1] === DZ_12.卯) {
+          case [niangan, rigan].includes(TG.癸):
+            if (target[1] === DZ.卯) {
               res = ShenshaItem.文昌贵人;
             }
             break;
         }
 
+        return res;
+      },
+    },
+    [ShenshaItem.华盖]: {
+      text: `
+        寅午戌见戌, 亥卯未见未,申子辰见辰, 巳酉丑见丑.
+        文章、艺术、聪明、孤独，宗教、佛道，浪迹江湖。
+        艺术之星，多有文学，音乐，设计方面的天赋，但性情较孤独，具有敏感性质。
+        华盖是一颗吉祥之星，有揽护君主威严的职权，所以华盖是权力的象征，也是工作职事变化的代表性，亦是艺术之星。
+        华盖临生旺地为喜用，此人才华横溢；
+        华盖临（日干）墓地，在日支和时柱为忌，不利子女的健康或运势；若有气，可能为僧道；
+        华盖+七杀、桃花，可能成为艺人、巫师；
+        华盖+桃花+贵人，会为艺人明星。
+        华盖是八字忌神，虽然聪明好学，但个性比较有孤僻现象，常见血气方刚，不靠六亲。如果是八字喜神，一生可以自立更生，见解超群，才华有过人之处；可谓气宇不凡，是一个有条件、有能力成就事业的人。
+        双华盖入命：命中多贵人。华盖为八字吉神：一生利官近贵，技艺出众。岁运华盖逢刑冲：事职有动；若岁运不利，小心意外危难。华盖坐空亡、或逢刑冲：工作起伏变动较多。华盖带将星，福气深厚。华盖在空亡、死、绝之地，可修身养性，修习佛理，净化自身。女命，华盖坐日支：形同寡宿。
+        一般都称华盖为孤独之星，如上所言确实如此。有很多方外出家人、在家修道人，甚至九流技术艺业的人，八字里面都带有华盖。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu, , rizhu] = bazi;
+        const [, nianzhi] = nianzhu;
+        const [, rizhi] = rizhu;
+        let res: false | ShenshaItem.华盖 = false;
+
+        function verify(t: DZ) {
+          switch (true) {
+            case [DZ.申, DZ.子, DZ.辰].includes(t):
+              if (target[1] === DZ.辰) {
+                res = ShenshaItem.华盖;
+              }
+              break;
+            case [DZ.寅, DZ.午, DZ.戌].includes(t):
+              if (target[1] === DZ.戌) {
+                res = ShenshaItem.华盖;
+              }
+              break;
+            case [DZ.巳, DZ.酉, DZ.丑].includes(t):
+              if (target[1] === DZ.丑) {
+                res = ShenshaItem.华盖;
+              }
+              break;
+            case [DZ.亥, DZ.卯, DZ.未].includes(t):
+              if (target[1] === DZ.未) {
+                res = ShenshaItem.华盖;
+              }
+              break;
+          }
+        }
+
+        verify(nianzhi as DZ);
+        verify(rizhi as DZ);
+
+        return res;
+      },
+    },
+    [ShenshaItem.天医]: {
+      text: `
+        正月生见丑, 二月生见寅, 三月生见卯, 四月生见辰, 五月生见巳, 六月生见午, 七月生见未, 八月生见申, 九月生见酉, 十月生见戌, 十一月生见亥, 十二月生见子。
+        与医学有缘,少病,处死绝之地,则主人体弱，身体健康容易出问题。
+        天医是掌管疾病之事的星神。四柱逢天医,如不旺,又无贵人吉神相扶,不利于身体健康，容易身弱无力。若生旺又有贵人相生助,不仅身体健壮,而且特别适合从事医学、心理学、哲学等。学习力、理解力、观察力、模仿力、好奇心、研究心、直觉观等能力皆强。
+        宗教、医药、哲学、人文等学说之星。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60, yinli: number[]) {
+        const [, mm] = yinli;
+        let res: false | ShenshaItem.天医 = false;
+
+        const map = [
+          '',
+          DZ.丑,
+          DZ.寅,
+          DZ.卯,
+          DZ.辰,
+          DZ.巳,
+          DZ.午,
+          DZ.未,
+          DZ.酉,
+          DZ.戌,
+          DZ.亥,
+          DZ.子,
+        ];
+
+        // console.log('yinli', yinli, map[mm]);
+
+        if (target[1] === map[mm]) {
+          res = ShenshaItem.天医;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.金舆]: {
+      text: `
+        甲龙乙蛇丙戊羊, 丁己猴歌庚犬方, 辛猪壬牛癸逢虎, 凡人遇此福气昌。
+        财帛之星和配偶相关联，会受到配偶之资助，技术之相助。
+        与车有缘，拥有私车，交通事故等。日坐金舆：能得异性之助；命带金舆：得祖荫。又称金舆禄神，此星入命能得扶助，一生能得富贵。
+        女人逢之，幸福安吉、骨肉安泰。
+        男人逢之，得贤妻，享妻钱财，荣富显贵。
+        古代皇族，多带此星。金舆是贵人乘坐的车子。乃禄命之旌旗，三才之节钺。主人性柔、貌美，举止温顺。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu, , rizhu] = bazi;
+        let res: false | ShenshaItem.金舆 = false;
+
+        function verify(t: TG) {
+          switch (t) {
+            case TG.甲:
+              if (target[1] === DZ.辰) {
+                res = ShenshaItem.金舆;
+              }
+              break;
+            case TG.乙:
+              if (target[1] === DZ.巳) {
+                res = ShenshaItem.金舆;
+              }
+              break;
+            case TG.丙:
+            case TG.戊:
+              if (target[1] === DZ.未) {
+                res = ShenshaItem.金舆;
+              }
+              break;
+            case TG.丁:
+            case TG.己:
+              if (target[1] === DZ.申) {
+                res = ShenshaItem.金舆;
+              }
+              break;
+            case TG.庚:
+              if (target[1] === DZ.戌) {
+                res = ShenshaItem.金舆;
+              }
+              break;
+            case TG.辛:
+              if (target[1] === DZ.亥) {
+                res = ShenshaItem.金舆;
+              }
+              break;
+            case TG.壬:
+              if (target[1] === DZ.丑) {
+                res = ShenshaItem.金舆;
+              }
+              break;
+            case TG.癸:
+              if (target[1] === DZ.寅) {
+                res = ShenshaItem.金舆;
+              }
+              break;
+          }
+        }
+
+        verify(nianzhu[0] as TG);
+        verify(rizhu[0] as TG);
+
+        return res;
+      },
+    },
+    [ShenshaItem.空亡]: {
+      text: `
+      甲子旬在戌亥。甲戌旬在申酉。甲申旬在午未。甲午旬在辰巳。甲辰旬在寅卯。甲寅旬在子丑。
+      空亡入吉神，吉事减半；空亡入凶神，坏事威力减少。
+      空亡又名“天中”，凡命中所忌之凶星落入空亡则吉，命中所喜之吉星落入空亡则顿失其力，空亡本身并不主吉凶灾祥之事。空亡见三会，三合，六合不作空亡论。吉神空而喜见合，凶星空而忌见合。
+      空亡入命为八字忌神：判断多误，事易差错，人多迷糊，乏主见。多有无心之过错或是意外，一生常见四处奔走。可以说『空亡』是八字里面比劫畏惧见到的神煞。带双空亡：修行出家之人，或见在家居士，多为吃斋人。最怕时柱落空，有孤寡：姻缘迟来，恋情较晚，乃性拗之人。
+      空亡在年支上, 一是家运可能不太顺利，二是与母亲缘薄。空亡在月支上, 多主无兄弟姐妹, 或兄弟姐妹无靠。时值空亡多拗性,更遇华盖主少子。胎元支落空亡，昏蒙飘零。命中有空亡与咸池, 沐浴多者是艺人。若空亡与贵人,华盖一齐出现,则此人有大智慧,性情恬淡,品德清高,具有追求真理与智慧的超凡入圣之士,每易为世人钦仰与皈依。
+      伤官与空亡同柱：做事经常遭受阻碍。食神与空亡同柱：注意自身健康。正财与空亡同柱：做事辛苦，财钱不聚。偏财与空亡同柱：横财机会少。正官与空亡同柱：不利公职，威信不足。七杀与空亡同柱：权力难保。空亡与正印同柱：潜心修道之人，一生终见黄袍加身。比肩与空亡同柱：兄弟、朋友相交无情义可言。
+      劫财与空亡同柱：财钱难储，有来去之患。财神、禄神落入空亡之地：一生四处奔波，求财较为困难。女命，食神与空亡同柱：子息少。女命，空亡与正官或七杀同柱：感情多波折。八字喜神入空亡，失其功能。八字忌神入空亡，藏其凶讯。
+      空亡逢合化吉，初凶终吉。空亡逢合化忌，可能对命主不利。空亡逢冲，则空亡去。空亡在喜用之地，则喜神受制。空亡在忌神之地，则助其凶猛。
+      古人说，空亡入命只怕万事成空、心难如愿，有很多人饱读诗书、胸怀大志，却徒劳英雄无用武之地，或则感觉好事不临，却是杂琐不如意事始终不离身，一样的机会、一样的努力以赴，结果反而事与愿违，劳苦心力，空亡入命制喜助凶罢了。是否如此，或吉凶福祸如何，依八字而论定。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu, , rizhu] = bazi;
+        let res: false | ShenshaItem.空亡 = false;
+
+        function verifyXun(t: JZ_60) {
+          let res: DZ[] = [];
+          const xun = getXun(t);
+          switch (xun) {
+            case JZ_60.甲子:
+              res = [DZ.戌, DZ.亥];
+              break;
+            case JZ_60.甲戌:
+              res = [DZ.申, DZ.酉];
+              break;
+            case JZ_60.甲申:
+              res = [DZ.午, DZ.未];
+              break;
+            case JZ_60.甲午:
+              res = [DZ.辰, DZ.巳];
+              break;
+            case JZ_60.甲辰:
+              res = [DZ.寅, DZ.卯];
+              break;
+            case JZ_60.甲寅:
+              res = [DZ.子, DZ.丑];
+              break;
+          }
+          return res;
+        }
+
+        const xun_res = [...verifyXun(nianzhu), ...verifyXun(rizhu)];
+
+        if (xun_res.includes(target[1] as DZ)) {
+          res = ShenshaItem.空亡;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.灾煞]: {
+      text: `
+          申子辰见午, 亥卯未见酉, 寅午戌见子, 巳酉丑见卯。查法：以年支查余三支
+          又名白虎煞，主人身意外。有天月吉神相助，多主武权之威。
+          其性勇猛，冲破将星，谓之灾煞。
+          此煞主人身意外，根据所处五行支，在水火，防焚溺，金木，杖刃；土，坠落瘟疫。若与七杀同柱来克身，可能有危难。也主刑律官司。若灾煞是正官、正印的生旺之支，多是武权。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu] = bazi;
+        const [, nianzhi] = nianzhu;
+        let res: false | ShenshaItem.灾煞 = false;
+
+        switch (true) {
+          case [DZ.申, DZ.子, DZ.辰].includes(nianzhi as DZ):
+            if (target[1] === DZ.午) {
+              res = ShenshaItem.灾煞;
+            }
+            break;
+          case [DZ.寅, DZ.午, DZ.戌].includes(nianzhi as DZ):
+            if (target[1] === DZ.子) {
+              res = ShenshaItem.灾煞;
+            }
+            break;
+          case [DZ.巳, DZ.酉, DZ.丑].includes(nianzhi as DZ):
+            if (target[1] === DZ.卯) {
+              res = ShenshaItem.灾煞;
+            }
+            break;
+          case [DZ.亥, DZ.卯, DZ.未].includes(nianzhi as DZ):
+            if (target[1] === DZ.酉) {
+              res = ShenshaItem.灾煞;
+            }
+            break;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.劫煞]: {
+      text: `
+          寅午戌见亥，申子辰见巳，巳酉丑见寅，亥卯未见申。查法：以年日支查余三支, 三合局第三个字的下一位
+          入喜用支而处生旺则才智过人，可创业绩。反之家运可能不太顺利，难聚财，严重会惹上法律纠纷，事与愿违。
+          劫煞主意外危难、健康、刑法上面的问题。为喜具有竞争心，肯求上进，做事有魄力，敢担当。
+          劫煞与贵星同柱：谋事有成。劫煞与天乙贵人、或喜用神同柱：有才能和智谋。劫煞与羊刃同柱：小心意外危险。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu] = bazi;
+        const [, nianzhi] = nianzhu;
+        let res: false | ShenshaItem.劫煞 = false;
+
+        switch (true) {
+          case [DZ.申, DZ.子, DZ.辰].includes(nianzhi as DZ):
+            if (target[1] === DZ.巳) {
+              res = ShenshaItem.劫煞;
+            }
+            break;
+          case [DZ.寅, DZ.午, DZ.戌].includes(nianzhi as DZ):
+            if (target[1] === DZ.亥) {
+              res = ShenshaItem.劫煞;
+            }
+            break;
+          case [DZ.巳, DZ.酉, DZ.丑].includes(nianzhi as DZ):
+            if (target[1] === DZ.寅) {
+              res = ShenshaItem.劫煞;
+            }
+            break;
+          case [DZ.亥, DZ.卯, DZ.未].includes(nianzhi as DZ):
+            if (target[1] === DZ.申) {
+              res = ShenshaItem.劫煞;
+            }
+            break;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.亡神]: {
+      text: `
+          寅午戌见巳, 亥卯未见寅, 巳酉丑见申, 申子辰见亥。
+          查法：以年、日支查余三支, 三合局中神的前一位
+          临喜用，则善于谋略，胸有城府；临死绝则遇事浮躁，气量较小，脾气阴晴不定，经常任性而为。
+          亡神若为命局中所喜用的地支，并与吉神同柱，则会沉稳干练，谋略深算，严谨有威，好胜心强。如果恰为命局所忌的地支，又与其它凶煞同柱，则性情中存在着虚伪掩饰的成分，家业容易不顺，影响置业和储蓄；夫妻感情一般，多波折；子女的健康或运势也容易出现问题；自己也经常得罪人，严重的话会有法律纠纷出现。
+          亡神入命：城府多深，做事疑虑。
+          亡神与天乙贵人同现：老谋深算。
+          亡神为喜：面有威仪、足智多谋、处事严谨、断事如神，是一个真人不露相的人。
+          最怕亡神是命中凶忌之神：其人心性难定、事难如愿、脾气粗俗。
+          亡神入命为八字凶神的人，做起起事来总感觉无精打采，不利家运，一生难免争纷，严重者可能会惹上法律纠纷，容易涉足酒色场所。不管男命还是女命，夫妻间都容易争吵，子女也会有不省心的情况发生。古人论命特别强调了亡神入命的危害，其实不是没有道理。
+        `,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu, , rizhu] = bazi;
+        const [, nianzhi] = nianzhu;
+        const [, rizhi] = rizhu;
+        let res: false | ShenshaItem.亡神 = false;
+
+        function verify(t: DZ) {
+          switch (true) {
+            case [DZ.申, DZ.子, DZ.辰].includes(t):
+              if (target[1] === DZ.亥) {
+                res = ShenshaItem.亡神;
+              }
+              break;
+            case [DZ.寅, DZ.午, DZ.戌].includes(t):
+              if (target[1] === DZ.巳) {
+                res = ShenshaItem.亡神;
+              }
+              break;
+            case [DZ.巳, DZ.酉, DZ.丑].includes(t):
+              if (target[1] === DZ.申) {
+                res = ShenshaItem.亡神;
+              }
+              break;
+            case [DZ.亥, DZ.卯, DZ.未].includes(t):
+              if (target[1] === DZ.寅) {
+                res = ShenshaItem.亡神;
+              }
+              break;
+          }
+        }
+
+        verify(nianzhi as DZ);
+        verify(rizhi as DZ);
+
+        return res;
+      },
+    },
+    [ShenshaItem.羊刃]: {
+      text: `
+        甲日卯。乙日寅。丙日午。丁日巳。戊日午。己日巳。庚日酉。辛日申。壬日子。癸日亥。
+        查法：以日干查四地支。
+        武职之星，主观性、好胜心、倔强、刚烈、勇猛、担当、急躁。
+        羊刃+血刃+驿马同柱：人身意外、多惊多险、交通意外事故。
+        时刃者, 岁运并临, 可能会有意外危难。
+        年刃者，祖上家运可能不太顺利，影响到置产、钱财储蓄、家人之间的关系。
+        比如：癸卯 甲子 甲辰 癸酉此一八字出身农家。又如：乙酉 戊寅 庚申 戊寅此男命，年刃栽根，不仅少年丧父，且平生与妻不和。
+        一般格局中，透出杀神皆要制合，惟刃格大忌制化之。
+        羊刃常见于警察、军人。
+        羊刃是一种很强硬的气力，但它不一定是凶恶的，必须看八字中的整体组合。
+        假如一个人的八字很弱，羊刃可以起到很大的匡助作用，比如你贫穷困难时，羊刃就是一个强有力的兄弟，能帮助和支持你；假如八字比较旺，再来羊刃的话就危险了，缺乏适当制约的话，他会与你争夺，劫财。
+        羊刃是五行过旺之气，通常被认为是凶星。刃，即刀，故亦常与手术、杀伤有关。情绪容易激动，易树敌，生涯充满惊涛骇浪。从事机械、技术之研究，成功的人很多。虽然常碰到困难，但若成功时，所缔造的都是丰功伟业。
+        羊刃一忌重犯，二忌羊刃逢三合六合于岁运。三忌羊刃跟太岁冲战。羊刃一忌重犯叠遇，犯之必凶所谓“劫财羊刃，切忌时逢，岁运许临，祸患立至”是也。比如原局有子午卯酉四刃，岁运又逢则谓犯重刃，会主求财较为困难，与父亲缘薄，不常往来。夫妻感情多波折。其中尤以午午、酉酉相见大凶，以午酉重叠有相刑之象。
+        二忌羊刃逢三合六合于岁运。太岁乃凶神羊刃乃凶煞，羊刃三合六合太岁，则小心意外事故。比如甲刃在卯忌亥未戍流岁合之，若命中原犯三合六合，岁运再逢大忌；若原局无此病端则刃合岁灾稍轻。
+        三忌羊刃跟太岁冲战。经云：“羊刃冲合岁君，勃然祸至”是也。羊刃不可冲犯，犯之大怒凶性发；命中原刃最忌跟太岁冲战，比如甲刃在卯忌见酉年相战，可能会有意外的危难。
+        羊刃制凶要官杀制化去其暴气方可温顺驯服。甲刃在卯。要庚辛申制合，忌酉冲之；丙刃在午，要见壬癸亥制合，忌子冲之；戊刃在午，要见甲乙寅卯制合，忌子冲亡；庚刃在酉，要丙丁巳午制亡，忌卯冲之；壬刃在子，要戊已戍丑未制之，忌午冲之。
+        刃杀两凶互相制伏，日主从中渔利方善驾驭也。刃杀相见也要力量相等匹配，方为大贵之造。刃重杀柔要补杀，杀重刃轻要补刃，或用食制杀印化杀来助刃平定杀气。
+        羊刃颇忌伤食之星护卫，则杀官制化之功难于作用；若羊刃与伤食互倚成党，对命主可能会有不利的事情。
+        `,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [, , rizhu] = bazi;
+        const [rigan] = rizhu;
+        let res: false | ShenshaItem.羊刃 = false;
+
+        function verify(t: TG) {
+          switch (t) {
+            case TG.甲:
+              if (target[1] === DZ.卯) {
+                res = ShenshaItem.羊刃;
+              }
+              break;
+            case TG.乙:
+              if (target[1] === DZ.寅) {
+                res = ShenshaItem.羊刃;
+              }
+              break;
+            case TG.丙:
+            case TG.戊:
+              if (target[1] === DZ.午) {
+                res = ShenshaItem.羊刃;
+              }
+              break;
+            case TG.丁:
+            case TG.己:
+              if (target[1] === DZ.巳) {
+                res = ShenshaItem.羊刃;
+              }
+              break;
+            case TG.庚:
+              if (target[1] === DZ.酉) {
+                res = ShenshaItem.羊刃;
+              }
+              break;
+            case TG.辛:
+              if (target[1] === DZ.申) {
+                res = ShenshaItem.羊刃;
+              }
+              break;
+            case TG.壬:
+              if (target[1] === DZ.子) {
+                res = ShenshaItem.羊刃;
+              }
+              break;
+            case TG.癸:
+              if (target[1] === DZ.亥) {
+                res = ShenshaItem.羊刃;
+              }
+              break;
+          }
+        }
+
+        verify(rigan as TG);
+
+        return res;
+      },
+    },
+    [ShenshaItem.飞刃]: {
+      text: `
+        羊刃的六冲。甲羊刃在卯，如果地支见酉，即为飞刃; 乙刃在寅, 寅申相冲, 即为飞刃。
+        查法：以日干查四地支。
+        人身意外、争端、是非之星，出现在月时两柱最严重。（除非有贵人星化解，最忌刑冲）。
+        如果原局羊刃，再遇其他支或流年有飞刃，身体健康上容易出问题。
+        `,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [, , rizhu] = bazi;
+        const [rigan] = rizhu;
+        let res: false | ShenshaItem.飞刃 = false;
+
+        function verify(t: TG) {
+          switch (t) {
+            case TG.甲:
+              if (target[1] === DZ.酉) {
+                res = ShenshaItem.飞刃;
+              }
+              break;
+            case TG.乙:
+              if (target[1] === DZ.申) {
+                res = ShenshaItem.飞刃;
+              }
+              break;
+            case TG.丙:
+            case TG.戊:
+              if (target[1] === DZ.子) {
+                res = ShenshaItem.飞刃;
+              }
+              break;
+            case TG.丁:
+            case TG.己:
+              if (target[1] === DZ.亥) {
+                res = ShenshaItem.飞刃;
+              }
+              break;
+            case TG.庚:
+              if (target[1] === DZ.卯) {
+                res = ShenshaItem.飞刃;
+              }
+              break;
+            case TG.辛:
+              if (target[1] === DZ.寅) {
+                res = ShenshaItem.飞刃;
+              }
+              break;
+            case TG.壬:
+              if (target[1] === DZ.午) {
+                res = ShenshaItem.飞刃;
+              }
+              break;
+            case TG.癸:
+              if (target[1] === DZ.巳) {
+                res = ShenshaItem.飞刃;
+              }
+              break;
+          }
+        }
+
+        verify(rigan as TG);
+
+        return res;
+      },
+    },
+    [ShenshaItem.血刃]: {
+      text: `
+        寅月丑。卯月未。辰月寅。巳月申。午月卯。未月酉。申月辰。酉月戌。戌月巳。亥月亥。子月午。丑月子。
+        查法：以月支查四柱干支。
+        注意身体健康、意外的事故。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [, yz] = bazi;
+        const [, yuezhi] = yz;
+        let res: false | ShenshaItem.血刃 = false;
+
+        switch (yuezhi) {
+          case DZ.寅:
+            if (target[1] === DZ.丑) {
+              res = ShenshaItem.血刃;
+            }
+            break;
+          case DZ.卯:
+            if (target[1] === DZ.未) {
+              res = ShenshaItem.血刃;
+            }
+            break;
+          case DZ.辰:
+            if (target[1] === DZ.寅) {
+              res = ShenshaItem.血刃;
+            }
+            break;
+          case DZ.巳:
+            if (target[1] === DZ.申) {
+              res = ShenshaItem.血刃;
+            }
+            break;
+          case DZ.午:
+            if (target[1] === DZ.卯) {
+              res = ShenshaItem.血刃;
+            }
+            break;
+          case DZ.未:
+            if (target[1] === DZ.酉) {
+              res = ShenshaItem.血刃;
+            }
+            break;
+          case DZ.申:
+            if (target[1] === DZ.辰) {
+              res = ShenshaItem.血刃;
+            }
+            break;
+          case DZ.酉:
+            if (target[1] === DZ.戌) {
+              res = ShenshaItem.血刃;
+            }
+            break;
+          case DZ.戌:
+            if (target[1] === DZ.巳) {
+              res = ShenshaItem.血刃;
+            }
+            break;
+          case DZ.亥:
+            if (target[1] === DZ.亥) {
+              res = ShenshaItem.血刃;
+            }
+            break;
+          case DZ.子:
+            if (target[1] === DZ.午) {
+              res = ShenshaItem.血刃;
+            }
+            break;
+          case DZ.丑:
+            if (target[1] === DZ.子) {
+              res = ShenshaItem.血刃;
+            }
+            break;
+        }
         return res;
       },
     },

@@ -9,7 +9,7 @@
  * 儒略日历(Julian day),以西元前4713年(或-4712年)1月1日12時為起點,方便各历法间的转换
  */
 
-import {DZ_12, JZ_60, Ten, TG_10, WuXing} from './wuxing';
+import {DZ_12, JZ_60, Ten, TG, TG_10, WuXing5} from './wuxing';
 
 /**
  * 均值朔望月長(mean length of synodic month)
@@ -709,20 +709,9 @@ class Paipan {
    * 十天干
    * @var array
    */
-  ctg = [
-    TG_10.甲,
-    TG_10.乙,
-    TG_10.丙,
-    TG_10.丁,
-    TG_10.戊,
-    TG_10.己,
-    TG_10.庚,
-    TG_10.辛,
-    TG_10.壬,
-    TG_10.癸,
-  ]; // char of TianGan
-  yang = [TG_10.甲, TG_10.丙, TG_10.戊, TG_10.庚, TG_10.壬];
-  yin = [TG_10.乙, TG_10.丁, TG_10.己, TG_10.辛, TG_10.癸];
+  ctg = [...TG_10]; // char of TianGan
+  yang = [TG.甲, TG.丙, TG.戊, TG.庚, TG.壬];
+  yin = [TG.乙, TG.丁, TG.己, TG.辛, TG.癸];
   // tenGodMap = { 2: '食神', 6: '七杀', 8: '偏印' } // TODO 为什么只有这几个的位置是固定的
   ctg2 = [
     '甲木',
@@ -740,7 +729,7 @@ class Paipan {
   /**
    * 五行
    */
-  cwx = [WuXing.金, WuXing.木, WuXing.水, WuXing.火, WuXing.土]; //char of WuXing
+  cwx = [...WuXing5]; //char of WuXing
   /**
    * 天干对应五行
    * @var array
@@ -750,20 +739,7 @@ class Paipan {
    * 十二地支
    * @var array
    */
-  cdz = [
-    DZ_12.子,
-    DZ_12.丑,
-    DZ_12.寅,
-    DZ_12.卯,
-    DZ_12.辰,
-    DZ_12.巳,
-    DZ_12.午,
-    DZ_12.未,
-    DZ_12.申,
-    DZ_12.酉,
-    DZ_12.戌,
-    DZ_12.亥,
-  ]; //char of DiZhi
+  cdz = [...DZ_12]; //char of DiZhi
   /**
    * 地支对应五行
    * @var array

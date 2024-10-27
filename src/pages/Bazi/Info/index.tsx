@@ -15,14 +15,7 @@ import paipan, {PaipanInfo} from '../../../util/paipan';
 import Ytgcg from '../../../util/ytgcg';
 import {RootStackParamList, StackPages} from '../../../types/interface';
 import {isiOS} from '../../../constant/config';
-import {
-  DZ_12,
-  getWuxing,
-  NaYin,
-  Ten,
-  TG_10,
-  WuXing,
-} from '../../../util/wuxing';
+import {DZ, getWuxing, NaYin, Ten, TG, WuXing} from '../../../util/wuxing';
 import Shensha, {ShenshaItem} from '../../../util/shensha';
 import MyModal from '../../../components/MyModal';
 
@@ -250,13 +243,15 @@ const BaziInfo: FC<
                 const ss_text = item.ss[index];
                 return (
                   <Col key={'ss_' + ss_text + index + y}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setModalText(Shensha.getDetails(ss_text));
-                        setIsShowMoal(true);
-                      }}>
-                      <Text style={styles.tenText}>{ss_text}</Text>
-                    </TouchableOpacity>
+                    {ss_text && (
+                      <TouchableOpacity
+                        onPress={() => {
+                          setModalText(Shensha.getDetails(ss_text));
+                          setIsShowMoal(true);
+                        }}>
+                        <Text style={styles.shenshaText}>{ss_text}</Text>
+                      </TouchableOpacity>
+                    )}
                   </Col>
                 );
               })}
@@ -554,7 +549,7 @@ const Col: FC<{
   return <View style={[styles.col]}>{children}</View>;
 };
 const WuxingText: FC<{
-  text: TG_10 | DZ_12 | string;
+  text: TG | DZ | string;
   children?: ReactNode;
   size?: 'default' | 'mini';
 }> = ({text = '', children, size = 'default'}) => {
@@ -635,6 +630,11 @@ const styles = StyleSheet.create({
   tenText: {
     fontSize: 16,
     color: '#4B4B4B',
+    textAlign: 'center',
+  },
+  shenshaText: {
+    fontSize: 14,
+    color: '#000',
     textAlign: 'center',
   },
 
