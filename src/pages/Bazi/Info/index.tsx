@@ -88,6 +88,7 @@ const BaziInfo: FC<
             newPaiInfo.bazi,
             newPaiInfo.bazi[i],
             newPaiInfo.yinli,
+            newPaiInfo.gender
           ),
         };
       }),
@@ -319,7 +320,7 @@ const BaziInfo: FC<
         ss:
           dy.name === '小运'
             ? []
-            : Shensha.getData(paipanInfo.bazi, dy.name, paipanInfo.yinli),
+            : Shensha.getData(paipanInfo.bazi, dy.name, paipanInfo.yinli, paipanInfo.gender),
       };
       if (dyIndex < 0) {
         s.push(dyItem);
@@ -340,7 +341,7 @@ const BaziInfo: FC<
         ss:
           dy.name === '小运'
             ? []
-            : Shensha.getData(paipanInfo.bazi, ln.name, paipanInfo.yinli),
+            : Shensha.getData(paipanInfo.bazi, ln.name, paipanInfo.yinli, paipanInfo.gender),
       };
       if (LnIndex < 0) {
         s.push(LnItem);
