@@ -27,6 +27,17 @@ export enum ShenshaItem {
   羊刃 = '羊刃',
   飞刃 = '飞刃',
   血刃 = '血刃',
+  流霞 = '流霞',
+  四废 = '四废',
+  //   天罗地网 = '天罗地网',
+  桃花 = '桃花',
+  孤辰 = '孤辰',
+  寡宿 = '寡宿',
+  阴阳差错 = '阴阳差错',
+  魁罡 = '魁罡',
+  孤鸾煞 = '孤鸾煞',
+  红鸾 = '红鸾',
+  天喜 = '天喜',
 }
 
 export default class Shensha {
@@ -1287,6 +1298,563 @@ export default class Shensha {
             }
             break;
         }
+        return res;
+      },
+    },
+    [ShenshaItem.流霞]: {
+      text: `
+        精评：男忌酒色，女子在临盆分娩的时候需要注意。
+        甲日酉。乙日戌。丙日未。丁日申。戊日巳。
+        己日午。庚日辰。辛日卯。壬日亥。癸日寅。
+        查法：以日干查四地支
+        流霞逢冲：易犯人身意外。男命：酒色。女命：分娩方面的意外。
+        古人称血煞。轻者可能会有皮肉之伤，健康方面的问题，重者可能会有人身意外。
+        命犯血煞，最怕八字凶神带重，大运流年又走在凶煞冲克之地，可能会因为一些事情而受伤或出现人身意外，如果八字有吉神转化，是可以化险为夷的。
+        岁运走在流霞、血支、血刃的流年，不论轻重，或多或少可能会受伤。如果是在不利的流年岁月期间，外出、开车多加小心谨慎，防止意外发生的严重性增加。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [, , rizhu] = bazi;
+        const [rigan] = rizhu;
+        let res: false | ShenshaItem.流霞 = false;
+
+        switch (rigan) {
+          case TG.甲:
+            if (target[1] === DZ.酉) {
+              res = ShenshaItem.流霞;
+            }
+            break;
+          case TG.乙:
+            if (target[1] === DZ.戌) {
+              res = ShenshaItem.流霞;
+            }
+            break;
+          case TG.丙:
+            if (target[1] === DZ.未) {
+              res = ShenshaItem.流霞;
+            }
+            break;
+          case TG.丁:
+            if (target[1] === DZ.申) {
+              res = ShenshaItem.流霞;
+            }
+            break;
+          case TG.戊:
+            if (target[1] === DZ.巳) {
+              res = ShenshaItem.流霞;
+            }
+            break;
+          case TG.己:
+            if (target[1] === DZ.午) {
+              res = ShenshaItem.流霞;
+            }
+            break;
+          case TG.庚:
+            if (target[1] === DZ.辰) {
+              res = ShenshaItem.流霞;
+            }
+            break;
+          case TG.辛:
+            if (target[1] === DZ.卯) {
+              res = ShenshaItem.流霞;
+            }
+            break;
+          case TG.壬:
+            if (target[1] === DZ.亥) {
+              res = ShenshaItem.流霞;
+            }
+            break;
+          case TG.癸:
+            if (target[1] === DZ.寅) {
+              res = ShenshaItem.流霞;
+            }
+            break;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.四废]: {
+      text: `
+          精评：败多成少。
+          春庚申辛酉，夏壬子癸亥，秋甲寅乙卯，冬丙午丁巳。
+          查法：以日柱见之即是
+          四废日是在春夏秋冬四个季节中，干支与季节旺气，呈一百八十度的相反的结构。季节为王（朝廷），四废日就像被朝廷刻黜的官吏。以“刻”为“不用”之意引申，四刻日生者，是比较没有个性、事业上面作为不大的人，或者是怀才不遇的人，平凡过其一生。
+          命局中带“四废”神煞的人，一生之中做事可能会有始无终，需要多注意健康问题。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [, yuezhu, rizhu] = bazi;
+        const [, yuezhi] = yuezhu;
+        let res: false | ShenshaItem.四废 = false;
+
+        if (rizhu !== target) return false;
+        switch (yuezhi) {
+          case DZ.寅:
+          case DZ.卯:
+          case DZ.辰:
+            if ([JZ_60.庚申, JZ_60.辛酉].includes(target)) {
+              res = ShenshaItem.四废;
+            }
+            break;
+          case DZ.巳:
+          case DZ.午:
+          case DZ.未:
+            if ([JZ_60.壬子, JZ_60.癸亥].includes(target)) {
+              res = ShenshaItem.四废;
+            }
+            break;
+          case DZ.申:
+          case DZ.酉:
+          case DZ.戌:
+            if ([JZ_60.甲寅, JZ_60.乙卯].includes(target)) {
+              res = ShenshaItem.四废;
+            }
+            break;
+          case DZ.亥:
+          case DZ.子:
+          case DZ.丑:
+            if ([JZ_60.丙午, JZ_60.丁巳].includes(target)) {
+              res = ShenshaItem.四废;
+            }
+            break;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.桃花]: {
+      text: `
+        精评：1、代表魅力、社交缘、风流（女人尤忌，桃花喜空亡）。2、代表鉴赏能力、装饰能力。
+        申子辰在酉, 寅午戌在卯, 巳酉丑在午, 亥卯未在子。
+        查法：以年、日支查余三支
+        咸池是取日入之义, 指万物暗昧之时"日出扶桑, 入于咸池", 故五行沐浴之地曰咸池，又名桃花。 主要影响一个人的情感,魅力和恋爱, 婚姻生活,附带还有隐秘,阴暗,酒水之类的影响。
+        命带桃花,其人性巧,有同情心,爱风流,多才艺,能艺术,如果八字出现桃花而且处于生旺之地则主其人姿容俊美,如果是男人,则慷慨好交游,喜美色;如果是女人则风情万种, 漂亮诱人。桃花并主聪明,异性缘佳。
+        桃花忌见水,见之则生理欲望比较强。如申子辰人逢癸酉或亥子丑水。时支桃花,时干不宜再见伤官,因为伤官本身已伤害官星(夫星),如再坐桃花, 将导致多夫,及婚姻不美满的情形。
+        桃花在年月：称为『内桃花』，夫妻恩爱。桃花在日时：称为『外桃花』，夫妻多纷争；尤岁运再逢。时上桃花：桃花强，感情丰富。桃花入命，干见杀星：为人多情、欲望强。
+        桃花与禄神同柱：有异性缘。桃花与羊刃同柱：感情风波，是非多灾。桃花与空亡同柱：人缘有欠缺之忧，一生为情多苦。桃花与元辰同现或桃花逢刑冲：可能会因为钱财女人方面遇到问题。
+        不易犯桃花者：桃花坐空亡；命不带桃花。男命，桃花合禄：一生多有女贵人，多见帮助。男命，桃花与禄神同柱：能得桃花之助力。女命，流年大运见桃花刑冲：不利姻缘。
+        桃花喜与正官、正印同柱：表示自己有自制能力，不致于滥。喜与食神同柱：表示将欲求转为文学、艺术的才华。忌与七杀同柱：表示容易为欲望犯罪，女性则被迫，坠入风尘。
+        与伤官同柱（欲望强）：表示喜新厌旧、容易自恃才貌、追求时髦，对于感情不太在乎。与劫财同柱：敢爱敢恨、横刀夺爱、争风吃醋。与偏印同柱：生理欲望较强，同性。与比肩同柱：孤芳自赏、独身主义。
+        另外，《三命通会刑冲带合》中认为，“干合支刑”也是喜爱喝酒的典型标志。比如甲子见己卯，丙子见辛卯，庚申见乙巳，干合支刑，上合下刑，多犯酒色。
+        看有无外遇，则看命局中有无劫夺妻或夫之象。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu, , rizhu] = bazi;
+        let res: false | ShenshaItem.桃花 = false;
+
+        function verify(t: DZ) {
+          switch (t) {
+            case DZ.寅:
+            case DZ.午:
+            case DZ.戌:
+              if (target[1] === DZ.卯) {
+                res = ShenshaItem.桃花;
+              }
+              break;
+            case DZ.申:
+            case DZ.子:
+            case DZ.辰:
+              if (target[1] === DZ.酉) {
+                res = ShenshaItem.桃花;
+              }
+              break;
+            case DZ.亥:
+            case DZ.卯:
+            case DZ.未:
+              if (target[1] === DZ.子) {
+                res = ShenshaItem.桃花;
+              }
+              break;
+            case DZ.巳:
+            case DZ.酉:
+            case DZ.丑:
+              if (target[1] === DZ.午) {
+                res = ShenshaItem.桃花;
+              }
+              break;
+          }
+        }
+
+        verify(nianzhu[1] as DZ);
+        verify(rizhu[1] as DZ);
+
+        return res;
+      },
+    },
+    [ShenshaItem.孤辰]: {
+      text: `
+        精评：男怕孤、女怕寡。
+        性格孤僻沉默不语、清心寡欲、依恋安逸。
+        男命逢孤辰,平生感情多波折。女命逢寡宿，姻缘不利。孤寡与驿马并，流浪他乡，与华盖并于日时,恋情较晚，或为僧尼。与空亡并，小的时候能依靠的人较少，一生不太平稳，四处奔走。
+        亥子丑人, 见寅为孤, 见戌为寡；
+        寅卯辰人, 见巳为孤, 见丑为寡；
+        巳午未人, 见申为孤, 见辰为寡；
+        申酉戌人, 见亥为孤, 见未为寡。
+        查法：以年支查余三支
+        孤辰入命：生性多孤独，孤枕独眠。古人常说『男怕孤、女怕寡』，八字里面孤辰、寡宿同现：常见事与愿违。男命：为人孤独。女命：为人独立。
+        男命怕孤辰落在财星之地，或日主的死绝之方。女命怕寡宿落在夫星之地，或日主的死绝之方。这现像造成缘份难偕久之憾，难免刑克，内心容易伤感，尤其是孤寡入命又见空亡的八字，一生比较孤单。八字忌孤辰、寡宿同时入命。
+        如果命带孤辰或寡宿，八字又有华盖出现，则是一个非常聪明的孤独之人，往往具有特殊才华，很多艺术家、哲学家、五术家，或是修道者、牧师，多是这种命格。
+        孤辰、寡宿也叫做隔角煞，又叫绝情煞。在年月柱，与六亲缘份淡薄，独立自成之命。在日柱，夫妻男女缘份淡薄。在时柱，与子孙缘分淡薄。
+        命带孤辰、寡宿的人，不具交际能力与手腕，兄弟朋友情谊也显得有始无终，这就是孤寡入命终须寂的道理。所以八字有孤寡的人，其实无须汲汲追求社交或过份接近喧嚣人潮，养性独处反而显得安然自得。古来五术界得以流芳者，大都八字有孤寡、华盖空亡等神煞入命，惟能处静耐寂之人才得以花长时间研究探讨精深命理。
+        凡人命犯孤寡，主形孤肉露,面无和气。生旺稍可,死绝尤甚。孤寡如有贵神相扶, 不至为害, 甚至"孤辰寡宿带官印,定做丛林领袖"。
+        孤辰寡宿是印星与财星的墓、绝之位，与丧门、吊客并见，不利父母的健康和运势，做事阻碍较多，伶仃、单寒。入贵格，主入赘。
+        阳命大运流年忌孤辰，阴命忌寡宿。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu] = bazi;
+        let res: false | ShenshaItem.孤辰 = false;
+
+        function verify(t: DZ) {
+          switch (t) {
+            case DZ.亥:
+            case DZ.子:
+            case DZ.丑:
+              if (DZ.寅 === target[1]) {
+                res = ShenshaItem.孤辰;
+              }
+              break;
+            case DZ.寅:
+            case DZ.卯:
+            case DZ.辰:
+              if (DZ.巳 === target[1]) {
+                res = ShenshaItem.孤辰;
+              }
+              break;
+            case DZ.巳:
+            case DZ.午:
+            case DZ.未:
+              if (DZ.申 === target[1]) {
+                res = ShenshaItem.孤辰;
+              }
+              break;
+            case DZ.申:
+            case DZ.酉:
+            case DZ.戌:
+              if (DZ.亥 === target[1]) {
+                res = ShenshaItem.孤辰;
+              }
+              break;
+          }
+        }
+
+        verify(nianzhu[1] as DZ);
+
+        return res;
+      },
+    },
+    [ShenshaItem.寡宿]: {
+      text: `
+        精评：异性缘浅薄，婚缘浅薄延后，夫缘浅薄，独身主义。
+        男命逢孤辰，平姻缘迟来，恋情较晚。女命逢寡宿姻缘来的较晚。孤寡与驿马并，流浪他乡，与华盖并于日时，孤苦伶仃，或为僧尼。与空亡并，自幼无倚，一生可能不太平顺，容易四处奔走。
+        亥子丑人, 见寅为孤, 见戌为寡；
+        寅卯辰人, 见巳为孤, 见丑为寡；
+        巳午未人, 见申为孤, 见辰为寡；
+        申酉戌人, 见亥为孤, 见未为寡。
+        查法：以年支查余三支
+        寡宿入命：孤枕独眠，生性多孤独。孤辰、寡宿同现：凡事多见无所谓，乃四大皆空。男命：为人孤僻。女命：为人多孤独，老年比较孤单。
+        孤辰入命：生性多孤独，孤枕独眠。古人常说『男怕孤、女怕寡』，八字里面孤辰、寡宿同现：常见事与愿违。男命：为人孤独。女命：为人独立。
+        男命怕孤辰落在财星之地，或日主的死绝之方。女命怕寡宿落在夫星之地，或日主的死绝之方。这现像造成缘份难偕久之憾，难免刑克，内心容易伤感，尤其是孤寡入命又见空亡的八字，一生比较孤单。八字忌孤辰、寡宿同时入命。
+        如果命带孤辰或寡宿，八字又有华盖出现，则是一个非常聪明的孤独之人，往往具有特殊才华，很多艺术家、哲学家、五术家，或是修道者、牧师，多是这种命格。
+        孤辰、寡宿也叫做隔角煞，又叫绝情煞。在年月柱，与六亲缘份淡薄，独立自成之命。在日柱，夫妻男女缘份淡薄。在时柱，与子孙缘份淡薄。
+        命带孤辰、寡宿的人，比较不具交际能力与手腕，兄弟朋友情谊也显得有始无终，这就是孤寡入命终须寂的道理。所以八字有孤寡的人，其实无须汲汲追求社交或过份接近喧嚣人潮，养性独处反而显得安然自得。古来五术界得以流芳者，大都八字有孤寡、华盖空亡等神煞入命，惟能处静耐寂之人才得以花长时间研究探讨精深命理。
+        凡人命犯孤寡, 主形孤肉露, 面无和气。生旺稍可, 死绝尤甚.孤寡如有贵神相扶, 不至为害, 甚至"孤辰寡宿带官印, 定做丛林领袖"。
+        孤辰寡宿是印星与财星的墓、绝之位，与丧门、吊客并见，不利父母的健康和运势，做事阻碍较多，伶仃、单寒。入贵格，主入赘。
+        阳命大运流年忌孤辰，阴命忌寡宿。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu] = bazi;
+        let res: false | ShenshaItem.寡宿 = false;
+
+        function verify(t: DZ) {
+          switch (t) {
+            case DZ.亥:
+            case DZ.子:
+            case DZ.丑:
+              if (DZ.戌 === target[1]) {
+                res = ShenshaItem.寡宿;
+              }
+              break;
+            case DZ.寅:
+            case DZ.卯:
+            case DZ.辰:
+              if (DZ.丑 === target[1]) {
+                res = ShenshaItem.寡宿;
+              }
+              break;
+            case DZ.巳:
+            case DZ.午:
+            case DZ.未:
+              if (DZ.辰 === target[1]) {
+                res = ShenshaItem.寡宿;
+              }
+              break;
+            case DZ.申:
+            case DZ.酉:
+            case DZ.戌:
+              if (DZ.未 === target[1]) {
+                res = ShenshaItem.寡宿;
+              }
+              break;
+          }
+        }
+
+        verify(nianzhu[1] as DZ);
+
+        return res;
+      },
+    },
+    [ShenshaItem.阴阳差错]: {
+      text: `
+        精评：女不太利于婆婆和妯娌姐妹间的亲情。男不太利于和妻子家的关系，不容易得到外家之助。
+        如月日时两重或三重犯此煞，多主二婚之事，常为婚姻烦恼，应注意感情培养。
+        丙子日。丙午日。丁丑日。丁未日。戊寅日。戊申日。
+        辛卯日。辛酉日。壬辰日。壬戌日。癸巳日。癸亥日。
+        查法：查日柱
+        行事阴阳颠倒，多有事成反败之虞。好变不好，诸事多见在阴错阳差下，或完成、或结束。
+        阴差阳错，是太过与不及、男女不和的意思。古说谓“女子逢之，公姑寡合，妯娌不足，夫家冷退。男子逢之，主退外家，亦与妻家是非寡合。其杀，不论男女，月日时两重或三重，犯之重，只日犯之尤重，主不得外家力，纵有妻财，亦成虚花，久后可能会与妻家有矛盾”。
+        一般带阴差阳错者可能有同母异父或同父异母的兄弟姐妹，在丧期中成婚、谈亲事时发生不愉快之事，妻子与父母相处的不太融洽，和妻舅感情疏远。做事阻碍较大，容易错失良机。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [, , rizhu] = bazi;
+        let res: false | ShenshaItem.阴阳差错 = false;
+
+        if (
+          rizhu === target &&
+          [
+            JZ_60.丙子,
+            JZ_60.丙午,
+            JZ_60.丁丑,
+            JZ_60.丁未,
+            JZ_60.戊寅,
+            JZ_60.戊申,
+            JZ_60.辛卯,
+            JZ_60.辛酉,
+            JZ_60.壬辰,
+            JZ_60.壬戌,
+            JZ_60.癸巳,
+            JZ_60.癸亥,
+          ].includes(rizhu)
+        ) {
+          res = ShenshaItem.阴阳差错;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.魁罡]: {
+      text: `
+        精评：聪明机巧，临事果断，有威杀之。
+        忌刑冲，刑冲多有灭身之祸；忌身弱，身弱逢之则钱财不丰可能会遇刑律。
+        戊戌日。庚辰日。庚戌日。壬辰日。
+        查法：查日柱
+        魁罡坐命：心性刚强霸气，聪明果断，攻击性，不服输，临事果断。带双魁罡：秉权，好杀，具领导才能。必须身旺，才能任其霸气；身弱，则容易遭意外事故，凡事不要强出头。
+        辰为天罡, 戌为河魁, 乃阴阳绝灭之地,故名。辰是水库属天罡, 戌是火库属地魁, 辰戌相见为天冲地击。魁罡格在日柱方能入格,其他三格不算,且不能冲破。魁罡格需日主健旺,也即以财官为喜用,因为魁罡格,具有攻击性且格局雄壮,日主衰弱需印生,与魁罡性格相反, 即不成为魁罡格了。
+        古歌云:"魁罡四日为先,叠叠相逢掌大权,庚戌庚辰怕显官,戊戌壬辰畏财运。主人性格多聪慧,好杀之心断不偏,倘有刑冲兼破害,一贫彻骨受笞鞭。"
+        身值天罡地魁,财运不佳,强则较显贵,魁罡聚会,发福非常。主为人性格聪明,文章振发,临事果断,秉权好杀。魁罡性严有操持。运行身旺发福百端,一见财官,祸患立至,或带刑杀尤甚。
+        倘日位独处,刑冲克制重临,人际关系可能不太好,刑责不已,求财困难。运临财旺官旺处,主防意外事故,若月令见财官印绶,日主一位,即以财官印食取用,虽难聚财,财官印食得位即无大害。
+        庚戌, 庚辰二日无官星, 若魁罡重叠有情,主富贵于名,但见财官则不成局,岁运再见财旺之乡,小心意外危险。
+        柱带魁罡者,虽有领导才能,声宏气壮,且好权术,好胜心强，但婚姻较为不顺。
+        古人说魁罡入命的八字不要吃牛肉，并且适合修道养性以断其霸气伤人之性。
+        “为人性格聪明，文章振发，临事果断，秉权好杀。”在现代，“魁罡”有新的诠释：带魁罡的人，人生可能充满惊涛骇浪，命运起伏大，分化较明显，容易碰到不好的事情。若是女性，大多是美人胚子，但是在恋爱和婚姻方面感情较差。法官、教授、艺术家、裁缝、理发业人士，有很多是魁罡日出的。
+        好坏参半，婚缘不佳财运不济，因在丑和戌把天乙贵人吃掉。具有独立自主精神、精明干练、模仿、组织力皆强，性情属于累积性暴发。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [, , rizhu] = bazi;
+        let res: false | ShenshaItem.魁罡 = false;
+
+        if (
+          rizhu === target &&
+          [JZ_60.戊戌, JZ_60.庚辰, JZ_60.庚戌, JZ_60.壬辰].includes(rizhu)
+        ) {
+          res = ShenshaItem.魁罡;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.孤鸾煞]: {
+      text: `
+        精评：不利婚姻，或外遇。
+        甲寅日。乙巳日。丙午日。丁巳日。
+        戊午日。戊申日。辛亥日。壬子日。
+        查法：查日柱
+        又名“呻吟煞”。夫妻多纷争。
+        男命：婚姻中不太懂的相处，和妻子不和睦，可能会出现外遇事件。
+        女命：夫妻感情多一般，正缘来的晚，多为晚婚，注意健康问题。
+        女命带孤鸾与子女缘分薄，若四柱中见官杀则不适用此条。孤鸾日生的女子不利姻缘，夫妻感情多波折，两人需要面对的问题较多。房事不太和谐，注意外遇风波。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [, , rizhu] = bazi;
+        let res: false | ShenshaItem.孤鸾煞 = false;
+
+        if (
+          rizhu === target &&
+          [
+            JZ_60.甲寅,
+            JZ_60.乙巳,
+            JZ_60.丙午,
+            JZ_60.丁巳,
+            JZ_60.戊午,
+            JZ_60.戊申,
+            JZ_60.辛亥,
+            JZ_60.壬子,
+          ].includes(rizhu)
+        ) {
+          res = ShenshaItem.孤鸾煞;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.红鸾]: {
+      text: `
+        精评：喜事，结婚爱情喜事。
+        红鸾年支: 子 丑 寅 卯 辰 巳 午 未 申 酉 戌 亥
+        三地支见: 卯 寅 丑 子 亥 戌 酉 申 未 午 巳 辰。
+        查法：以年支查余地支
+        如子年生人见卯为红鸾，见酉为天喜。
+        “桃花红鸾天喜合，岁运逢之定结亲”。
+        红鸾天喜星，主喜庆之事，岁运逢之，若与桃花同见，年日柱与岁运多合者，若是结婚合适年纪，多有爱情结婚喜事。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu] = bazi;
+        const [, nianzhi] = nianzhu;
+        let res: false | ShenshaItem.红鸾 = false;
+
+        switch (nianzhi) {
+          case DZ.子:
+            if (target[1] === DZ.卯) {
+              res = ShenshaItem.红鸾;
+            }
+            break;
+          case DZ.丑:
+            if (target[1] === DZ.寅) {
+              res = ShenshaItem.红鸾;
+            }
+            break;
+          case DZ.寅:
+            if (target[1] === DZ.丑) {
+              res = ShenshaItem.红鸾;
+            }
+            break;
+          case DZ.卯:
+            if (target[1] === DZ.子) {
+              res = ShenshaItem.红鸾;
+            }
+            break;
+          case DZ.辰:
+            if (target[1] === DZ.亥) {
+              res = ShenshaItem.红鸾;
+            }
+            break;
+          case DZ.巳:
+            if (target[1] === DZ.戌) {
+              res = ShenshaItem.红鸾;
+            }
+            break;
+          case DZ.午:
+            if (target[1] === DZ.酉) {
+              res = ShenshaItem.红鸾;
+            }
+            break;
+          case DZ.未:
+            if (target[1] === DZ.申) {
+              res = ShenshaItem.红鸾;
+            }
+            break;
+          case DZ.申:
+            if (target[1] === DZ.未) {
+              res = ShenshaItem.红鸾;
+            }
+            break;
+          case DZ.酉:
+            if (target[1] === DZ.午) {
+              res = ShenshaItem.红鸾;
+            }
+            break;
+          case DZ.戌:
+            if (target[1] === DZ.巳) {
+              res = ShenshaItem.红鸾;
+            }
+            break;
+          case DZ.亥:
+            if (target[1] === DZ.辰) {
+              res = ShenshaItem.红鸾;
+            }
+            break;
+        }
+
+        return res;
+      },
+    },
+    [ShenshaItem.天喜]: {
+      text: `
+        精评：精评：喜事，结婚爱情喜事
+        古诀：
+        天喜年支: 子 丑 寅 卯 辰 巳 午 未 申 酉 戌 亥
+        三地支见: 酉 申 未 午 巳 辰 卯 寅 丑 子 亥 戌
+        查法：以年支查余地支
+        如子年生人见卯为红鸾，见酉为天喜。
+        “桃花红鸾天喜合，岁运逢之定结亲”。
+        红鸾天喜星，主喜庆之事，岁运逢之，若与桃花同见，年日柱与岁运多合者，若是结婚合适年纪，多有爱情结婚喜事。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu] = bazi;
+        const [, nianzhi] = nianzhu;
+        let res: false | ShenshaItem.天喜 = false;
+
+        switch (nianzhi) {
+          case DZ.子:
+            if (target[1] === DZ.酉) {
+              res = ShenshaItem.天喜;
+            }
+            break;
+          case DZ.丑:
+            if (target[1] === DZ.申) {
+              res = ShenshaItem.天喜;
+            }
+            break;
+          case DZ.寅:
+            if (target[1] === DZ.未) {
+              res = ShenshaItem.天喜;
+            }
+            break;
+          case DZ.卯:
+            if (target[1] === DZ.午) {
+              res = ShenshaItem.天喜;
+            }
+            break;
+          case DZ.辰:
+            if (target[1] === DZ.巳) {
+              res = ShenshaItem.天喜;
+            }
+            break;
+          case DZ.巳:
+            if (target[1] === DZ.辰) {
+              res = ShenshaItem.天喜;
+            }
+            break;
+          case DZ.午:
+            if (target[1] === DZ.卯) {
+              res = ShenshaItem.天喜;
+            }
+            break;
+          case DZ.未:
+            if (target[1] === DZ.寅) {
+              res = ShenshaItem.天喜;
+            }
+            break;
+          case DZ.申:
+            if (target[1] === DZ.丑) {
+              res = ShenshaItem.天喜;
+            }
+            break;
+          case DZ.酉:
+            if (target[1] === DZ.子) {
+              res = ShenshaItem.天喜;
+            }
+            break;
+          case DZ.戌:
+            if (target[1] === DZ.亥) {
+              res = ShenshaItem.天喜;
+            }
+            break;
+          case DZ.亥:
+            if (target[1] === DZ.戌) {
+              res = ShenshaItem.天喜;
+            }
+            break;
+        }
+
         return res;
       },
     },
