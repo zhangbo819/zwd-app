@@ -88,7 +88,7 @@ const BaziInfo: FC<
             newPaiInfo.bazi,
             newPaiInfo.bazi[i],
             newPaiInfo.yinli,
-            newPaiInfo.gender
+            newPaiInfo.gender,
           ),
         };
       }),
@@ -295,8 +295,12 @@ const BaziInfo: FC<
       lnIndex = 0;
       ln = dy.years[lnIndex];
       setActiveLnIndex(lnIndex);
+      if (!ln) {
+        // 这种情况一般是出生不到一年就起大运，无小运
+        Alert.alert('该命主无小运');
+        return;
+      }
     }
-    // console.log(dy.name, ln);
 
     const {dzcg, dzcg_text} = paipan.getDzcgText(
       [dy.name, ln.name].map(item => {
@@ -320,7 +324,12 @@ const BaziInfo: FC<
         ss:
           dy.name === '小运'
             ? []
-            : Shensha.getData(paipanInfo.bazi, dy.name, paipanInfo.yinli, paipanInfo.gender),
+            : Shensha.getData(
+                paipanInfo.bazi,
+                dy.name,
+                paipanInfo.yinli,
+                paipanInfo.gender,
+              ),
       };
       if (dyIndex < 0) {
         s.push(dyItem);
@@ -341,7 +350,12 @@ const BaziInfo: FC<
         ss:
           dy.name === '小运'
             ? []
-            : Shensha.getData(paipanInfo.bazi, ln.name, paipanInfo.yinli, paipanInfo.gender),
+            : Shensha.getData(
+                paipanInfo.bazi,
+                ln.name,
+                paipanInfo.yinli,
+                paipanInfo.gender,
+              ),
       };
       if (LnIndex < 0) {
         s.push(LnItem);
@@ -370,10 +384,17 @@ const BaziInfo: FC<
 
   // 大运表
   const renderDayunGrid = () => {
+    const activeDyData = paipanInfo.big.data[activeDyIndex];
+
     return (
       <View style={styles.dayunGrid}>
         <View style={styles.dayunTools}>
           <Text>起运：出生后{paipanInfo.big.start_desc}</Text>
+          {activeDyData.years[activeLnIndex] && (
+            <Text>{`${
+              activeDyData.years[activeLnIndex].year - paipanInfo.yy
+            }岁`}</Text>
+          )}
           <TouchableOpacity style={styles.toolNowBtn} onPress={handleNow}>
             <Text style={{fontSize: 18}}>今</Text>
           </TouchableOpacity>
@@ -527,7 +548,7 @@ const BaziInfo: FC<
           </Row>
         </View>
 
-        {/* <Text>{JSON.stringify(ytgcgData, null, 4)}</Text> */}
+        <Text>{JSON.stringify(paipanInfo, null, 4)}</Text>
         {/* <Text>{JSON.stringify(pillarData, null, 4)}</Text> */}
         {/* 弹窗 */}
         <MyModal isShow={isShowModal} onClose={() => setIsShowMoal(false)}>
