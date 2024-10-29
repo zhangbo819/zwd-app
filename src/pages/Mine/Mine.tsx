@@ -44,9 +44,9 @@ const Mine: FC<
     Alert.alert('暂无');
   };
 
-  const handleDownloadApk = () => {
-    setIsShowWebview(s => !s);
-  };
+  // const handleDownloadApk = () => {
+  //   setIsShowWebview(s => !s);
+  // };
 
   return (
     <View style={styles.container}>
@@ -54,7 +54,7 @@ const Mine: FC<
         {RenderCard([
           {event: handleAccount, title: '账号管理'},
           {event: handleAbout, title: '关于'},
-          {event: handleDownloadApk, title: '下载最新版本'},
+          // {event: handleDownloadApk, title: '下载最新版本'},
         ])}
         {isShowWebview && <DownloadApk setIsShowWebview={setIsShowWebview} />}
       </ScrollView>
