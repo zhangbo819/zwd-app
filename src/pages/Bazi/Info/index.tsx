@@ -11,13 +11,14 @@ import {
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-import paipan, {PaipanInfo} from '../../../util/paipan';
-import Ytgcg from '../../../util/ytgcg';
+import MyModal from '../../../components/MyModal';
 import {RootStackParamList, StackPages} from '../../../types/interface';
 import {isiOS} from '../../../constant/config';
-import {DZ, getWuxing, NaYin, Ten, TG, WuXing} from '../../../util/wuxing';
+import {DZ, getWuxing, Ten, TG, WuXing, ZhangSheng} from '../../../util/wuxing';
+import paipan, {PaipanInfo} from '../../../util/paipan';
+import Ytgcg from '../../../util/ytgcg';
 import Shensha, {ShenshaItem} from '../../../util/shensha';
-import MyModal from '../../../components/MyModal';
+import NaYin from '../../../util/Nayin';
 import textJSON from '../../../util/text';
 
 const init_Data = paipan.GetInfo(1, Date.now());
@@ -43,6 +44,8 @@ const BaziInfo: FC<
       dz: string;
       dzcg: string[];
       fx: number[];
+      xingyun: ZhangSheng | null;
+      zizuo: ZhangSheng | null;
       nayin: string;
       ss: ShenshaItem[];
     }[]
@@ -84,6 +87,14 @@ const BaziInfo: FC<
           dz: newPaiInfo.bazi[i][1],
           dzcg: newPaiInfo.dzcg_text[i],
           fx: newPaiInfo.dzcg[i],
+          xingyun: NaYin.getXingYun(
+            newPaiInfo.bazi[i],
+            newPaiInfo.bazi[2][0] as TG,
+          ),
+          zizuo: NaYin.getXingYun(
+            newPaiInfo.bazi[i],
+            newPaiInfo.bazi[i][0] as TG,
+          ),
           nayin: NaYin.getNayin(newPaiInfo.bazi[i]),
           ss: Shensha.getData(
             newPaiInfo.bazi,
@@ -243,6 +254,42 @@ const BaziInfo: FC<
             </Row>
           );
         })}
+        {/* 12长生 星运 */}
+        <Row>
+          <Col>
+            <Text style={styles.subheading}>星运</Text>
+          </Col>
+          {pillarData.map((item, index) => {
+            return (
+              <Col key={'xingyun' + item.xingyun + index}>
+                <TouchableOpacity
+                  onPress={() =>
+                    item.xingyun !== null && setModal(textJSON[item.xingyun])
+                  }>
+                  <Text style={styles.tenText}>{item.xingyun}</Text>
+                </TouchableOpacity>
+              </Col>
+            );
+          })}
+        </Row>
+        {/* 12长生 自坐 */}
+        <Row>
+          <Col>
+            <Text style={styles.subheading}>自坐</Text>
+          </Col>
+          {pillarData.map((item, index) => {
+            return (
+              <Col key={'zizuo' + item.zizuo + index}>
+                <TouchableOpacity
+                  onPress={() =>
+                    item.zizuo !== null && setModal(textJSON[item.zizuo])
+                  }>
+                  <Text style={styles.tenText}>{item.zizuo}</Text>
+                </TouchableOpacity>
+              </Col>
+            );
+          })}
+        </Row>
         {/* 纳音 */}
         <Row>
           <Col>
@@ -340,6 +387,14 @@ const BaziInfo: FC<
         dz: dy.name[1],
         dzcg: dzcg_text[0],
         fx: dzcg[0],
+        xingyun:
+          dy.name === '小运'
+            ? null
+            : NaYin.getXingYun(dy.name, paipanInfo.bazi[2][0] as TG),
+        zizuo:
+          dy.name === '小运'
+            ? null
+            : NaYin.getXingYun(dy.name, dy.name[0] as TG),
         nayin: dy.name === '小运' ? '' : NaYin.getNayin(dy.name),
         ss:
           dy.name === '小运'
@@ -366,6 +421,8 @@ const BaziInfo: FC<
         dz: ln.name[1],
         dzcg: dzcg_text[1],
         fx: dzcg[1],
+        xingyun: NaYin.getXingYun(ln.name, paipanInfo.bazi[2][0] as TG),
+        zizuo: NaYin.getXingYun(ln.name, ln.name[0] as TG),
         nayin: NaYin.getNayin(ln.name),
         ss:
           dy.name === '小运'
