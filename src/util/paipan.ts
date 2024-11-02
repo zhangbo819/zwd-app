@@ -1287,7 +1287,6 @@ class Paipan {
     const gd = gender === 0 ? 0 : 1; // 非男即女
 
     const {tg, dz, jd, jq, ix} = this.GetGanZhi(yy, mm, dd, hh, mt, ss);
-    // console.log('gz', gz);
 
     const pn = tg[0] % 2; // 起大运.阴阳年干:0阳年 1阴年
 
@@ -1385,7 +1384,97 @@ class Paipan {
     return res;
   }
 
-  // 获取地址藏干和文字
+  // 根据公历年获取流月
+  getLiuYueByYear(yy: number, tgdz: JZ_60) {
+    const res: {
+      name: JZ_60;
+      year: number;
+      mouth: number;
+      day: number;
+      // days: {name: JZ_60; mouth: number; day: number}[];
+      days: JZ_60[];
+    }[] = [];
+    const days: number[][] = [];
+    const rest_days: number[][] = [];
+    GetPureJQsinceSpring(yy).forEach(i => {
+      const [y, m, ddd, hhh, mtt, sss] = Julian2Solar(i);
+      const r = this.GetGanZhi(y, m, ddd, hhh, mtt, sss + 1);
+      if (this.ctg[r.tg[0]] + this.cdz[r.dz[0]] === tgdz) {
+        // console.log(
+        //   'GetPureJQsinceSpring',
+        //   y,m,ddd,
+        //   r.tg.map((_, j) => this.ctg[r.tg[j]] + this.cdz[r.dz[j]]),
+        // );
+        res.push({
+          name: (this.ctg[r.tg[1]] + this.cdz[r.dz[1]]) as JZ_60,
+          year: y,
+          mouth: m,
+          day: ddd,
+          days: [],
+        });
+        days.push([r.tg[2], r.dz[2]]);
+      } else {
+        rest_days.push([r.tg[2], r.dz[2]]);
+      }
+    });
+    // console.log('days', days);
+    // const days_JZ_60: {name: JZ_60; mouth: number; day: number}[][] = [];
+    const days_JZ_60: JZ_60[][] = [];
+    for (let i = 0; i < days.length; i++) {
+      const start = days[i];
+      let end = days[i + 1];
+      if (!end) {
+        // 最后一个月特殊处理
+        end = rest_days[0];
+      }
+      days_JZ_60.push(this._getJZ60SByStartEnd(start, end));
+    }
+
+    res.forEach((i, index) => {
+      i.days = days_JZ_60[index];
+    });
+
+    console.log(
+      'days_JZ_60',
+      // days_JZ_60.map(i => i.map(j => j.name)),
+      days_JZ_60,
+    );
+    // console.log('getLiuYueByYear', JSON.stringify(res, null, 2));
+    return res;
+  }
+
+  // 79 710 711, 80 81 - 811, - , 611, 70, 71, 72, 73
+  _getJZ60SByStartEnd(start: number[], end: number[]) {
+    // const res: {name: JZ_60; mouth: number; day: number}[] = [];
+    const res: JZ_60[] = [];
+    const [startX, startY] = start;
+    const [endX, endY] = end;
+    let nowX = startX,
+      nowY = startY;
+    for (let i = 1; i <= 60; i++) {
+      if (nowX === endX && nowY === endY) {
+        break;
+      } else {
+        res.push((TG_10[nowX] + DZ_12[nowY]) as JZ_60);
+        // res.push({
+        //   name: (TG_10[nowX] + DZ_12[nowY]) as JZ_60,
+        //   mouth: 0,
+        //   day: 0,
+        // });
+        ++nowX;
+        ++nowY;
+        if (nowY > 11) {
+          nowY = 0;
+        }
+        if (nowX > 9) {
+          nowX = 0;
+        }
+      }
+    }
+    return res;
+  }
+
+  // 获取地支藏干和文字
   getDzcgText(target: any[]) {
     const dzcg = this.getDzcgByIndex(target);
     const dzcg_text = dzcg.map(arr => arr.map(j => this.ctg2[j]));

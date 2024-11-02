@@ -547,6 +547,14 @@ const BaziInfo: FC<
                 onPress={() => {
                   setActiveLnIndex(index);
                   updateList(activeDyIndex, index);
+                  // TODO
+                  setModal(
+                    JSON.stringify(
+                      paipan.getLiuYueByYear(item.year, item.name),
+                      null,
+                      2,
+                    ),
+                  );
                 }}>
                 <Text
                   style={[
