@@ -18,6 +18,7 @@ import {isiOS} from '../../../constant/config';
 import {DZ, getWuxing, NaYin, Ten, TG, WuXing} from '../../../util/wuxing';
 import Shensha, {ShenshaItem} from '../../../util/shensha';
 import MyModal from '../../../components/MyModal';
+import textJSON from '../../../util/text';
 
 const init_Data = paipan.GetInfo(1, Date.now());
 enum PillarTitle {
@@ -102,6 +103,11 @@ const BaziInfo: FC<
     setYtgcgData(newYtgcgData);
   }, [props.route.params]);
 
+  const setModal = (text: string) => {
+    setModalText(text);
+    setIsShowMoal(true);
+  };
+
   // 阴阳历日期
   const renderDateText = (isYang = false) => {
     const arr = (isYang ? paipanInfo.yangli : paipanInfo.yinli) || [];
@@ -151,7 +157,10 @@ const BaziInfo: FC<
           {pillarData.map((item, index) => {
             return (
               <Col key={'主星_' + item + index}>
-                <Text style={styles.tenText}>{item.zhuxing}</Text>
+                <TouchableOpacity
+                  onPress={() => setModal(textJSON[item.zhuxing as Ten])}>
+                  <Text style={styles.tenText}>{item.zhuxing}</Text>
+                </TouchableOpacity>
               </Col>
             );
           })}
@@ -164,7 +173,10 @@ const BaziInfo: FC<
           {pillarData.map((item, index) => {
             return (
               <Col key={'tg' + item.tg + index}>
-                <WuxingText text={item.tg} />
+                <TouchableOpacity
+                  onPress={() => setModal(textJSON[item.tg as TG])}>
+                  <WuxingText text={item.tg} />
+                </TouchableOpacity>
               </Col>
             );
           })}
@@ -177,7 +189,10 @@ const BaziInfo: FC<
           {pillarData.map((item, index) => {
             return (
               <Col key={'dz' + item.dz + index}>
-                <WuxingText text={item.dz} />
+                <TouchableOpacity
+                  onPress={() => setModal(textJSON[item.dz as DZ])}>
+                  <WuxingText text={item.dz} />
+                </TouchableOpacity>
               </Col>
             );
           })}
@@ -193,7 +208,10 @@ const BaziInfo: FC<
                 const dzcg = item.dzcg[index];
                 return (
                   <Col key={'dzcg' + dzcg + index + y}>
-                    <WuxingText text={dzcg} size="mini" />
+                    <TouchableOpacity
+                      onPress={() => setModal(textJSON[dzcg[0] as DZ])}>
+                      <WuxingText text={dzcg} size="mini" />
+                    </TouchableOpacity>
                   </Col>
                 );
               })}
@@ -211,9 +229,14 @@ const BaziInfo: FC<
                 const cg_index = item.fx[index];
                 return (
                   <Col key={'fx_' + cg_index + index + y}>
-                    <Text style={styles.tenText}>
-                      {paipanInfo.tenMap[cg_index]}
-                    </Text>
+                    <TouchableOpacity
+                      onPress={() =>
+                        setModal(textJSON[paipanInfo.tenMap[cg_index] as Ten])
+                      }>
+                      <Text style={styles.tenText}>
+                        {paipanInfo.tenMap[cg_index]}
+                      </Text>
+                    </TouchableOpacity>
                   </Col>
                 );
               })}
@@ -246,10 +269,7 @@ const BaziInfo: FC<
                   <Col key={'ss_' + ss_text + index + y}>
                     {ss_text && (
                       <TouchableOpacity
-                        onPress={() => {
-                          setModalText(Shensha.getDetails(ss_text));
-                          setIsShowMoal(true);
-                        }}>
+                        onPress={() => setModal(Shensha.getDetails(ss_text))}>
                         <Text style={styles.shenshaText}>{ss_text}</Text>
                       </TouchableOpacity>
                     )}
@@ -548,7 +568,7 @@ const BaziInfo: FC<
           </Row>
         </View>
 
-        <Text>{JSON.stringify(paipanInfo, null, 4)}</Text>
+        {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
         {/* <Text>{JSON.stringify(pillarData, null, 4)}</Text> */}
         {/* 弹窗 */}
         <MyModal isShow={isShowModal} onClose={() => setIsShowMoal(false)}>
