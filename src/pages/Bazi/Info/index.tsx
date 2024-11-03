@@ -14,7 +14,17 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import MyModal from '../../../components/MyModal';
 import {RootStackParamList, StackPages} from '../../../types/interface';
 import {isiOS} from '../../../constant/config';
-import {DZ, getWuxing, Ten, TG, WuXing, ZhangSheng} from '../../../util/wuxing';
+import {
+  DZ,
+  getWuxing,
+  JQ_12,
+  JZ_60,
+  Ten,
+  TG,
+  TG_10,
+  WuXing,
+  ZhangSheng,
+} from '../../../util/wuxing';
 import paipan, {PaipanInfo} from '../../../util/paipan';
 import Ytgcg from '../../../util/ytgcg';
 import Shensha, {ShenshaItem} from '../../../util/shensha';
@@ -29,6 +39,8 @@ enum PillarTitle {
   时柱 = '时柱',
   大运 = '大运',
   流年 = '流年',
+  流月 = '流月',
+  流日 = '流日',
 }
 
 const BaziInfo: FC<
@@ -334,6 +346,18 @@ const BaziInfo: FC<
   // 当前的大运
   const [activeDyIndex, setActiveDyIndex] = useState(0);
   const [activeLnIndex, setActiveLnIndex] = useState(0);
+  const [lyData, setLyData] = useState<
+    | null
+    | {
+        name: JZ_60;
+        year: number;
+        mouth: number;
+        day: number;
+        days: {name: JZ_60; mouth: number; day: number}[];
+      }[]
+  >(null);
+  const [activeLyIndex, setActiveLyIndex] = useState(0);
+  const [activeLrIndex, setActiveLrIndex] = useState(0);
 
   const handleNow = () => {
     const data = paipanInfo.big.data;
@@ -351,15 +375,34 @@ const BaziInfo: FC<
     if (index < 0 || lnIndex < 0) return;
     setActiveDyIndex(index);
     setActiveLnIndex(lnIndex);
-    updateList(index, lnIndex);
+
+    // 流月
+    const ln_item = paipanInfo.big.data[activeDyIndex].years[lnIndex];
+    const newLiuYueData = paipan.getLiuYueByYear(ln_item.year, ln_item.name);
+    setLyData(newLiuYueData);
+    const newActiveLyIndex = newLiuYueData.findIndex(i => {
+      const last_day = i.days[i.days.length - 1];
+      const mouth_max = new Date();
+      mouth_max.setMonth(last_day.mouth - 1);
+      mouth_max.setDate(last_day.day);
+      return mouth_max.getTime() > new Date().getTime();
+    });
+    setActiveLyIndex(newActiveLyIndex);
+    // 流日
+    const newAcstiveLrIndex = newLiuYueData[newActiveLyIndex].days.findIndex(
+      i =>
+        i.mouth === new Date().getMonth() + 1 && i.day === new Date().getDate(),
+    );
+    setActiveLrIndex(newAcstiveLrIndex);
   };
 
-  const updateList = (index: number, lnIndex: number) => {
-    const dy = paipanInfo.big.data[index];
-    let ln = dy.years[lnIndex];
+  // 大运流年流月等切换后自动更新四柱表
+  useEffect(() => {
+    const dy = paipanInfo.big.data[activeDyIndex];
+    let ln = dy.years[activeLnIndex];
     if (!ln) {
       // 这种情况一般是点到了小运
-      lnIndex = 0;
+      const lnIndex = 0;
       ln = dy.years[lnIndex];
       setActiveLnIndex(lnIndex);
       if (!ln) {
@@ -379,7 +422,7 @@ const BaziInfo: FC<
     setPillarData(s => {
       // 大运
       const dyIndex = s.findIndex(i => i.title === PillarTitle.大运);
-      const dyZhuxingIndex = paipan.ctg.findIndex(j => j === dy.name[0]);
+      const dyZhuxingIndex = TG_10.findIndex(j => j === dy.name[0]);
       const dyItem = {
         title: PillarTitle.大运,
         zhuxing: paipanInfo.tenMap[dyZhuxingIndex],
@@ -413,7 +456,7 @@ const BaziInfo: FC<
       }
       // 流年
       const LnIndex = s.findIndex(i => i.title === PillarTitle.流年);
-      const LnZhuxingIndex = paipan.ctg.findIndex(j => j === ln.name[0]);
+      const LnZhuxingIndex = TG_10.findIndex(j => j === ln.name[0]);
       const LnItem = {
         title: PillarTitle.流年,
         zhuxing: paipanInfo.tenMap[LnZhuxingIndex],
@@ -424,28 +467,96 @@ const BaziInfo: FC<
         xingyun: NaYin.getXingYun(ln.name, paipanInfo.bazi[2][0] as TG),
         zizuo: NaYin.getXingYun(ln.name, ln.name[0] as TG),
         nayin: NaYin.getNayin(ln.name),
-        ss:
-          dy.name === '小运'
-            ? []
-            : Shensha.getData(
-                paipanInfo.bazi,
-                ln.name,
-                paipanInfo.yinli,
-                paipanInfo.gender,
-              ),
+        ss: Shensha.getData(
+          paipanInfo.bazi,
+          ln.name,
+          paipanInfo.yinli,
+          paipanInfo.gender,
+        ),
       };
       if (LnIndex < 0) {
         s.push(LnItem);
       } else {
         s[LnIndex] = LnItem;
       }
+      // 流月
+      if (lyData) {
+        const activeLyData = lyData[activeLyIndex];
+        const activeLrData = activeLyData.days[activeLrIndex];
+        const ly_tgdz = activeLyData.name;
+        const lr_tgdz = activeLrData.name;
+
+        const {dzcg, dzcg_text} = paipan.getDzcgText(
+          [ly_tgdz, lr_tgdz].map(item =>
+            paipan.cdz.findIndex(j => j === item?.[1]),
+          ),
+        );
+
+        const lyIndex = s.findIndex(i => i.title === PillarTitle.流月);
+        const LyZhuxingIndex = TG_10.findIndex(j => j === ly_tgdz[0]);
+        const lyItem = {
+          title: PillarTitle.流月,
+          zhuxing: paipanInfo.tenMap[LyZhuxingIndex],
+          tg: ly_tgdz[0],
+          dz: ly_tgdz[1],
+          dzcg: dzcg_text[0],
+          fx: dzcg[0],
+          xingyun: NaYin.getXingYun(ly_tgdz, paipanInfo.bazi[2][0] as TG),
+          zizuo: NaYin.getXingYun(ly_tgdz, ly_tgdz[0] as TG),
+          nayin: NaYin.getNayin(ly_tgdz),
+          ss: Shensha.getData(
+            paipanInfo.bazi,
+            ly_tgdz,
+            paipanInfo.yinli,
+            paipanInfo.gender,
+          ),
+        };
+        if (lyIndex < 0) {
+          s.push(lyItem);
+        } else {
+          s[lyIndex] = lyItem;
+        }
+
+        const lrIndex = s.findIndex(i => i.title === PillarTitle.流日);
+        const LrZhuxingIndex = TG_10.findIndex(j => j === lr_tgdz[0]);
+        const lrItem = {
+          title: PillarTitle.流日,
+          zhuxing: paipanInfo.tenMap[LrZhuxingIndex],
+          tg: lr_tgdz[0],
+          dz: lr_tgdz[1],
+          dzcg: dzcg_text[0],
+          fx: dzcg[0],
+          xingyun: NaYin.getXingYun(lr_tgdz, paipanInfo.bazi[2][0] as TG),
+          zizuo: NaYin.getXingYun(lr_tgdz, lr_tgdz[0] as TG),
+          nayin: NaYin.getNayin(lr_tgdz),
+          ss: Shensha.getData(
+            paipanInfo.bazi,
+            lr_tgdz,
+            paipanInfo.yinli,
+            paipanInfo.gender,
+          ),
+        };
+        if (lrIndex < 0) {
+          s.push(lrItem);
+        } else {
+          s[lrIndex] = lrItem;
+        }
+      }
 
       return [...s];
     });
-  };
+  }, [
+    activeDyIndex,
+    activeLnIndex,
+    activeLrIndex,
+    activeLyIndex,
+    lyData,
+    paipanInfo,
+  ]);
+  // console.log('render in');
 
   //   useEffect(() => {
-  //     handleNow(paipanInfo.big.data);
+  //     handleNow();
   //     // eslint-disable-next-line react-hooks/exhaustive-deps
   //   }, [paipanInfo]);
 
@@ -455,11 +566,15 @@ const BaziInfo: FC<
       dyIndex !== -1 && s.splice(dyIndex, 1);
       const lnIndex = s.findIndex(i => i.title === PillarTitle.流年);
       lnIndex !== -1 && s.splice(lnIndex, 1);
+      const lyIndex = s.findIndex(i => i.title === PillarTitle.流月);
+      lyIndex !== -1 && s.splice(lyIndex, 1);
+      const lrIndex = s.findIndex(i => i.title === PillarTitle.流日);
+      lrIndex !== -1 && s.splice(lrIndex, 1);
       return [...s];
     });
   };
 
-  // 大运表
+  // 大运
   const renderDayunGrid = () => {
     const activeDyData = paipanInfo.big.data[activeDyIndex];
 
@@ -472,15 +587,17 @@ const BaziInfo: FC<
               activeDyData.years[activeLnIndex].year - paipanInfo.yy
             }岁`}</Text>
           )}
+          <TouchableOpacity style={styles.toolNowBtn} onPress={handleHiddenDy}>
+            <Text>关闭</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.toolNowBtn} onPress={handleNow}>
-            <Text style={{fontSize: 18}}>今</Text>
+            <Text style={{fontSize: 16, fontWeight: 'bold'}}>今</Text>
           </TouchableOpacity>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <TouchableOpacity style={styles.dayunItem} onPress={handleHiddenDy}>
-            <Text style={{fontSize: 18}}>大</Text>
-            <Text style={{fontSize: 18}}>运</Text>
-          </TouchableOpacity>
+          <View style={styles.dayunItem}>
+            <Text style={{fontSize: 18}}>{'大\n运'}</Text>
+          </View>
           {paipanInfo.big.data.map((item, index) => {
             const isActive = activeDyIndex === index;
             const color = isActive ? '#000' : '#404040';
@@ -489,10 +606,7 @@ const BaziInfo: FC<
               <TouchableOpacity
                 key={'dayun_' + item.name + index}
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
-                onPress={() => {
-                  setActiveDyIndex(index);
-                  updateList(index, activeLnIndex);
-                }}>
+                onPress={() => setActiveDyIndex(index)}>
                 <Text style={[{fontSize: 14, color}]}>
                   {isXiaoYun ? paipanInfo.yy : item.start_time[0]}
                 </Text>
@@ -520,9 +634,6 @@ const BaziInfo: FC<
               </TouchableOpacity>
             );
           })}
-          {/* <Row>
-          <Text>{JSON.stringify(paipanInfo.big_start_time)}</Text>
-        </Row> */}
         </ScrollView>
       </View>
     );
@@ -535,8 +646,7 @@ const BaziInfo: FC<
       <View style={styles.dayunGrid}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.dayunItem}>
-            <Text style={{fontSize: 18}}>流</Text>
-            <Text style={{fontSize: 18}}>年</Text>
+            <Text style={{fontSize: 18}}>{'流\n年'}</Text>
           </View>
           {activeDyData.years.map((item, index) => {
             const isActive = activeLnIndex === index;
@@ -546,15 +656,7 @@ const BaziInfo: FC<
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
                 onPress={() => {
                   setActiveLnIndex(index);
-                  updateList(activeDyIndex, index);
-                  // TODO
-                  setModal(
-                    JSON.stringify(
-                      paipan.getLiuYueByYear(item.year, item.name),
-                      null,
-                      2,
-                    ),
-                  );
+                  setLyData(paipan.getLiuYueByYear(item.year, item.name));
                 }}>
                 <Text
                   style={[
@@ -565,6 +667,80 @@ const BaziInfo: FC<
                     },
                   ]}>
                   {item.year}
+                </Text>
+                <WuxingText text={item.name[0]} size="mini" />
+                <WuxingText text={item.name[1]} size="mini" />
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+    );
+  };
+
+  // 流月
+  const renderLiuyue = () => {
+    if (lyData === null) return null;
+    return (
+      <View style={styles.dayunGrid}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.dayunItem}>
+            <Text style={{fontSize: 18}}>{'流\n月'}</Text>
+          </View>
+          {lyData.map((item, index) => {
+            const isActive = activeLyIndex === index;
+            return (
+              <TouchableOpacity
+                key={'liuyue_' + item.year + item.mouth}
+                style={[styles.dayunItem, isActive && styles.dayunItemActive]}
+                onPress={() => setActiveLyIndex(index)}>
+                <Text>{JQ_12[index]}</Text>
+                <Text
+                  style={[
+                    {
+                      marginBottom: 4,
+                      fontSize: 14,
+                      color: isActive ? '#000' : '#404040',
+                    },
+                  ]}>
+                  {`${item.mouth}/${item.day}`}
+                </Text>
+                <WuxingText text={item.name[0]} size="mini" />
+                <WuxingText text={item.name[1]} size="mini" />
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+    );
+  };
+
+  // 流日
+  const renderLiuri = () => {
+    if (lyData === null) return null;
+    return (
+      <View style={styles.dayunGrid}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.dayunItem}>
+            <Text style={{fontSize: 18}}>{'流\n日'}</Text>
+          </View>
+          {lyData[activeLyIndex].days.map((item, index) => {
+            const isActive = activeLrIndex === index;
+            return (
+              <TouchableOpacity
+                key={'liuri_' + item.mouth + index}
+                style={[styles.dayunItem, isActive && styles.dayunItemActive]}
+                onPress={() => setActiveLrIndex(index)}>
+                {/* <Text>{JQ_12[index]}</Text> */}
+                <Text
+                  style={[
+                    {
+                      marginBottom: 4,
+                      fontSize: 14,
+                      color: isActive ? '#000' : '#404040',
+                    },
+                  ]}>
+                  {`${item.mouth}/${item.day}`}
                 </Text>
                 <WuxingText text={item.name[0]} size="mini" />
                 <WuxingText text={item.name[1]} size="mini" />
@@ -612,6 +788,8 @@ const BaziInfo: FC<
         {/* 大运表 */}
         {renderDayunGrid()}
         {renderLiunian()}
+        {renderLiuyue()}
+        {renderLiuri()}
 
         {/* 袁天罡称骨： */}
         <View style={{marginVertical: 16}}>
@@ -637,7 +815,7 @@ const BaziInfo: FC<
         {/* <Text>{JSON.stringify(pillarData, null, 4)}</Text> */}
         {/* 弹窗 */}
         <MyModal isShow={isShowModal} onClose={() => setIsShowMoal(false)}>
-          <Text>{modalText}</Text>
+          <Text style={{fontSize: 20}}>{modalText}</Text>
         </MyModal>
       </ScrollView>
     </View>

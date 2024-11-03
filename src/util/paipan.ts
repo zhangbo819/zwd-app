@@ -1384,21 +1384,22 @@ class Paipan {
     return res;
   }
 
-  // 根据公历年获取流月
+  // 根据公历年获取流月流日
   getLiuYueByYear(yy: number, tgdz: JZ_60) {
     const res: {
       name: JZ_60;
       year: number;
       mouth: number;
       day: number;
-      // days: {name: JZ_60; mouth: number; day: number}[];
-      days: JZ_60[];
+      days: {name: JZ_60; mouth: number; day: number}[];
+      // days: JZ_60[];
     }[] = [];
     const days: number[][] = [];
     const rest_days: number[][] = [];
     GetPureJQsinceSpring(yy).forEach(i => {
       const [y, m, ddd, hhh, mtt, sss] = Julian2Solar(i);
       const r = this.GetGanZhi(y, m, ddd, hhh, mtt, sss + 1);
+      // console.log('r', r.ix, Julian2Solar(r.jq[r.ix]))
       if (this.ctg[r.tg[0]] + this.cdz[r.dz[0]] === tgdz) {
         // console.log(
         //   'GetPureJQsinceSpring',
@@ -1418,8 +1419,8 @@ class Paipan {
       }
     });
     // console.log('days', days);
-    // const days_JZ_60: {name: JZ_60; mouth: number; day: number}[][] = [];
-    const days_JZ_60: JZ_60[][] = [];
+    const days_JZ_60: {name: JZ_60; mouth: number; day: number}[][] = [];
+    // const days_JZ_60: JZ_60[][] = [];
     for (let i = 0; i < days.length; i++) {
       const start = days[i];
       let end = days[i + 1];
@@ -1430,23 +1431,55 @@ class Paipan {
       days_JZ_60.push(this._getJZ60SByStartEnd(start, end));
     }
 
+    const max_map: Record<number, number> = {
+      1: 31,
+      2: this.GetLeap(yy) ? 29 : 28,
+      3: 31,
+      4: 30,
+      5: 31,
+      6: 30,
+      7: 31,
+      8: 31,
+      9: 30,
+      10: 31,
+      11: 30,
+      12: 31,
+    };
+
     res.forEach((i, index) => {
-      i.days = days_JZ_60[index];
+      let day = i.day;
+      let mouth = i.mouth;
+      i.days = days_JZ_60[index].map((j, k) => {
+        // console.log(j.name, i.day, k);
+        if (k !== 0) {
+          day++;
+        }
+
+        if (day > max_map[mouth]) {
+          mouth++;
+          day = 1;
+        }
+
+        j.mouth = mouth;
+        j.day = day;
+
+        return j;
+      });
     });
 
-    console.log(
-      'days_JZ_60',
-      // days_JZ_60.map(i => i.map(j => j.name)),
-      days_JZ_60,
-    );
+    // console.log(
+    //   'days_JZ_60',
+    //   // days_JZ_60.map(i => i.map(j => j.name)),
+    //   days_JZ_60,
+    // );
     // console.log('getLiuYueByYear', JSON.stringify(res, null, 2));
     return res;
   }
 
   // 79 710 711, 80 81 - 811, - , 611, 70, 71, 72, 73
   _getJZ60SByStartEnd(start: number[], end: number[]) {
-    // const res: {name: JZ_60; mouth: number; day: number}[] = [];
-    const res: JZ_60[] = [];
+    const res: {name: JZ_60; mouth: number; day: number}[] = [];
+    // const res: JZ_60[] = [];
     const [startX, startY] = start;
     const [endX, endY] = end;
     let nowX = startX,
@@ -1455,12 +1488,12 @@ class Paipan {
       if (nowX === endX && nowY === endY) {
         break;
       } else {
-        res.push((TG_10[nowX] + DZ_12[nowY]) as JZ_60);
-        // res.push({
-        //   name: (TG_10[nowX] + DZ_12[nowY]) as JZ_60,
-        //   mouth: 0,
-        //   day: 0,
-        // });
+        // res.push((TG_10[nowX] + DZ_12[nowY]) as JZ_60);
+        res.push({
+          name: (TG_10[nowX] + DZ_12[nowY]) as JZ_60,
+          mouth: 0,
+          day: 0,
+        });
         ++nowX;
         ++nowY;
         if (nowY > 11) {

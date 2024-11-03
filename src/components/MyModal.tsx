@@ -44,7 +44,7 @@ const MyModal: FC<{
                 setModalVisible(!modalVisible);
                 onClose?.();
               }}>
-              <Text style={styles.textStyle}>关 闭</Text>
+              <Text style={styles.textStyle}>关闭</Text>
             </TouchableHighlight>
           </View>
         </View>
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    padding: 35,
+    padding: 20,
     backgroundColor: 'white',
     borderRadius: 20,
     alignItems: 'center',
@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
   },
   ScrollView: {
     flexGrow: 0,
+    paddingHorizontal: 10
     // maxHeight: '80%',
   },
   openButton: {
