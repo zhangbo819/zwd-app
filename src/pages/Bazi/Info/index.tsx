@@ -22,8 +22,11 @@ import NaYin from '../../../util/Nayin';
 import textJSON from '../../../util/text';
 import WuxingText from './WuxingText';
 import DaYunLiuNian from './DaYunLiuNian';
+import Spin from '../../../components/Spin';
+import { NAV_COMMON_HEIGHT } from '../../../constant/UI';
+import ShowColors from '../../../components/ShowColors';
 
-const init_Data = paipan.GetInfo(1, Date.now());
+// const init_Data = paipan.GetInfo(1, Date.now());
 export enum PillarTitle {
   年柱 = '年柱',
   月柱 = '月柱',
@@ -51,7 +54,7 @@ export type PillarItem = {
 const BaziInfo: FC<
   NativeStackScreenProps<RootStackParamList, StackPages.BaziInfo>
 > = props => {
-  const [paipanInfo, setPaipanInfo] = useState<PaipanInfo>(init_Data);
+  const [paipanInfo, setPaipanInfo] = useState<PaipanInfo | null>(null);
   // 所有柱数据
   const [pillarData, setPillarData] = useState<PillarItem[]>([]);
   const [ytgcgData, setYtgcgData] = useState({
@@ -125,6 +128,9 @@ const BaziInfo: FC<
 
   // 阴阳历日期
   const renderDateText = (isYang = false) => {
+    if (paipanInfo === null) {
+      return null;
+    }
     const arr = (isYang ? paipanInfo.yangli : paipanInfo.yinli) || [];
     let res = `${isYang ? '阳历' : '阴历'}：${arr[0]}年${arr[1]}月${arr[2]}日 `;
     res += isYang
@@ -246,10 +252,11 @@ const BaziInfo: FC<
                   <Col key={'fx_' + cg_index + index + y}>
                     <TouchableOpacity
                       onPress={() =>
+                        paipanInfo !== null &&
                         setModal(textJSON[paipanInfo.tenMap[cg_index] as Ten])
                       }>
                       <Text style={styles.tenText}>
-                        {paipanInfo.tenMap[cg_index]}
+                        {paipanInfo === null ? '' : paipanInfo.tenMap[cg_index]}
                       </Text>
                     </TouchableOpacity>
                   </Col>
@@ -335,69 +342,78 @@ const BaziInfo: FC<
   };
 
   return (
-    <View style={[styles.container, isiOS && {paddingTop: 60}]}>
-      <ScrollView style={styles.pagesScrollView}>
-        {/* 基础信息 */}
-        <View style={styles.topInfo}>
-          <Row>
-            <Col>
-              <Text style={styles.yinyangText}>
-                {props.route.params.name || '未命名'}{' '}
-              </Text>
-            </Col>
-            <Col>
-              <Text style={styles.yinyangText}>
-                {paipanInfo.gender ? '女' : '男'}
-              </Text>
-            </Col>
-          </Row>
-          {/* 阴历阳历 */}
-          {renderDateText(false)}
-          {renderDateText(true)}
-          <Row>
-            <Col>
-              <Text style={styles.yinyangText}>属相：{paipanInfo.sx}</Text>
-            </Col>
-            <Col>
-              <Text style={styles.yinyangText}>星座：{paipanInfo.xz}</Text>
-            </Col>
-          </Row>
-        </View>
+    <View style={[styles.container, isiOS && {paddingTop: NAV_COMMON_HEIGHT}]}>
+      <Spin spinning={paipanInfo === null}>
+        {paipanInfo !== null && (
+          <ScrollView style={styles.pagesScrollView}>
+            {/* 基础信息 */}
+            <View style={styles.topInfo}>
+              <Row>
+                <Col>
+                  <Text style={styles.yinyangText}>
+                    {props.route.params.name || '未命名'}{' '}
+                  </Text>
+                </Col>
+                <Col>
+                  <Text style={styles.yinyangText}>
+                    {paipanInfo.gender ? '女' : '男'}
+                  </Text>
+                </Col>
+              </Row>
+              {/* 阴历阳历 */}
+              {renderDateText(false)}
+              {renderDateText(true)}
+              <Row>
+                <Col>
+                  <Text style={styles.yinyangText}>属相：{paipanInfo.sx}</Text>
+                </Col>
+                <Col>
+                  <Text style={styles.yinyangText}>星座：{paipanInfo.xz}</Text>
+                </Col>
+              </Row>
+            </View>
 
-        {/* 四柱表 */}
-        {renderPillarGrid()}
+            {/* 四柱表 */}
+            {renderPillarGrid()}
 
-        {/* 大运表 */}
-        <DaYunLiuNian paipanInfo={paipanInfo} setPillarData={setPillarData} />
+            {/* 大运表 */}
+            <DaYunLiuNian
+              paipanInfo={paipanInfo}
+              setPillarData={setPillarData}
+            />
 
-        {/* 袁天罡称骨： */}
-        <View style={{marginVertical: 16}}>
-          <Row>
-            <TouchableOpacity
-              onPress={() =>
-                Alert.alert(
-                  ytgcgData.weight_text,
-                  `年${ytgcgData.weight_y} + 月${ytgcgData.weight_m} + 日${ytgcgData.weight_d} + 时${ytgcgData.weight_h}`,
-                )
-              }>
-              <Text style={styles.yinyangText}>
-                袁天罡称骨：{ytgcgData.weight_text}
-              </Text>
-            </TouchableOpacity>
-          </Row>
-          <Row>
-            <Text style={styles.yinyangText}>{ytgcgData.comment}</Text>
-          </Row>
-        </View>
+            {/* 袁天罡称骨： */}
+            <View style={{marginVertical: 16}}>
+              <Row>
+                <TouchableOpacity
+                  onPress={() =>
+                    Alert.alert(
+                      ytgcgData.weight_text,
+                      `年${ytgcgData.weight_y} + 月${ytgcgData.weight_m} + 日${ytgcgData.weight_d} + 时${ytgcgData.weight_h}`,
+                    )
+                  }>
+                  <Text style={styles.yinyangText}>
+                    袁天罡称骨：{ytgcgData.weight_text}
+                  </Text>
+                </TouchableOpacity>
+              </Row>
+              <Row>
+                <Text style={styles.yinyangText}>{ytgcgData.comment}</Text>
+              </Row>
+            </View>
 
-        {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
-        {/* <Text>{JSON.stringify(pillarData, null, 4)}</Text> */}
+            {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
+            {/* <Text>{JSON.stringify(pillarData, null, 4)}</Text> */}
 
-        {/* 弹窗 */}
-        <MyModal isShow={isShowModal} onClose={() => setIsShowMoal(false)}>
-          <Text style={{fontSize: 20}}>{modalText}</Text>
-        </MyModal>
-      </ScrollView>
+            {/* 弹窗 */}
+            <MyModal isShow={isShowModal} onClose={() => setIsShowMoal(false)}>
+              <Text style={{fontSize: 20}}>{modalText}</Text>
+            </MyModal>
+
+            <ShowColors />
+          </ScrollView>
+        )}
+      </Spin>
     </View>
   );
 };

@@ -1,5 +1,5 @@
 import React, {FC, ReactNode} from 'react';
-import {DZ, getWuxing, TG, WuXing} from '../../../util/wuxing';
+import {DZ, getColorByWuxing, TG} from '../../../util/wuxing';
 import {StyleSheet, Text, View} from 'react-native';
 
 const WuxingText: FC<{
@@ -8,13 +8,6 @@ const WuxingText: FC<{
   size?: 'default' | 'mini';
 }> = ({text = '', children, size = 'default'}) => {
   // 五行颜色
-  const ColorsMap: Record<WuXing | string, any> = {
-    [WuXing.木]: '#4CAF50',
-    [WuXing.火]: '#F44336',
-    [WuXing.土]: '#795548',
-    [WuXing.金]: '#FDD835',
-    [WuXing.水]: '#2196F3',
-  };
   const color_text = text.length > 1 ? text[0] : text;
 
   return (
@@ -23,7 +16,7 @@ const WuxingText: FC<{
         style={[
           styles.wuxing,
           size === 'mini' && styles.wuxing_mini,
-          {color: ColorsMap[getWuxing(color_text)]},
+          {color: getColorByWuxing(color_text)},
         ]}>
         {text || ' '}
         {children}

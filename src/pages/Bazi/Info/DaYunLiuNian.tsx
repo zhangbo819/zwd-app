@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {
   Alert,
   ScrollView,
@@ -33,46 +33,53 @@ const DaYunLiuNian: FC<{
   >(null);
   const [activeLyIndex, setActiveLyIndex] = useState(0);
   const [activeLrIndex, setActiveLrIndex] = useState(0);
+  const isInit = useRef(true);
 
   const handleNow = () => {
     const data = paipanInfo.big.data;
     const nowYears = new Date().getFullYear();
-    let lnIndex = -1;
-    const index = data.findIndex(i => {
+    let newlnIndex = -1;
+    const newDyIndex = data.findIndex(i => {
       return i.years.find((j, yearsIndex) => {
         if (j.year === nowYears) {
-          lnIndex = yearsIndex;
+          newlnIndex = yearsIndex;
           return true;
         }
         return false;
       });
     });
-    if (index < 0 || lnIndex < 0) return;
-    setActiveDyIndex(index);
-    setActiveLnIndex(lnIndex);
+    if (newDyIndex < 0 || newlnIndex < 0) return;
+    setActiveDyIndex(newDyIndex);
+    setActiveLnIndex(newlnIndex);
 
     // 流月
-    const ln_item = paipanInfo.big.data[activeDyIndex].years[lnIndex];
+    const ln_item = paipanInfo.big.data[newDyIndex].years[newlnIndex];
     const newLiuYueData = paipan.getLiuYueByYear(ln_item.year, ln_item.name);
     setLyData(newLiuYueData);
-    const newActiveLyIndex = newLiuYueData.findIndex(i => {
+    const newLyIndex = newLiuYueData.findIndex(i => {
       const last_day = i.days[i.days.length - 1];
       const mouth_max = new Date();
       mouth_max.setMonth(last_day.mouth - 1);
       mouth_max.setDate(last_day.day);
       return mouth_max.getTime() > new Date().getTime();
     });
-    setActiveLyIndex(newActiveLyIndex);
+    setActiveLyIndex(newLyIndex);
     // 流日
-    const newAcstiveLrIndex = newLiuYueData[newActiveLyIndex].days.findIndex(
+    const newLrIndex = newLiuYueData[newLyIndex].days.findIndex(
       i =>
         i.mouth === new Date().getMonth() + 1 && i.day === new Date().getDate(),
     );
-    setActiveLrIndex(newAcstiveLrIndex);
+    setActiveLrIndex(newLrIndex);
   };
 
   // 大运流年流月等切换后自动更新四柱表
   useEffect(() => {
+    // 初始化时不展示大运流年表
+    if (isInit.current) {
+      isInit.current = false;
+      return;
+    }
+
     const dy = paipanInfo.big.data[activeDyIndex];
     let ln = dy.years[activeLnIndex];
     if (!ln) {
@@ -250,6 +257,8 @@ const DaYunLiuNian: FC<{
     });
   };
 
+  const refDayun = useRef<ScrollView>(null);
+
   // 大运
   const renderDayun = () => {
     const activeDyData = paipanInfo.big.data[activeDyIndex];
@@ -270,7 +279,10 @@ const DaYunLiuNian: FC<{
             <Text style={styles.toolNowText}>今</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          ref={refDayun}
+          horizontal
+          showsHorizontalScrollIndicator={false}>
           <View style={styles.dayunItem}>
             <Text style={styles.listTitleText}>{'大\n运'}</Text>
           </View>
@@ -282,7 +294,10 @@ const DaYunLiuNian: FC<{
               <TouchableOpacity
                 key={'dayun_' + item.name + index}
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
-                onPress={() => setActiveDyIndex(index)}>
+                onPress={() => {
+                  setActiveDyIndex(index);
+                  refDayun.current?.scrollTo({x: index * 10}); // TODO
+                }}>
                 <Text style={[{fontSize: 14, color}]}>
                   {isXiaoYun ? paipanInfo.yy : item.start_time[0]}
                 </Text>

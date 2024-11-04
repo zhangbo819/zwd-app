@@ -218,6 +218,17 @@ export function getWuxing(text: TG | DZ | string) {
   return '';
 }
 
+export function getColorByWuxing(text: TG | DZ | string) {
+  const ColorsMap: Record<WuXing | string, any> = {
+    [WuXing.木]: '#4CAF50',
+    [WuXing.火]: '#F44336',
+    [WuXing.土]: '#795548',
+    [WuXing.金]: '#FDD835',
+    [WuXing.水]: '#2196F3',
+  };
+  return ColorsMap[getWuxing(text)];
+}
+
 type Xun =
   | JZ_60.甲子
   | JZ_60.甲午
