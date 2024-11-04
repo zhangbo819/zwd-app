@@ -22,7 +22,13 @@ import {
 } from '../../types/interface';
 import {loadStorage, saveStorage} from '../../constant/config';
 import {Parsers} from '../../constant/moss';
-import {COLOR_LINEGRAY, FONT_PFR, FONT_PFS, MinPix} from '../../constant/UI';
+import {
+  COLOR_LINEGRAY,
+  COLOR_THEME_COMMON,
+  FONT_PFR,
+  FONT_PFS,
+  MinPix,
+} from '../../constant/UI';
 import {ListEmptyComponent} from '../../components/ListEmptyComp';
 import STYLES from '../../constant/STYLES';
 import {BaziListKey} from '.';
@@ -97,7 +103,7 @@ const List: FC<
         // onLongPress={() => handleDelete({index})}
       >
         <Text style={styles.ItemText}>
-          {`${item.name} `}
+          {`${item.name || '未命名'} `}
           <Text style={styles.ItemSmallText}>{`${
             item.gender === 0 ? '男' : '女'
           } ${date.getFullYear()}年${
@@ -140,7 +146,11 @@ const List: FC<
         // ListHeaderComponent={renderHeaderComponent}
         ListFooterComponent={renderFooterComponent}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={_onRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={_onRefresh}
+            tintColor={COLOR_THEME_COMMON}
+          />
         }
         // onRefresh
         refreshing={refreshing}
@@ -163,14 +173,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ItemText: {
+    marginRight: 8,
     paddingVertical: 5,
     fontFamily: FONT_PFR,
-    fontSize: 20,
+    fontWeight: 'bold',
+    fontSize: 18,
     textAlign: 'center',
     color: '#000',
   },
   ItemSmallText: {
     fontSize: 16,
+    fontWeight: 'normal',
   },
 });
 

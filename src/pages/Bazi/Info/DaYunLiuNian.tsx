@@ -13,6 +13,7 @@ import NaYin from '../../../util/Nayin';
 import Shensha from '../../../util/shensha';
 import WuxingText from './WuxingText';
 import {PillarItem, PillarTitle} from '.';
+import {COLOR_THEME_COMMON} from '../../../constant/UI';
 
 const DaYunLiuNian: FC<{
   paipanInfo: PaipanInfo;
@@ -273,7 +274,7 @@ const DaYunLiuNian: FC<{
             }岁`}</Text>
           )}
           <TouchableOpacity style={styles.toolNowBtn} onPress={handleHiddenDy}>
-            <Text>关闭</Text>
+            <Text style={styles.toolNowText}>关闭</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.toolNowBtn} onPress={handleNow}>
             <Text style={styles.toolNowText}>今</Text>
@@ -468,7 +469,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#fff',
   },
-  toolNowText: {fontSize: 16, fontWeight: 'bold'},
+  toolNowText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLOR_THEME_COMMON,
+  },
   dayunItem: {
     justifyContent: 'center',
     alignItems: 'center',

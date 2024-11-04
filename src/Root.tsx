@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StatusBar, StyleSheet} from 'react-native';
+import {View, StatusBar, StyleSheet, Text} from 'react-native';
 
 // import { createStackNavigator } from 'react-navigation';
 // import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -10,6 +10,7 @@ import {RootStackParamList, StackPages} from './types/interface';
 import About from './pages/Mine/About';
 import BaziInfo from './pages/Bazi/Info';
 import MainTabNavigator from './Main';
+import {COLOR_THEME_COMMON} from './constant/UI';
 
 // import { STATUS_BAR_HEIGHT } from './constant/UI';
 
@@ -47,7 +48,14 @@ export default function Root() {
             component={MainTabNavigator}
           />
           <Stack.Screen name={StackPages.About} component={About} />
-          <Stack.Screen name={StackPages.BaziInfo} component={BaziInfo} />
+          <Stack.Screen
+            name={StackPages.BaziInfo}
+            component={BaziInfo}
+            options={{
+              headerTintColor: COLOR_THEME_COMMON,
+              headerTitle: '',
+            }}
+          />
         </Stack.Navigator>
       </View>
     </NavigationContainer>

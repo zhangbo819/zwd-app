@@ -12,7 +12,10 @@ import {
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 import MyModal from '../../../components/MyModal';
+import Spin from '../../../components/Spin';
+import ShowColors from '../../../components/ShowColors';
 import {isiOS} from '../../../constant/config';
+import { NAV_COMMON_HEIGHT } from '../../../constant/UI';
 import {RootStackParamList, StackPages} from '../../../types/interface';
 import {DZ, Ten, TG, ZhangSheng} from '../../../util/wuxing';
 import paipan, {PaipanInfo} from '../../../util/paipan';
@@ -22,9 +25,6 @@ import NaYin from '../../../util/Nayin';
 import textJSON from '../../../util/text';
 import WuxingText from './WuxingText';
 import DaYunLiuNian from './DaYunLiuNian';
-import Spin from '../../../components/Spin';
-import { NAV_COMMON_HEIGHT } from '../../../constant/UI';
-import ShowColors from '../../../components/ShowColors';
 
 // const init_Data = paipan.GetInfo(1, Date.now());
 export enum PillarTitle {

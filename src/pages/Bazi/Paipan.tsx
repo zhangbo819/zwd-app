@@ -13,6 +13,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {loadStorage, saveStorage} from '../../constant/config';
 import {RootStackParamList, StackPages} from '../../types/interface';
 import {BaziListKey} from '.';
+import {COLOR_THEME_COMMON} from '../../constant/UI';
 
 const Paipan: FC<
   NativeStackScreenProps<RootStackParamList, StackPages.Home>
@@ -42,7 +43,7 @@ const Paipan: FC<
     setIsShowHours(false);
   };
 
-  const onSubmit = async () => {
+  const onSubmit = async (isSave: boolean = true) => {
     const newData = await loadStorage(BaziListKey, []);
     const newObj: RootStackParamList[StackPages.BaziInfo] = {
       name: name === '' ? '未命名' : name,
@@ -52,7 +53,9 @@ const Paipan: FC<
     };
     newData.unshift(newObj);
     // 保存本地
-    await saveStorage({key: BaziListKey, data: newData});
+    if (isSave) {
+      await saveStorage({key: BaziListKey, data: newData});
+    }
     // 跳转详情
     props.navigation.navigate(StackPages.BaziInfo, newObj);
   };
@@ -103,17 +106,22 @@ const Paipan: FC<
       </View>
       <View style={styles.row}>
         <Text style={styles.title}>&nbsp;</Text>
-        <TouchableOpacity onPress={() => setDate(new Date())}>
+        <TouchableOpacity
+          onPress={() => {
+            setDate(new Date());
+            onSubmit(false);
+          }}>
           <Text style={styles.setNow}>即时起局</Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableHighlight onPress={onSubmit} style={styles.submitTouch}>
+      <TouchableHighlight onPress={() => onSubmit()} style={[styles.submitTouch]}>
         <Text style={styles.submitText}>开始排盘</Text>
       </TouchableHighlight>
 
       <DateTimePickerModal
         isVisible={isShowDays}
+        date={date}
         mode="date"
         onConfirm={handleConfirm}
         onCancel={() => setIsShowDays(false)}
@@ -139,14 +147,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   title: {
-    width: '30%',
-    marginRight: 12,
-    fontSize: 24,
+    width: '35%',
+    paddingRight: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'right',
   },
   row: {
-    marginVertical: 4,
+    marginVertical: 8,
     flexDirection: 'row',
     // justifyContent: 'center',
     alignItems: 'center',
@@ -156,9 +164,10 @@ const styles = StyleSheet.create({
   },
   dateBtn: {
     fontSize: 22,
+    color: COLOR_THEME_COMMON,
   },
   setNow: {
-    color: '#4A90E2',
+    color: COLOR_THEME_COMMON,
     marginTop: 8,
     fontSize: 20,
   },
@@ -168,7 +177,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     width: '70%',
     borderRadius: 32,
-    backgroundColor: '#4A90E2',
+    backgroundColor: COLOR_THEME_COMMON,
     alignItems: 'center',
   },
   submitText: {
