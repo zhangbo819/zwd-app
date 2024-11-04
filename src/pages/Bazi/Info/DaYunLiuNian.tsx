@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useRef, useState} from 'react';
 import {
   Alert,
-  ScrollView,
+  FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -22,6 +22,8 @@ const DaYunLiuNian: FC<{
   // 当前的大运
   const [activeDyIndex, setActiveDyIndex] = useState(0);
   const [activeLnIndex, setActiveLnIndex] = useState(0);
+  const [activeLyIndex, setActiveLyIndex] = useState(0);
+  const [activeLrIndex, setActiveLrIndex] = useState(0);
   const [lyData, setLyData] = useState<
     | null
     | {
@@ -32,46 +34,13 @@ const DaYunLiuNian: FC<{
         days: {name: JZ_60; mouth: number; day: number}[];
       }[]
   >(null);
-  const [activeLyIndex, setActiveLyIndex] = useState(0);
-  const [activeLrIndex, setActiveLrIndex] = useState(0);
   const isInit = useRef(true);
-
-  const handleNow = () => {
-    const data = paipanInfo.big.data;
-    const nowYears = new Date().getFullYear();
-    let newlnIndex = -1;
-    const newDyIndex = data.findIndex(i => {
-      return i.years.find((j, yearsIndex) => {
-        if (j.year === nowYears) {
-          newlnIndex = yearsIndex;
-          return true;
-        }
-        return false;
-      });
-    });
-    if (newDyIndex < 0 || newlnIndex < 0) return;
-    setActiveDyIndex(newDyIndex);
-    setActiveLnIndex(newlnIndex);
-
-    // 流月
-    const ln_item = paipanInfo.big.data[newDyIndex].years[newlnIndex];
-    const newLiuYueData = paipan.getLiuYueByYear(ln_item.year, ln_item.name);
-    setLyData(newLiuYueData);
-    const newLyIndex = newLiuYueData.findIndex(i => {
-      const last_day = i.days[i.days.length - 1];
-      const mouth_max = new Date();
-      mouth_max.setMonth(last_day.mouth - 1);
-      mouth_max.setDate(last_day.day);
-      return mouth_max.getTime() > new Date().getTime();
-    });
-    setActiveLyIndex(newLyIndex);
-    // 流日
-    const newLrIndex = newLiuYueData[newLyIndex].days.findIndex(
-      i =>
-        i.mouth === new Date().getMonth() + 1 && i.day === new Date().getDate(),
-    );
-    setActiveLrIndex(newLrIndex);
-  };
+  const refLists = useRef<Record<'dy' | 'ln' | 'ly' | 'lr', FlatList | null>>({
+    dy: null,
+    ln: null,
+    ly: null,
+    lr: null,
+  });
 
   // 大运流年流月等切换后自动更新四柱表
   useEffect(() => {
@@ -239,6 +208,71 @@ const DaYunLiuNian: FC<{
   ]);
   // console.log('render in');
 
+  const handleNow = () => {
+    const data = paipanInfo.big.data;
+    const nowYears = new Date().getFullYear();
+    let newlnIndex = -1;
+    const newDyIndex = data.findIndex(i => {
+      return i.years.find((j, yearsIndex) => {
+        if (j.year === nowYears) {
+          newlnIndex = yearsIndex;
+          return true;
+        }
+        return false;
+      });
+    });
+    if (newDyIndex < 0 || newlnIndex < 0) {
+      return;
+    }
+    setActiveDyIndex(newDyIndex);
+    setActiveLnIndex(newlnIndex);
+
+    // 流月
+    const ln_item = paipanInfo.big.data[newDyIndex].years[newlnIndex];
+    const newLiuYueData = paipan.getLiuYueByYear(ln_item.year, ln_item.name);
+    setLyData(newLiuYueData);
+    const newLyIndex = newLiuYueData.findIndex(i => {
+      const last_day = i.days[i.days.length - 1];
+      const mouth_max = new Date();
+      mouth_max.setMonth(last_day.mouth - 1);
+      mouth_max.setDate(last_day.day);
+      return mouth_max.getTime() > new Date().getTime();
+    });
+    setActiveLyIndex(newLyIndex);
+    // 流日
+    const newLrIndex = newLiuYueData[newLyIndex].days.findIndex(
+      i =>
+        i.mouth === new Date().getMonth() + 1 && i.day === new Date().getDate(),
+    );
+    setActiveLrIndex(newLrIndex);
+
+    // 自动跳转
+    refLists.current.dy?.scrollToIndex?.({
+      index: activeDyIndex,
+      viewOffset: 150,
+    });
+    setTimeout(() => {
+      if (refLists.current.ln?.props.data?.[newlnIndex]) {
+        refLists.current.ln?.scrollToIndex?.({
+          index: newlnIndex,
+          viewOffset: 150,
+        });
+      }
+      if (refLists.current.ly?.props.data?.[newLyIndex]) {
+        refLists.current.ly?.scrollToIndex?.({
+          index: newLyIndex,
+          viewOffset: 150,
+        });
+      }
+      if (refLists.current.lr?.props.data?.[newLrIndex]) {
+        refLists.current.lr?.scrollToIndex?.({
+          index: newLrIndex,
+          viewOffset: 150,
+        });
+      }
+    }, 800); // todo 800ms
+  };
+
   //   useEffect(() => {
   //     handleNow();
   //     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -257,8 +291,6 @@ const DaYunLiuNian: FC<{
       return [...s];
     });
   };
-
-  const refDayun = useRef<ScrollView>(null);
 
   // 大运
   const renderDayun = () => {
@@ -280,53 +312,47 @@ const DaYunLiuNian: FC<{
             <Text style={styles.toolNowText}>今</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView
-          ref={refDayun}
-          horizontal
-          showsHorizontalScrollIndicator={false}>
+
+        <View style={styles.rowList}>
           <View style={styles.dayunItem}>
             <Text style={styles.listTitleText}>{'大\n运'}</Text>
           </View>
-          {paipanInfo.big.data.map((item, index) => {
-            const isActive = activeDyIndex === index;
-            const color = isActive ? '#000' : '#404040';
-            const isXiaoYun = item.name === '小运';
-            return (
-              <TouchableOpacity
-                key={'dayun_' + item.name + index}
-                style={[styles.dayunItem, isActive && styles.dayunItemActive]}
-                onPress={() => {
-                  setActiveDyIndex(index);
-                  refDayun.current?.scrollTo({x: index * 10}); // TODO
-                }}>
-                <Text style={[{fontSize: 14, color}]}>
-                  {isXiaoYun ? paipanInfo.yy : item.start_time[0]}
-                </Text>
-                <Text
-                  style={[
-                    {
-                      marginBottom: 4,
-                      fontSize: 14,
-                      color,
-                    },
-                  ]}>
-                  {isXiaoYun
-                    ? `1~${item.years.length}`
-                    : item.start_time[0] - paipanInfo.yy + 1}
-                  岁
-                </Text>
-                <WuxingText text={item.name[0]} size="mini">
-                  {/* {!isXiaoYun && (
+          <FlatList
+            ref={r => (refLists.current.dy = r)}
+            data={paipanInfo.big.data}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={i => 'dayun_' + i.name}
+            renderItem={({item, index}) => {
+              const isActive = activeDyIndex === index;
+              const color = isActive ? '#000' : '#404040';
+              const isXiaoYun = item.name === '小运';
+              return (
+                <TouchableOpacity
+                  style={[styles.dayunItem, isActive && styles.dayunItemActive]}
+                  onPress={() => setActiveDyIndex(index)}>
+                  <Text style={[styles.itemText, {color}]}>
+                    {isXiaoYun ? paipanInfo.yy : item.start_time[0]}
+                  </Text>
+                  <Text style={[styles.itemText, {color}]}>
+                    {isXiaoYun
+                      ? `1~${item.years.length}`
+                      : item.start_time[0] - paipanInfo.yy + 1}
+                    岁
+                  </Text>
+                  <WuxingText text={item.name[0]} size="mini">
+                    {/* {!isXiaoYun && (
                     <Text style={{color: '#000'}}>
                       {paipan.}
                     </Text>
                   )} */}
-                </WuxingText>
-                <WuxingText text={item.name[1]} size="mini" />
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
+                  </WuxingText>
+                  <WuxingText text={item.name[1]} size="mini" />
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </View>
       </View>
     );
   };
@@ -334,112 +360,109 @@ const DaYunLiuNian: FC<{
   // 流年
   const renderLiunian = () => {
     const activeDyData = paipanInfo.big.data[activeDyIndex];
+
     return (
-      <View style={styles.dayunGrid}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.dayunItem}>
-            <Text style={styles.listTitleText}>{'流\n年'}</Text>
-          </View>
-          {activeDyData.years.map((item, index) => {
+      <View style={styles.rowList}>
+        <View style={styles.dayunItem}>
+          <Text style={styles.listTitleText}>{'流\n年'}</Text>
+        </View>
+        <FlatList
+          ref={r => (refLists.current.ln = r)}
+          data={activeDyData.years}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={i => 'liunian_' + i.year}
+          renderItem={({item, index}) => {
             const isActive = activeLnIndex === index;
+            const color = isActive ? '#000' : '#404040';
             return (
               <TouchableOpacity
-                key={'liunian_' + item.year}
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
                 onPress={() => {
-                  setActiveLnIndex(index);
                   setLyData(paipan.getLiuYueByYear(item.year, item.name));
+                  setActiveLnIndex(index);
                 }}>
-                <Text
-                  style={[
-                    {
-                      marginBottom: 4,
-                      fontSize: 14,
-                      color: isActive ? '#000' : '#404040',
-                    },
-                  ]}>
-                  {item.year}
-                </Text>
+                <Text style={[styles.itemText, {color}]}>{item.year}</Text>
                 <WuxingText text={item.name[0]} size="mini" />
                 <WuxingText text={item.name[1]} size="mini" />
               </TouchableOpacity>
             );
-          })}
-        </ScrollView>
+          }}
+        />
       </View>
     );
   };
 
   // 流月
   const renderLiuyue = () => {
-    if (lyData === null) return null;
     return (
-      <View style={styles.dayunGrid}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <View style={styles.rowList}>
+        {lyData !== null && (
           <View style={styles.dayunItem}>
             <Text style={styles.listTitleText}>{'流\n月'}</Text>
           </View>
-          {lyData.map((item, index) => {
+        )}
+        <FlatList
+          ref={r => (refLists.current.ly = r)}
+          data={lyData}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={i => 'Liuyue_' + i.year + i.mouth + i.day}
+          renderItem={({item, index}) => {
             const isActive = activeLyIndex === index;
+            const color = isActive ? '#000' : '#404040';
+
             return (
               <TouchableOpacity
-                key={'liuyue_' + item.year + item.mouth}
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
                 onPress={() => setActiveLyIndex(index)}>
                 <Text>{JQ_12[index]}</Text>
-                <Text
-                  style={[
-                    {
-                      marginBottom: 4,
-                      fontSize: 14,
-                      color: isActive ? '#000' : '#404040',
-                    },
-                  ]}>
+                <Text style={[styles.itemText, {color}]}>
                   {`${item.mouth}/${item.day}`}
                 </Text>
                 <WuxingText text={item.name[0]} size="mini" />
                 <WuxingText text={item.name[1]} size="mini" />
               </TouchableOpacity>
             );
-          })}
-        </ScrollView>
+          }}
+        />
       </View>
     );
   };
 
   // 流日
   const renderLiuri = () => {
-    if (lyData === null) return null;
     return (
-      <View style={styles.dayunGrid}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <View style={styles.rowList}>
+        {lyData !== null && (
           <View style={styles.dayunItem}>
             <Text style={styles.listTitleText}>{'流\n日'}</Text>
           </View>
-          {lyData[activeLyIndex].days.map((item, index) => {
+        )}
+        <FlatList
+          ref={r => (refLists.current.lr = r)}
+          data={lyData === null ? [] : lyData[activeLyIndex].days}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={i => 'Liuri_' + i.mouth + i.day + i.name}
+          renderItem={({item, index}) => {
             const isActive = activeLrIndex === index;
+            const color = isActive ? '#000' : '#404040';
+
             return (
               <TouchableOpacity
-                key={'liuri_' + item.mouth + index}
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
                 onPress={() => setActiveLrIndex(index)}>
                 {/* <Text>{JQ_12[index]}</Text> */}
-                <Text
-                  style={[
-                    {
-                      marginBottom: 4,
-                      fontSize: 14,
-                      color: isActive ? '#000' : '#404040',
-                    },
-                  ]}>
+                <Text style={[styles.itemText, {color}]}>
                   {`${item.mouth}/${item.day}`}
                 </Text>
                 <WuxingText text={item.name[0]} size="mini" />
                 <WuxingText text={item.name[1]} size="mini" />
               </TouchableOpacity>
             );
-          })}
-        </ScrollView>
+          }}
+        />
       </View>
     );
   };
@@ -456,6 +479,10 @@ const DaYunLiuNian: FC<{
 const styles = StyleSheet.create({
   dayunGrid: {
     marginTop: 12,
+  },
+  rowList: {
+    marginTop: 12,
+    flexDirection: 'row',
   },
   dayunTools: {
     flexDirection: 'row',
@@ -481,7 +508,14 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: '#fff',
   },
-  listTitleText: {fontSize: 18},
+  itemText: {
+    marginBottom: 4,
+    fontSize: 14,
+  },
+  listTitleText: {
+    fontSize: 18,
+    // fontWeight: '400',
+  },
   dayunItemActive: {
     backgroundColor: '#EEEEEE',
   },
