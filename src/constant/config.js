@@ -24,7 +24,7 @@ export const isAndroid = OS === Android;
 //   ((VERSION_NUMBER % 10000) - (VERSION_NUMBER % 100)) / 100 +
 //   '.' +
 //   (VERSION_NUMBER % 100);
-export const VERSION_NUMBER_NORM = '0.2.0';
+export const VERSION_NUMBER_NORM = '0.2.+';
 
 export const isDev = typeof __DEV__ === 'boolean' && __DEV__;
 if (!isDev) {

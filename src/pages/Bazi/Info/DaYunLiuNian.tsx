@@ -248,7 +248,7 @@ const DaYunLiuNian: FC<{
 
     // 自动跳转
     refLists.current.dy?.scrollToIndex?.({
-      index: activeDyIndex,
+      index: newDyIndex,
       viewOffset: 150,
     });
     setTimeout(() => {
@@ -270,7 +270,7 @@ const DaYunLiuNian: FC<{
           viewOffset: 150,
         });
       }
-    }, 800); // todo 800ms
+    }, 500); // todo 500ms
   };
 
   //   useEffect(() => {
@@ -323,6 +323,13 @@ const DaYunLiuNian: FC<{
             horizontal
             showsHorizontalScrollIndicator={false}
             keyExtractor={i => 'dayun_' + i.name}
+            onScrollToIndexFailed={async info => {
+              // console.log('dy onScrollToIndexFailed', info);
+              refLists.current.ln?.scrollToIndex({
+                index: info.index,
+                animated: true,
+              });
+            }}
             renderItem={({item, index}) => {
               const isActive = activeDyIndex === index;
               const color = isActive ? '#000' : '#404040';
@@ -372,6 +379,14 @@ const DaYunLiuNian: FC<{
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={i => 'liunian_' + i.year}
+          onScrollToIndexFailed={async info => {
+            // console.log('ln onScrollToIndexFailed', info);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            refLists.current.ln?.scrollToIndex({
+              index: info.index,
+              animated: true,
+            });
+          }}
           renderItem={({item, index}) => {
             const isActive = activeLnIndex === index;
             const color = isActive ? '#000' : '#404040';
@@ -408,6 +423,14 @@ const DaYunLiuNian: FC<{
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={i => 'Liuyue_' + i.year + i.mouth + i.day}
+          onScrollToIndexFailed={async info => {
+            // console.log('ly onScrollToIndexFailed', info);
+            await new Promise(resolve => setTimeout(resolve, 200));
+            refLists.current.ly?.scrollToIndex({
+              index: info.index,
+              animated: true,
+            });
+          }}
           renderItem={({item, index}) => {
             const isActive = activeLyIndex === index;
             const color = isActive ? '#000' : '#404040';
@@ -445,6 +468,14 @@ const DaYunLiuNian: FC<{
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={i => 'Liuri_' + i.mouth + i.day + i.name}
+          onScrollToIndexFailed={async info => {
+            // console.log('lr onScrollToIndexFailed', info);
+            await new Promise(resolve => setTimeout(resolve, 200));
+            refLists.current.lr?.scrollToIndex({
+              index: info.index,
+              animated: true,
+            });
+          }}
           renderItem={({item, index}) => {
             const isActive = activeLrIndex === index;
             const color = isActive ? '#000' : '#404040';
