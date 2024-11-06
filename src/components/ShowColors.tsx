@@ -2,6 +2,7 @@ import React, {FC} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {getColorByWuxing, JZ_60} from '../util/wuxing';
 import {mixHexColors} from '../constant/Util';
+import {COLOR_THEME_COMMON} from '../constant/UI';
 
 const ShowColors: FC<{}> = () => {
   const data = [];
@@ -14,9 +15,10 @@ const ShowColors: FC<{}> = () => {
     <View style={styles.contentContainer}>
       {data.map(([t, d]) => {
         const [c1, c2] = [getColorByWuxing(t), getColorByWuxing(d)];
+        const color = mixHexColors(c1, c2, 0.5);
         return (
           <View style={styles.row} key={t + d}>
-            <Text style={{color: mixHexColors(c1, c2, 0.5)}}>
+            <Text style={{color}}>
               {t}
               {d}
             </Text>
@@ -24,10 +26,11 @@ const ShowColors: FC<{}> = () => {
               style={[
                 styles.chunk,
                 {
-                  backgroundColor: mixHexColors(c1, c2, 0.5),
+                  backgroundColor: color,
                 },
-              ]}
-            />
+              ]}>
+              <Text>{color === COLOR_THEME_COMMON ? 'X' : ' '}</Text>
+            </View>
           </View>
         );
       })}

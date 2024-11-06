@@ -34,7 +34,6 @@ const DaYunLiuNian: FC<{
         days: {name: JZ_60; mouth: number; day: number}[];
       }[]
   >(null);
-  console.log('activeLrIndex', activeLrIndex);
   const isInit = useRef(true);
   const refLists = useRef<Record<'dy' | 'ln' | 'ly' | 'lr', FlatList | null>>({
     dy: null,
