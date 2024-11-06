@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {
   StyleSheet,
   Switch,
@@ -14,6 +14,8 @@ import {loadStorage, saveStorage} from '../../constant/config';
 import {RootStackParamList, StackPages} from '../../types/interface';
 import {BaziListKey} from '.';
 import {COLOR_THEME_COMMON} from '../../constant/UI';
+import WuxingText from './Info/WuxingText';
+import paipan from '../../util/paipan';
 
 const Paipan: FC<
   NativeStackScreenProps<RootStackParamList, StackPages.Home>
@@ -23,6 +25,18 @@ const Paipan: FC<
   const [date, setDate] = useState(new Date());
   const [isShowDays, setIsShowDays] = useState(false);
   const [isShowHours, setIsShowHours] = useState(false);
+  const [nowPaipan, setNowPaipan] = useState(paipan.GetInfo(0, Date.now()));
+
+  useEffect(() => {
+    const listener = () => {
+      setNowPaipan(paipan.GetInfo(0, Date.now()));
+    };
+    props.navigation.addListener('focus', listener);
+    return () => {
+      props.navigation.removeListener('focus', listener);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleConfirm = (ymdDate: Date) => {
     // console.log('A date has been picked: ', date);
@@ -77,17 +91,19 @@ const Paipan: FC<
       </View>
       <View style={styles.row}>
         <Text style={styles.title}>性别</Text>
-        <TouchableOpacity onPress={() => setGender(g => !g)}>
-          <Text style={styles.dateBtn}>{gender ? '男' : '女'}</Text>
-        </TouchableOpacity>
-        <Switch
-          trackColor={{false: '#FFC0CB', true: '#000'}}
-          // thumbColor={gender ? '#f5dd4b' : '#FFC0CB'}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={() => setGender(g => !g)}
-          value={gender}
-          style={{marginLeft: 16}}
-        />
+        <View style={styles.sex}>
+          <TouchableOpacity onPress={() => setGender(g => !g)}>
+            <Text style={styles.dateBtn}>{gender ? '男' : '女'}</Text>
+          </TouchableOpacity>
+          <Switch
+            trackColor={{false: '#FFC0CB', true: '#000'}}
+            // thumbColor={gender ? '#f5dd4b' : '#FFC0CB'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={() => setGender(g => !g)}
+            value={gender}
+            style={{marginLeft: 16}}
+          />
+        </View>
       </View>
       <View style={styles.row}>
         <Text style={styles.title}>时辰</Text>
@@ -105,17 +121,39 @@ const Paipan: FC<
         /> */}
       </View>
       <View style={styles.row}>
-        <Text style={styles.title}>&nbsp;</Text>
-        <TouchableOpacity
-          onPress={() => {
-            setDate(new Date());
-            onSubmit(false);
-          }}>
-          <Text style={styles.setNow}>即时起局</Text>
-        </TouchableOpacity>
+        <Text style={styles.title}>此刻</Text>
+        <View>
+          <Text style={styles.nowText}>
+            公历：{nowPaipan.yangli[0]}年{nowPaipan.yangli[1]}月
+            {nowPaipan.yangli[2]}日 {nowPaipan.yangli[3]}时
+          </Text>
+          <Text style={styles.nowText}>
+            农历：{nowPaipan.yinli[0]}年{nowPaipan.yinli[1]}月
+            {nowPaipan.yinli[2]}日 {nowPaipan.bazi[3][1]}时
+          </Text>
+          <View style={styles.zhuRow}>
+            {nowPaipan.bazi.map((zhu, index) => {
+              return (
+                <View style={styles.zhuItem} key={'now_zhu' + index}>
+                  <WuxingText size="mid" text={zhu[0]} />
+                  <WuxingText size="mid" text={zhu[1]} />
+                </View>
+              );
+            })}
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              setDate(new Date());
+              onSubmit(false);
+            }}>
+            <Text style={styles.setNow}>即时起局</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <TouchableHighlight onPress={() => onSubmit()} style={[styles.submitTouch]}>
+      <TouchableHighlight
+        onPress={() => onSubmit()}
+        style={[styles.submitTouch]}>
         <Text style={styles.submitText}>开始排盘</Text>
       </TouchableHighlight>
 
@@ -146,6 +184,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#fff',
   },
+  row: {
+    marginVertical: 8,
+    flexDirection: 'row',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+  },
   title: {
     width: '35%',
     paddingRight: 20,
@@ -153,11 +197,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'right',
   },
-  row: {
+  sex: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  nowText: {
+    color: '#666',
+  },
+  zhuRow: {
     marginVertical: 8,
+    // width: '100%',
     flexDirection: 'row',
     // justifyContent: 'center',
-    alignItems: 'center',
+  },
+  zhuItem: {
+    marginRight: 16,
   },
   name: {
     fontSize: 22,
@@ -165,11 +219,17 @@ const styles = StyleSheet.create({
   dateBtn: {
     fontSize: 22,
     color: COLOR_THEME_COMMON,
+    textDecorationLine: 'underline',
   },
   setNow: {
     color: COLOR_THEME_COMMON,
-    marginTop: 8,
-    fontSize: 20,
+    // marginTop: 8,
+    // padding: 8,
+    fontSize: 18,
+    textDecorationLine: 'underline',
+    // borderRadius: 20,
+    // borderColor: COLOR_THEME_COMMON,
+    // borderWidth: 1,
   },
   submitTouch: {
     alignItems: 'center',
