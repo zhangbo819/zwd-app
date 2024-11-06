@@ -34,7 +34,7 @@ const [, , [todayTg, todayDZ]] = paipan.GetInfo(1, Date.now()).bazi;
 export const COLOR_THEME_COMMON = mixHexColors(
   getColorByWuxing(todayTg),
   getColorByWuxing(todayDZ),
-  0.5,
+  0.4,
 );
 export const COLOR_COMMON_BLACK = '#999';
 

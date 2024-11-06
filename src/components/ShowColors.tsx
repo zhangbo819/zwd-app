@@ -15,22 +15,27 @@ const ShowColors: FC<{}> = () => {
     <View style={styles.contentContainer}>
       {data.map(([t, d]) => {
         const [c1, c2] = [getColorByWuxing(t), getColorByWuxing(d)];
-        const color = mixHexColors(c1, c2, 0.5);
+        const color = mixHexColors(c1, c2, 0.4);
         return (
-          <View style={styles.row} key={t + d}>
-            <Text style={{color}}>
+          <View
+            style={[
+              styles.row,
+              color === COLOR_THEME_COMMON && {borderColor: color},
+            ]}
+            key={t + d}>
+            <Text style={[styles.tgdz, {color: c1}]}>
               {t}
-              {d}
+              <Text style={[{color: c2}]}>{d}</Text>
             </Text>
+
             <View
               style={[
                 styles.chunk,
                 {
                   backgroundColor: color,
                 },
-              ]}>
-              <Text>{color === COLOR_THEME_COMMON ? 'X' : ' '}</Text>
-            </View>
+              ]}
+            />
           </View>
         );
       })}
@@ -47,12 +52,25 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   row: {
-    //   flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    width: '10%',
+    // justifyContent: 'space-evenly',
     alignItems: 'center',
+    borderColor: '#fff',
+    borderWidth: 2,
+    borderRadius: 5,
   },
   chunk: {
-    padding: 20,
+    // margin: 0,
+    width: '100%',
+    height: 26,
+  },
+  chunk_text: {
+    textAlign: 'center',
+  },
+  tgdz: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    // backgroundColor: '#fff',
   },
 });
 
