@@ -34,6 +34,7 @@ const DaYunLiuNian: FC<{
         days: {name: JZ_60; mouth: number; day: number}[];
       }[]
   >(null);
+  console.log('activeLrIndex', activeLrIndex);
   const isInit = useRef(true);
   const refLists = useRef<Record<'dy' | 'ln' | 'ly' | 'lr', FlatList | null>>({
     dy: null,
@@ -236,14 +237,18 @@ const DaYunLiuNian: FC<{
       const mouth_max = new Date();
       mouth_max.setMonth(last_day.mouth - 1);
       mouth_max.setDate(last_day.day);
+      mouth_max.setHours(23, 59, 59);
       return mouth_max.getTime() > new Date().getTime();
     });
     setActiveLyIndex(newLyIndex);
     // 流日
-    const newLrIndex = newLiuYueData[newLyIndex].days.findIndex(
+    let newLrIndex = newLiuYueData[newLyIndex].days.findIndex(
       i =>
         i.mouth === new Date().getMonth() + 1 && i.day === new Date().getDate(),
     );
+    if (newLrIndex === -1) {
+      newLrIndex = 0;
+    }
     setActiveLrIndex(newLrIndex);
 
     // 自动跳转

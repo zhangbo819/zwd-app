@@ -172,13 +172,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   submitTouch: {
+    alignItems: 'center',
     margin: 'auto',
     marginVertical: 20,
     paddingVertical: 16,
-    width: '70%',
+    width: '65%',
     borderRadius: 32,
     backgroundColor: COLOR_THEME_COMMON,
-    alignItems: 'center',
+    // backgroundColor: '#1a1a1a',
   },
   submitText: {
     color: '#fff',
