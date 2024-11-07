@@ -120,7 +120,7 @@ const Paipan: FC<
           onPress={() => setIsShowHours(true)}
         /> */}
       </View>
-      <View style={styles.row}>
+      <View style={[styles.row, styles.nowRow]}>
         <Text style={styles.title}>此刻</Text>
         <View>
           <Text style={styles.nowText}>
@@ -188,7 +188,10 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     flexDirection: 'row',
     // justifyContent: 'center',
-    // alignItems: 'center',
+    alignItems: 'center',
+  },
+  nowRow: {
+    alignItems: 'flex-start',
   },
   title: {
     width: '35%',

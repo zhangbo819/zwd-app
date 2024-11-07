@@ -30,12 +30,24 @@ export const COLOR_COMMON_BLUE = '#1B82D2';
 // export const COLOR_THEME_COMMON = getRandomColor();
 
 // 根据今天的天干地支得到混合颜色
-const [, , [todayTg, todayDZ]] = paipan.GetInfo(1, Date.now()).bazi;
-export const COLOR_THEME_COMMON = mixHexColors(
-  getColorByWuxing(todayTg),
-  getColorByWuxing(todayDZ),
-  0.4,
+// const [nianzhu, yuezhu, rizhu] = paipan.GetInfo(1, new Date().getTime()).bazi;
+const [, , rizhu] = paipan.GetInfo(1, Date.now()).bazi;
+// const nianColor = mixHexColors(
+//   getColorByWuxing(nianzhu[0]),
+//   getColorByWuxing(nianzhu[1]),
+// );
+// const yueColor = mixHexColors(
+//   getColorByWuxing(yuezhu[0]),
+//   getColorByWuxing(yuezhu[1]),
+// );
+const riColor = mixHexColors(
+  getColorByWuxing(rizhu[0]),
+  getColorByWuxing(rizhu[1]),
+  0.4
 );
+// const nianyueColor = mixHexColors(nianColor, yueColor);
+// const nyrColor = mixHexColors(nianyueColor, riColor);
+export const COLOR_THEME_COMMON = riColor;
 export const COLOR_COMMON_BLACK = '#999';
 
 export const COLOR_BLACK = '#2A2A2A';
