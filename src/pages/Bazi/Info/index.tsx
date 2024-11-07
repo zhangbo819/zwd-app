@@ -15,9 +15,17 @@ import MyModal from '../../../components/MyModal';
 import Spin from '../../../components/Spin';
 import ShowColors from '../../../components/ShowColors';
 import {isiOS} from '../../../constant/config';
-import {NAV_COMMON_HEIGHT} from '../../../constant/UI';
+import {COLOR_THEME_COMMON, NAV_COMMON_HEIGHT} from '../../../constant/UI';
 import {RootStackParamList, StackPages} from '../../../types/interface';
-import {DZ, getWuxing, Ten, TG, ZhangSheng} from '../../../util/wuxing';
+import {
+  DZ,
+  getColorByWuxing,
+  getWuxing,
+  Ten,
+  TG,
+  WuXing,
+  ZhangSheng,
+} from '../../../util/wuxing';
 import paipan, {PaipanInfo} from '../../../util/paipan';
 import Ytgcg from '../../../util/ytgcg';
 import Shensha, {ShenshaItem} from '../../../util/shensha';
@@ -42,8 +50,8 @@ export type PillarItem = {
   title: string;
   isShow: boolean;
   zhuxing: Ten;
-  tg: string;
-  dz: string;
+  tg: TG;
+  dz: DZ;
   dzcg: string[];
   fx: number[];
   xingyun: ZhangSheng | null;
@@ -71,7 +79,6 @@ const BaziInfo: FC<
     weight_h: 0,
   });
 
-
   // 公共弹窗
   const [isShowModal, setIsShowMoal] = useState(false);
   const [modalText, setModalText] = useState('');
@@ -97,8 +104,8 @@ const BaziInfo: FC<
           title,
           isShow: true,
           zhuxing: zhuxing,
-          tg: newPaiInfo.bazi[i][0],
-          dz: newPaiInfo.bazi[i][1],
+          tg: newPaiInfo.bazi[i][0] as TG,
+          dz: newPaiInfo.bazi[i][1] as DZ,
           dzcg: newPaiInfo.dzcg_text[i],
           fx: newPaiInfo.dzcg[i],
           xingyun: NaYin.getXingYun(
@@ -201,8 +208,7 @@ const BaziInfo: FC<
           {pillarShowData.map((item, index) => {
             return (
               <Col key={'tg' + item.tg + index}>
-                <TouchableOpacity
-                  onPress={() => setModal(textJSON[item.tg as TG])}>
+                <TouchableOpacity onPress={() => setModal(textJSON[item.tg])}>
                   <WuxingText text={item.tg} />
                 </TouchableOpacity>
               </Col>
@@ -217,8 +223,7 @@ const BaziInfo: FC<
           {pillarShowData.map((item, index) => {
             return (
               <Col key={'dz' + item.dz + index}>
-                <TouchableOpacity
-                  onPress={() => setModal(textJSON[item.dz as DZ])}>
+                <TouchableOpacity onPress={() => setModal(textJSON[item.dz])}>
                   <WuxingText text={item.dz} />
                 </TouchableOpacity>
               </Col>
@@ -348,6 +353,56 @@ const BaziInfo: FC<
     );
   };
 
+  // 天干地支关系
+  const renderTgDzRelation = () => {
+    const relation_tg = WuXing.getTgRelation(pillarShowData.map(i => i.tg));
+    const relation_dz = WuXing.getDzRelation(pillarShowData.map(i => i.dz));
+    return (
+      <View style={styles.tgDzRelation}>
+        <Row>
+          <Text style={styles.tgDzRelationTitle}>天干留意：</Text>
+          <View style={styles.tgGxRow}>
+            {relation_tg.length ? (
+              relation_tg.map(i => {
+                return i.relation.map(j => {
+                  return (
+                    <Text
+                      key={'relation_tg' + i.index + j.index}
+                      style={styles.tgGxItem}>
+                      {j.text}
+                    </Text>
+                  );
+                });
+              })
+            ) : (
+              <Text style={styles.tgGxItem}>无</Text>
+            )}
+          </View>
+        </Row>
+        <Row>
+          <Text style={styles.tgDzRelationTitle}>地支留意：</Text>
+          <View style={styles.tgGxRow}>
+            {relation_dz.length ? (
+              relation_dz.map(i => {
+                return i.relation.map(j => {
+                  return (
+                    <Text
+                      key={'relation_dz' + i.index + j.index}
+                      style={styles.tgGxItem}>
+                      {j.text}
+                    </Text>
+                  );
+                });
+              })
+            ) : (
+              <Text style={styles.tgGxItem}>无</Text>
+            )}
+          </View>
+        </Row>
+      </View>
+    );
+  };
+
   return (
     <View style={[styles.container, isiOS && {paddingTop: NAV_COMMON_HEIGHT}]}>
       <Spin spinning={paipanInfo === null}>
@@ -372,8 +427,12 @@ const BaziInfo: FC<
               {renderDateText(true)}
               <Row>
                 <Col>
-                  <Text style={styles.yinyangText}>
-                    五行：{getWuxing(paipanInfo.bazi[2][0])}
+                  <Text style={[styles.yinyangText]}>
+                    五行：
+                    <Text
+                      style={{color: getColorByWuxing(paipanInfo.bazi[2][0])}}>
+                      {getWuxing(paipanInfo.bazi[2][0])}
+                    </Text>
                   </Text>
                 </Col>
                 <Col>
@@ -389,6 +448,9 @@ const BaziInfo: FC<
 
             {/* 四柱表 */}
             {renderPillarGrid()}
+
+            {/* 天干地支关系 */}
+            {renderTgDzRelation()}
 
             {/* 大运表 */}
             <DaYunLiuNian
@@ -493,6 +555,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#000',
     textAlign: 'center',
+  },
+
+  tgDzRelation: {
+    marginVertical: 12,
+    padding: 8,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+  },
+  tgDzRelationTitle: {
+    fontSize: 16,
+    color: COLOR_THEME_COMMON,
+    fontWeight: 'bold',
+  },
+  tgGxRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  tgGxItem: {
+    marginHorizontal: 4,
+    fontSize: 16,
   },
 });
 

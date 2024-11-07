@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {JQ_12, JZ_60, TG, TG_10} from '../../../util/wuxing';
+import {DZ, JQ_12, JZ_60, TG, TG_10} from '../../../util/wuxing';
 import paipan, {PaipanInfo} from '../../../util/paipan';
 import NaYin from '../../../util/Nayin';
 import Shensha from '../../../util/shensha';
@@ -79,8 +79,8 @@ const DaYunLiuNian: FC<{
         title: PillarTitle.大运,
         isShow: true,
         zhuxing: paipanInfo.tenMap[dyZhuxingIndex],
-        tg: dy.name[0],
-        dz: dy.name[1],
+        tg: dy.name[0] as TG,
+        dz: dy.name[1] as DZ,
         dzcg: dzcg_text[0],
         fx: dzcg[0],
         xingyun:
@@ -115,8 +115,8 @@ const DaYunLiuNian: FC<{
         title: PillarTitle.流年,
         isShow: true,
         zhuxing: paipanInfo.tenMap[LnZhuxingIndex],
-        tg: ln.name[0],
-        dz: ln.name[1],
+        tg: ln.name[0] as TG,
+        dz: ln.name[1] as DZ,
         dzcg: dzcg_text[1],
         fx: dzcg[1],
         xingyun: NaYin.getXingYun(ln.name, paipanInfo.bazi[2][0] as TG),
@@ -154,8 +154,8 @@ const DaYunLiuNian: FC<{
           title: PillarTitle.流月,
           isShow: true,
           zhuxing: paipanInfo.tenMap[LyZhuxingIndex],
-          tg: ly_tgdz[0],
-          dz: ly_tgdz[1],
+          tg: ly_tgdz[0] as TG,
+          dz: ly_tgdz[1] as DZ,
           dzcg: lyr_dzcg_text[0],
           fx: lyr_dzcg[0],
           xingyun: NaYin.getXingYun(ly_tgdz, paipanInfo.bazi[2][0] as TG),
@@ -181,8 +181,8 @@ const DaYunLiuNian: FC<{
           title: PillarTitle.流日,
           isShow: true,
           zhuxing: paipanInfo.tenMap[LrZhuxingIndex],
-          tg: lr_tgdz[0],
-          dz: lr_tgdz[1],
+          tg: lr_tgdz[0] as TG,
+          dz: lr_tgdz[1] as DZ,
           dzcg: dzcg_text[0],
           fx: dzcg[0],
           xingyun: NaYin.getXingYun(lr_tgdz, paipanInfo.bazi[2][0] as TG),

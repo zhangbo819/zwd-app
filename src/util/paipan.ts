@@ -1243,7 +1243,7 @@ class Paipan {
    * @param int ss 秒数(0-59)
    * @return array
    */
-  GetInfo(gender: 0 | 1, date: number) {
+  public GetInfo(gender: 0 | 1, date: number) {
     const dateObj = new Date(date);
 
     const [yy, mm, dd, hh, mt, ss] = [
@@ -1385,7 +1385,7 @@ class Paipan {
   }
 
   // 根据公历年获取流月流日
-  getLiuYueByYear(yy: number, tgdz: JZ_60) {
+  public getLiuYueByYear(yy: number, tgdz: JZ_60) {
     const res: {
       name: JZ_60;
       year: number;
@@ -1477,7 +1477,7 @@ class Paipan {
   }
 
   // 79 710 711, 80 81 - 811, - , 611, 70, 71, 72, 73
-  _getJZ60SByStartEnd(start: number[], end: number[]) {
+  private _getJZ60SByStartEnd(start: number[], end: number[]) {
     const res: {name: JZ_60; mouth: number; day: number}[] = [];
     // const res: JZ_60[] = [];
     const [startX, startY] = start;
@@ -1508,14 +1508,14 @@ class Paipan {
   }
 
   // 获取地支藏干和文字
-  getDzcgText(target: any[]) {
+  public getDzcgText(target: any[]) {
     const dzcg = this.getDzcgByIndex(target);
     const dzcg_text = dzcg.map(arr => arr.map(j => this.ctg2[j]));
     return {dzcg, dzcg_text};
   }
 
   // 根据地支索引找到地支藏干
-  getDzcgByIndex(target: any[]) {
+  private getDzcgByIndex(target: any[]) {
     const res: number[][] = [];
     target.forEach(item => {
       if (this.cdz[item]) {
@@ -1527,11 +1527,6 @@ class Paipan {
     return res;
   }
 
-  // TODO
-  // 根据传入的天干或地址得到对应的十神
-  // getD(gz: string, map: Record<string, string>, needShort = false) {
-  // }
-
   // // 根据汉字找到地支具体藏干
   // getCanggan(target: string) {
   //   const index = this.cdz.findIndex(i => i === target);
@@ -1542,7 +1537,7 @@ class Paipan {
   // }
 
   // 找到日元的十神表
-  getTenGodMap(self: number | string = '') {
+  private getTenGodMap(self: number | string = '') {
     // 拿到(可能会循环)的数组隔位的坐标
     function _getLoopIndex(targetIndex: number) {
       const max = 5;
