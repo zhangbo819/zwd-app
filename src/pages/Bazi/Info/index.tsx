@@ -1,4 +1,4 @@
-import React, {FC, ReactNode, useEffect, useState} from 'react';
+import React, {FC, ReactNode, useEffect, useMemo, useState} from 'react';
 import {
   Alert,
   ScrollView,
@@ -15,9 +15,9 @@ import MyModal from '../../../components/MyModal';
 import Spin from '../../../components/Spin';
 import ShowColors from '../../../components/ShowColors';
 import {isiOS} from '../../../constant/config';
-import { NAV_COMMON_HEIGHT } from '../../../constant/UI';
+import {NAV_COMMON_HEIGHT} from '../../../constant/UI';
 import {RootStackParamList, StackPages} from '../../../types/interface';
-import {DZ, Ten, TG, ZhangSheng} from '../../../util/wuxing';
+import {DZ, getWuxing, Ten, TG, ZhangSheng} from '../../../util/wuxing';
 import paipan, {PaipanInfo} from '../../../util/paipan';
 import Ytgcg from '../../../util/ytgcg';
 import Shensha, {ShenshaItem} from '../../../util/shensha';
@@ -40,6 +40,7 @@ export enum PillarTitle {
 
 export type PillarItem = {
   title: string;
+  isShow: boolean;
   zhuxing: Ten;
   tg: string;
   dz: string;
@@ -57,6 +58,10 @@ const BaziInfo: FC<
   const [paipanInfo, setPaipanInfo] = useState<PaipanInfo | null>(null);
   // 所有柱数据
   const [pillarData, setPillarData] = useState<PillarItem[]>([]);
+  const pillarShowData = useMemo(
+    () => pillarData.filter(i => i.isShow),
+    [pillarData],
+  );
   const [ytgcgData, setYtgcgData] = useState({
     weight_text: '',
     comment: '',
@@ -65,6 +70,7 @@ const BaziInfo: FC<
     weight_d: 0,
     weight_h: 0,
   });
+
 
   // 公共弹窗
   const [isShowModal, setIsShowMoal] = useState(false);
@@ -89,6 +95,7 @@ const BaziInfo: FC<
         }
         return {
           title,
+          isShow: true,
           zhuxing: zhuxing,
           tg: newPaiInfo.bazi[i][0],
           dz: newPaiInfo.bazi[i][1],
@@ -142,13 +149,13 @@ const BaziInfo: FC<
   //  柱关系表格
   const renderPillarGrid = () => {
     // 找到藏干中最大的个数，来渲染藏干有几行
-    const cgMaxLength = pillarData.reduce((r, i) => {
+    const cgMaxLength = pillarShowData.reduce((r, i) => {
       if (i.dzcg.length > r) {
         r = i.dzcg.length;
       }
       return r;
     }, 0);
-    const ssMaxLength = pillarData.reduce((r, i) => {
+    const ssMaxLength = pillarShowData.reduce((r, i) => {
       if (i.ss.length > r) {
         r = i.ss.length;
       }
@@ -162,7 +169,7 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>日期</Text>
           </Col>
-          {pillarData.map(item => {
+          {pillarShowData.map(item => {
             return (
               <Col key={item.title}>
                 <Text style={styles.subheading}>{item.title}</Text>
@@ -175,7 +182,7 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>主星</Text>
           </Col>
-          {pillarData.map((item, index) => {
+          {pillarShowData.map((item, index) => {
             return (
               <Col key={'主星_' + item + index}>
                 <TouchableOpacity
@@ -191,7 +198,7 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>天干</Text>
           </Col>
-          {pillarData.map((item, index) => {
+          {pillarShowData.map((item, index) => {
             return (
               <Col key={'tg' + item.tg + index}>
                 <TouchableOpacity
@@ -207,7 +214,7 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>地支</Text>
           </Col>
-          {pillarData.map((item, index) => {
+          {pillarShowData.map((item, index) => {
             return (
               <Col key={'dz' + item.dz + index}>
                 <TouchableOpacity
@@ -225,7 +232,7 @@ const BaziInfo: FC<
               <Col>
                 {index === 0 && <Text style={styles.subheading}>藏干</Text>}
               </Col>
-              {pillarData.map((item, y) => {
+              {pillarShowData.map((item, y) => {
                 const dzcg = item.dzcg[index];
                 return (
                   <Col key={'dzcg' + dzcg + index + y}>
@@ -246,7 +253,7 @@ const BaziInfo: FC<
               <Col>
                 {index === 0 && <Text style={styles.subheading}>副星</Text>}
               </Col>
-              {pillarData.map((item, y) => {
+              {pillarShowData.map((item, y) => {
                 const cg_index = item.fx[index];
                 return (
                   <Col key={'fx_' + cg_index + index + y}>
@@ -270,7 +277,7 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>星运</Text>
           </Col>
-          {pillarData.map((item, index) => {
+          {pillarShowData.map((item, index) => {
             return (
               <Col key={'xingyun' + item.xingyun + index}>
                 <TouchableOpacity
@@ -288,7 +295,7 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>自坐</Text>
           </Col>
-          {pillarData.map((item, index) => {
+          {pillarShowData.map((item, index) => {
             return (
               <Col key={'zizuo' + item.zizuo + index}>
                 <TouchableOpacity
@@ -306,7 +313,7 @@ const BaziInfo: FC<
           <Col>
             <Text style={styles.subheading}>纳音</Text>
           </Col>
-          {pillarData.map((item, index) => {
+          {pillarShowData.map((item, index) => {
             return (
               <Col key={'nayin' + item.nayin + index}>
                 <Text style={styles.tenText}>{item.nayin}</Text>
@@ -321,7 +328,7 @@ const BaziInfo: FC<
               <Col>
                 {index === 0 && <Text style={styles.subheading}>神煞</Text>}
               </Col>
-              {pillarData.map((item, y) => {
+              {pillarShowData.map((item, y) => {
                 const ss_text = item.ss[index];
                 return (
                   <Col key={'ss_' + ss_text + index + y}>
@@ -365,8 +372,15 @@ const BaziInfo: FC<
               {renderDateText(true)}
               <Row>
                 <Col>
+                  <Text style={styles.yinyangText}>
+                    五行：{getWuxing(paipanInfo.bazi[2][0])}
+                  </Text>
+                </Col>
+                <Col>
                   <Text style={styles.yinyangText}>属相：{paipanInfo.sx}</Text>
                 </Col>
+              </Row>
+              <Row>
                 <Col>
                   <Text style={styles.yinyangText}>星座：{paipanInfo.xz}</Text>
                 </Col>
@@ -403,7 +417,7 @@ const BaziInfo: FC<
             </View>
 
             {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
-            {/* <Text>{JSON.stringify(pillarData, null, 4)}</Text> */}
+            {/* <Text>{JSON.stringify(pillarShowData, null, 4)}</Text> */}
 
             {/* 弹窗 */}
             <MyModal isShow={isShowModal} onClose={() => setIsShowMoal(false)}>

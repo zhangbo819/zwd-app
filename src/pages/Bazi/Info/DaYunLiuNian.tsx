@@ -77,6 +77,7 @@ const DaYunLiuNian: FC<{
       const dyZhuxingIndex = TG_10.findIndex(j => j === dy.name[0]);
       const dyItem = {
         title: PillarTitle.大运,
+        isShow: true,
         zhuxing: paipanInfo.tenMap[dyZhuxingIndex],
         tg: dy.name[0],
         dz: dy.name[1],
@@ -104,6 +105,7 @@ const DaYunLiuNian: FC<{
       if (dyIndex < 0) {
         s.push(dyItem);
       } else {
+        dyItem.isShow = s[dyIndex].isShow;
         s[dyIndex] = dyItem;
       }
       // 流年
@@ -111,6 +113,7 @@ const DaYunLiuNian: FC<{
       const LnZhuxingIndex = TG_10.findIndex(j => j === ln.name[0]);
       const LnItem = {
         title: PillarTitle.流年,
+        isShow: true,
         zhuxing: paipanInfo.tenMap[LnZhuxingIndex],
         tg: ln.name[0],
         dz: ln.name[1],
@@ -129,6 +132,7 @@ const DaYunLiuNian: FC<{
       if (LnIndex < 0) {
         s.push(LnItem);
       } else {
+        LnItem.isShow = s[LnIndex].isShow;
         s[LnIndex] = LnItem;
       }
       // 流月
@@ -138,7 +142,7 @@ const DaYunLiuNian: FC<{
         const ly_tgdz = activeLyData.name;
         const lr_tgdz = activeLrData.name;
 
-        const {dzcg, dzcg_text} = paipan.getDzcgText(
+        const {dzcg: lyr_dzcg, dzcg_text: lyr_dzcg_text} = paipan.getDzcgText(
           [ly_tgdz, lr_tgdz].map(item =>
             paipan.cdz.findIndex(j => j === item?.[1]),
           ),
@@ -148,11 +152,12 @@ const DaYunLiuNian: FC<{
         const LyZhuxingIndex = TG_10.findIndex(j => j === ly_tgdz[0]);
         const lyItem = {
           title: PillarTitle.流月,
+          isShow: true,
           zhuxing: paipanInfo.tenMap[LyZhuxingIndex],
           tg: ly_tgdz[0],
           dz: ly_tgdz[1],
-          dzcg: dzcg_text[0],
-          fx: dzcg[0],
+          dzcg: lyr_dzcg_text[0],
+          fx: lyr_dzcg[0],
           xingyun: NaYin.getXingYun(ly_tgdz, paipanInfo.bazi[2][0] as TG),
           zizuo: NaYin.getXingYun(ly_tgdz, ly_tgdz[0] as TG),
           nayin: NaYin.getNayin(ly_tgdz),
@@ -166,6 +171,7 @@ const DaYunLiuNian: FC<{
         if (lyIndex < 0) {
           s.push(lyItem);
         } else {
+          lyItem.isShow = s[lyIndex].isShow;
           s[lyIndex] = lyItem;
         }
 
@@ -173,6 +179,7 @@ const DaYunLiuNian: FC<{
         const LrZhuxingIndex = TG_10.findIndex(j => j === lr_tgdz[0]);
         const lrItem = {
           title: PillarTitle.流日,
+          isShow: true,
           zhuxing: paipanInfo.tenMap[LrZhuxingIndex],
           tg: lr_tgdz[0],
           dz: lr_tgdz[1],
@@ -191,6 +198,7 @@ const DaYunLiuNian: FC<{
         if (lrIndex < 0) {
           s.push(lrItem);
         } else {
+          lrItem.isShow = s[lrIndex].isShow;
           s[lrIndex] = lrItem;
         }
       }
@@ -250,6 +258,9 @@ const DaYunLiuNian: FC<{
     }
     setActiveLrIndex(newLrIndex);
 
+    // 全部显示大运流年
+    triggerPillarDataShow(true);
+
     // 自动跳转
     refLists.current.dy?.scrollToIndex?.({
       index: newDyIndex,
@@ -282,16 +293,22 @@ const DaYunLiuNian: FC<{
   //     // eslint-disable-next-line react-hooks/exhaustive-deps
   //   }, [paipanInfo]);
 
-  const handleHiddenDy = () => {
+  // 显示隐藏表中的大运流年等
+  const triggerPillarDataShow = (
+    isShow: boolean,
+    targets = [
+      PillarTitle.大运,
+      PillarTitle.流年,
+      PillarTitle.流月,
+      PillarTitle.流日,
+    ],
+  ) => {
     setPillarData(s => {
-      const dyIndex = s.findIndex(i => i.title === PillarTitle.大运);
-      dyIndex !== -1 && s.splice(dyIndex, 1);
-      const lnIndex = s.findIndex(i => i.title === PillarTitle.流年);
-      lnIndex !== -1 && s.splice(lnIndex, 1);
-      const lyIndex = s.findIndex(i => i.title === PillarTitle.流月);
-      lyIndex !== -1 && s.splice(lyIndex, 1);
-      const lrIndex = s.findIndex(i => i.title === PillarTitle.流日);
-      lrIndex !== -1 && s.splice(lrIndex, 1);
+      s.forEach(i => {
+        if (targets.includes(i.title as PillarTitle)) {
+          i.isShow = isShow;
+        }
+      });
       return [...s];
     });
   };
@@ -309,7 +326,9 @@ const DaYunLiuNian: FC<{
               activeDyData.years[activeLnIndex].year - paipanInfo.yy
             }岁`}</Text>
           )}
-          <TouchableOpacity style={styles.toolNowBtn} onPress={handleHiddenDy}>
+          <TouchableOpacity
+            style={styles.toolNowBtn}
+            onPress={() => triggerPillarDataShow(false)}>
             <Text style={styles.toolNowText}>关闭</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.toolNowBtn} onPress={handleNow}>
@@ -341,7 +360,13 @@ const DaYunLiuNian: FC<{
               return (
                 <TouchableOpacity
                   style={[styles.dayunItem, isActive && styles.dayunItemActive]}
-                  onPress={() => setActiveDyIndex(index)}>
+                  onPress={() => {
+                    setActiveDyIndex(index);
+                    triggerPillarDataShow(true, [
+                      PillarTitle.大运,
+                      PillarTitle.流年,
+                    ]);
+                  }}>
                   <Text style={[styles.itemText, {color}]}>
                     {isXiaoYun ? paipanInfo.yy : item.start_time[0]}
                   </Text>
@@ -400,6 +425,14 @@ const DaYunLiuNian: FC<{
                 onPress={() => {
                   setLyData(paipan.getLiuYueByYear(item.year, item.name));
                   setActiveLnIndex(index);
+                  triggerPillarDataShow(true, [
+                    PillarTitle.大运,
+                    PillarTitle.流年,
+                  ]);
+                  triggerPillarDataShow(false, [
+                    PillarTitle.流月,
+                    PillarTitle.流日,
+                  ]);
                 }}>
                 <Text style={[styles.itemText, {color}]}>{item.year}</Text>
                 <WuxingText text={item.name[0]} size="mini" />
@@ -442,7 +475,14 @@ const DaYunLiuNian: FC<{
             return (
               <TouchableOpacity
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
-                onPress={() => setActiveLyIndex(index)}>
+                onPress={() => {
+                  setActiveLyIndex(index);
+                  triggerPillarDataShow(true, [
+                    PillarTitle.大运,
+                    PillarTitle.流年,
+                    PillarTitle.流月,
+                  ]);
+                }}>
                 <Text>{JQ_12[index]}</Text>
                 <Text style={[styles.itemText, {color}]}>
                   {`${item.mouth}/${item.day}`}
@@ -487,7 +527,10 @@ const DaYunLiuNian: FC<{
             return (
               <TouchableOpacity
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
-                onPress={() => setActiveLrIndex(index)}>
+                onPress={() => {
+                  setActiveLrIndex(index);
+                  triggerPillarDataShow(true);
+                }}>
                 {/* <Text>{JQ_12[index]}</Text> */}
                 <Text style={[styles.itemText, {color}]}>
                   {`${item.mouth}/${item.day}`}
