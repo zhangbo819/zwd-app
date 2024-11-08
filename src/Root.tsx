@@ -41,18 +41,23 @@ export default function Root() {
         />
         {/* <Router /> */}
 
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{headerTintColor: COLOR_THEME_COMMON}}>
           <Stack.Screen
-            options={{headerShown: false}}
             name={StackPages.Home}
             component={MainTabNavigator}
+            options={{headerShown: false}}
           />
-          <Stack.Screen name={StackPages.About} component={About} />
+          <Stack.Screen
+            name={StackPages.About}
+            component={About}
+            options={{
+              headerTitle: '关于',
+            }}
+          />
           <Stack.Screen
             name={StackPages.BaziInfo}
             component={BaziInfo}
             options={{
-              headerTintColor: COLOR_THEME_COMMON,
               headerTitle: '',
             }}
           />

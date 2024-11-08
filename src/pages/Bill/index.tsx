@@ -29,6 +29,7 @@ import {
   MinPix,
   FONT_PFS,
   FONT_PFR,
+  COLOR_THEME_COMMON,
 } from '../../constant/UI';
 import {Parsers} from '../../constant/moss';
 import {saveStorage, loadStorage} from '../../constant/config';
@@ -233,7 +234,16 @@ export default function BillScan() {
           title={'账本'}
           navigation={navigation}
       /> */}
-      <Tab.Navigator initialRouteName={BillScreenName.list}>
+      <Tab.Navigator
+        initialRouteName={BillScreenName.list}
+        screenOptions={{
+          tabBarLabelStyle: {fontWeight: 'bold', fontSize: 18},
+          tabBarActiveTintColor: COLOR_THEME_COMMON,
+          tabBarIndicatorStyle: {
+            backgroundColor: COLOR_THEME_COMMON,
+            height: MinPix * 2,
+          },
+        }}>
         <Tab.Screen
           name={BillScreenName.input}
           options={{tabBarLabel: '录入'}}

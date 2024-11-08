@@ -29,6 +29,7 @@ import {
   FONT_PFR,
   viewportWidth,
   COLOR_WHITE,
+  COLOR_THEME_COMMON,
 } from '../../constant/UI';
 import {saveStorage, loadStorage, isiOS} from '../../constant/config';
 import {StorageBillKey} from './interface';
@@ -246,7 +247,11 @@ export const BillListScreen: FC<CompositeScreenProps<any, any>> = props => {
         ListHeaderComponent={renderHeaderComponent}
         ListFooterComponent={renderFooterComponent}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={_onRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={_onRefresh}
+            tintColor={COLOR_THEME_COMMON}
+          />
         }
         // onRefresh
         refreshing={refreshing}

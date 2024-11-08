@@ -7,6 +7,7 @@ import Ico5 from 'react-native-vector-icons/FontAwesome5';
 
 // import { billListTopTab } from './navigation/topTabNavPages';
 import {HomeBottomTabPages, HomeBottomTabParamList} from './types/interface';
+import {COLOR_THEME_COMMON} from './constant/UI';
 import Mine from './pages/Mine/Mine';
 import WarehouseList from './pages/Warehouse/WarehouseList';
 import BillScan from './pages/Bill';
@@ -19,7 +20,11 @@ const Tab = createBottomTabNavigator<HomeBottomTabParamList>();
 
 export default function () {
   return (
-    <Tab.Navigator initialRouteName={HomeBottomTabPages.Bazi}>
+    <Tab.Navigator
+      initialRouteName={HomeBottomTabPages.Bazi}
+      screenOptions={{
+        tabBarActiveTintColor: COLOR_THEME_COMMON,
+      }}>
       <Tab.Screen
         name={HomeBottomTabPages.Home}
         options={{

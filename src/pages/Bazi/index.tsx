@@ -23,7 +23,7 @@ const BaziTab: FC<{}> = () => {
           tabBarActiveTintColor: COLOR_THEME_COMMON,
           tabBarIndicatorStyle: {
             backgroundColor: COLOR_THEME_COMMON,
-            height: MinPix,
+            height: MinPix * 2,
           },
         }}>
         <Tab.Screen
