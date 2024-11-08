@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {loadStorage, saveStorage} from '../../constant/config';
+import {isiOS, loadStorage, saveStorage} from '../../constant/config';
 import {RootStackParamList, StackPages} from '../../types/interface';
 import {BaziListKey} from '.';
 import {COLOR_THEME_COMMON} from '../../constant/UI';
@@ -161,6 +161,11 @@ const Paipan: FC<
         isVisible={isShowDays}
         date={date}
         mode="date"
+        display={isiOS ? 'inline' : 'default'}
+        positiveButton={{textColor: COLOR_THEME_COMMON}}
+        negativeButton={{textColor: COLOR_THEME_COMMON}}
+        accentColor={COLOR_THEME_COMMON}
+        buttonTextColorIOS={COLOR_THEME_COMMON}
         onConfirm={handleConfirm}
         onCancel={() => setIsShowDays(false)}
       />
@@ -169,6 +174,9 @@ const Paipan: FC<
         date={date}
         mode="time"
         is24Hour={true}
+        buttonTextColorIOS={COLOR_THEME_COMMON}
+        positiveButton={{textColor: COLOR_THEME_COMMON}}
+        negativeButton={{textColor: COLOR_THEME_COMMON}}
         // display="default"
         onConfirm={onHoursConfirm}
         onCancel={() => setIsShowHours(false)}
