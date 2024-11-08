@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StatusBar, StyleSheet, Text} from 'react-native';
+import {View, StatusBar, StyleSheet} from 'react-native';
 
 // import { createStackNavigator } from 'react-navigation';
 // import {createNativeStackNavigator} from '@react-navigation/native-stack';

@@ -1,7 +1,6 @@
 import React, {FC, useEffect, useRef, useState} from 'react';
 import {
   Alert,
-  Button,
   FlatList,
   RefreshControl,
   StyleSheet,
@@ -12,6 +11,7 @@ import {
 import {MaterialTopTabScreenProps} from '@react-navigation/material-top-tabs';
 import {CompositeScreenProps} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {
   BaziMaterialTopTabParamList,
@@ -110,10 +110,10 @@ const List: FC<
             date.getMonth() + 1
           }月${date.getDate()}日${date.getHours()}时`}</Text>
         </Text>
-        <Button
+        <Icon
+          style={styles.delete}
+          name="delete"
           onPress={() => handleDelete(item, index)}
-          title="删除"
-          color="#f00"
         />
       </TouchableOpacity>
     );
@@ -184,6 +184,10 @@ const styles = StyleSheet.create({
   ItemSmallText: {
     fontSize: 16,
     fontWeight: 'normal',
+  },
+  delete: {
+    fontSize: 24,
+    color: COLOR_THEME_COMMON,
   },
 });
 

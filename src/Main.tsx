@@ -2,6 +2,8 @@ import React from 'react';
 
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Ico5 from 'react-native-vector-icons/FontAwesome5';
 
 // import { billListTopTab } from './navigation/topTabNavPages';
 import {HomeBottomTabPages, HomeBottomTabParamList} from './types/interface';
@@ -20,22 +22,44 @@ export default function () {
     <Tab.Navigator initialRouteName={HomeBottomTabPages.Bazi}>
       <Tab.Screen
         name={HomeBottomTabPages.Home}
-        options={{title: '首页', headerShown: false}}
+        options={{
+          title: '首页',
+          headerShown: false,
+          tabBarIcon: ({color, size}) => (
+            <Icon name="home" color={color} size={size} />
+          ),
+        }}
         component={BillScan}
       />
       <Tab.Screen
         name={HomeBottomTabPages.WareHouse}
-        options={{title: '货物'}}
+        options={{
+          title: '货物',
+          tabBarIcon: ({color, size}) => {
+            return <Icon name="book" color={color} size={size} />;
+          },
+        }}
         component={WarehouseList}
       />
       <Tab.Screen
         name={HomeBottomTabPages.Bazi}
-        options={{title: '八字', headerShown: false}}
+        options={{
+          title: '八字',
+          headerShown: false,
+          tabBarIcon: ({color, size}) => (
+            <Ico5 name="yin-yang" color={color} size={size} />
+          ),
+        }}
         component={BaziTab}
       />
       <Tab.Screen
         name={HomeBottomTabPages.Mine}
-        options={{title: '我的'}}
+        options={{
+          title: '我的',
+          tabBarIcon: ({color, size}) => (
+            <Icon name="user" color={color} size={size} />
+          ),
+        }}
         component={Mine as React.ComponentType<{}>}
       />
     </Tab.Navigator>
