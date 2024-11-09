@@ -65,11 +65,23 @@ const BaziInfo: FC<
           }}
           renderScene={SceneMap({
             first: () => (
-              <>{paipanInfo !== null && <BaseInfo paipanInfo={paipanInfo} />}</>
+              <>
+                {paipanInfo !== null && (
+                  <BaseInfo
+                    name={props.route.params.name}
+                    paipanInfo={paipanInfo}
+                  />
+                )}
+              </>
             ),
             second: () => (
               <>
-                {paipanInfo !== null && <CareerList paipanInfo={paipanInfo} />}
+                {paipanInfo !== null && (
+                  <CareerList
+                    name={props.route.params.name}
+                    paipanInfo={paipanInfo}
+                  />
+                )}
               </>
             ),
           })}

@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 import MyModal from '../../../components/MyModal';
-import ShowColors from '../../../components/ShowColors';
+import {COLOR_THEME_COMMON} from '../../../constant/UI';
 import {DZ, Ten, TG, WuXing} from '../../../util/wuxing';
 import {PaipanInfo} from '../../../util/paipan';
 import Shensha from '../../../util/shensha';
@@ -17,11 +17,12 @@ import textJSON from '../../../util/text';
 import WuxingText from './WuxingText';
 import DaYunLiuNian from './DaYunLiuNian';
 import {Col, PillarItem, PillarTitle, Row} from '.';
-import {COLOR_THEME_COMMON} from '../../../constant/UI';
 
 const CareerList: FC<{
+  name: string;
   paipanInfo: PaipanInfo;
-}> = ({paipanInfo}) => {
+}> = (props) => {
+  const {paipanInfo} = props
   // 所有柱数据
   const [pillarData, setPillarData] = useState<PillarItem[]>([]);
   const pillarShowData = useMemo(
@@ -348,7 +349,7 @@ const CareerList: FC<{
         <Row>
           <Col>
             <Text style={styles.yinyangText}>
-              {'未命名'} {/* {paipanInfo.name || '未命名'}{' '} */}
+               {props.name || '未命名'}{' '}
             </Text>
           </Col>
           <Col>
@@ -379,7 +380,7 @@ const CareerList: FC<{
         <Text style={{fontSize: 20}}>{modalText}</Text>
       </MyModal>
 
-      <ShowColors />
+      
     </ScrollView>
   );
 };

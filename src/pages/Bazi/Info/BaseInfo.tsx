@@ -1,13 +1,24 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+import ShowColors from '../../../components/ShowColors';
 import {PaipanInfo} from '../../../util/paipan';
 import Ytgcg from '../../../util/ytgcg';
-import {Col, Row} from '.';
 import {getColorByWuxing, getWuxing} from '../../../util/wuxing';
+import {Col, Row} from '.';
 
 const BaseInfo: FC<{
+  name: string;
   paipanInfo: PaipanInfo;
-}> = ({paipanInfo}) => {
+}> = props => {
+  const {paipanInfo} = props;
   const [ytgcgData, setYtgcgData] = useState({
     weight_text: '',
     comment: '',
@@ -41,13 +52,11 @@ const BaseInfo: FC<{
   };
 
   return (
-    <View style={styles.contentContainer}>
+    <ScrollView style={styles.contentContainer}>
       <View style={styles.topInfo}>
         <Row>
           <Col>
-            <Text style={styles.yinyangText}>
-              {'未命名'} {/* {paipanInfo.name || '未命名'}{' '} */}
-            </Text>
+            <Text style={styles.yinyangText}>{props.name || '未命名'} </Text>
           </Col>
           <Col>
             <Text style={styles.yinyangText}>
@@ -66,22 +75,23 @@ const BaseInfo: FC<{
                 style={{
                   color: getColorByWuxing(paipanInfo.bazi[2][0]),
                 }}>
-                {getWuxing(paipanInfo.bazi[2][0])}
+                {paipanInfo.tg[2] % 2 === 0 ? '阳' : '阴'}{getWuxing(paipanInfo.bazi[2][0])}
               </Text>
             </Text>
           </Col>
+        </Row>
+        <Row>
           <Col>
             <Text style={styles.yinyangText}>属相：{paipanInfo.sx}</Text>
           </Col>
-        </Row>
-        <Row>
           <Col>
             <Text style={styles.yinyangText}>星座：{paipanInfo.xz}</Text>
           </Col>
         </Row>
       </View>
+
       {/* 袁天罡称骨： */}
-      <View style={{marginVertical: 16}}>
+      <View style={styles.ytgcgBg}>
         <Row>
           <TouchableOpacity
             onPress={() =>
@@ -99,7 +109,9 @@ const BaseInfo: FC<{
           <Text style={styles.yinyangText}>{ytgcgData.comment}</Text>
         </Row>
       </View>
-    </View>
+
+      <ShowColors />
+    </ScrollView>
   );
 };
 
@@ -113,6 +125,11 @@ const styles = StyleSheet.create({
   },
   yinyangText: {
     fontSize: 16,
+  },
+  ytgcgBg: {
+    padding: 8,
+    marginTop: 16,
+    backgroundColor: '#fff',
   },
 });
 

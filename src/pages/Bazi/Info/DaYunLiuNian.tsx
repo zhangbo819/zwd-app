@@ -147,7 +147,7 @@ const DaYunLiuNian: FC<{
             paipan.cdz.findIndex(j => j === item?.[1]),
           ),
         );
-
+        // 流月
         const lyIndex = s.findIndex(i => i.title === PillarTitle.流月);
         const LyZhuxingIndex = TG_10.findIndex(j => j === ly_tgdz[0]);
         const lyItem = {
@@ -174,7 +174,7 @@ const DaYunLiuNian: FC<{
           lyItem.isShow = s[lyIndex].isShow;
           s[lyIndex] = lyItem;
         }
-
+        // 流日
         const lrIndex = s.findIndex(i => i.title === PillarTitle.流日);
         const LrZhuxingIndex = TG_10.findIndex(j => j === lr_tgdz[0]);
         const lrItem = {
@@ -482,6 +482,7 @@ const DaYunLiuNian: FC<{
                     PillarTitle.流年,
                     PillarTitle.流月,
                   ]);
+                  triggerPillarDataShow(false, [PillarTitle.流日]);
                 }}>
                 <Text>{JQ_12[index]}</Text>
                 <Text style={[styles.itemText, {color}]}>
