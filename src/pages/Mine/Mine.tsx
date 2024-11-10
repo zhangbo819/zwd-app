@@ -49,7 +49,7 @@ const Mine: FC<
     BottomTabScreenProps<HomeBottomTabParamList, HomeBottomTabPages.Mine>
   >
 > = props => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const handleAbout = () => {
     props.navigation.navigate(StackPages.About);
   };
