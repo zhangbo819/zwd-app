@@ -183,8 +183,8 @@ const DaYunLiuNian: FC<{
           zhuxing: paipanInfo.tenMap[LrZhuxingIndex],
           tg: lr_tgdz[0] as TG,
           dz: lr_tgdz[1] as DZ,
-          dzcg: dzcg_text[0],
-          fx: dzcg[0],
+          dzcg: lyr_dzcg_text[1],
+          fx: lyr_dzcg[1],
           xingyun: NaYin.getXingYun(lr_tgdz, paipanInfo.bazi[2][0] as TG),
           zizuo: NaYin.getXingYun(lr_tgdz, lr_tgdz[0] as TG),
           nayin: NaYin.getNayin(lr_tgdz),
@@ -546,7 +546,7 @@ const DaYunLiuNian: FC<{
     );
   };
   return (
-    <View>
+    <View style={styles.container}>
       {renderDayun()}
       {renderLiunian()}
       {renderLiuyue()}
@@ -556,6 +556,9 @@ const DaYunLiuNian: FC<{
 };
 
 const styles = StyleSheet.create({
+  container: {
+    marginBottom: 16,
+  },
   dayunGrid: {
     marginTop: 12,
   },

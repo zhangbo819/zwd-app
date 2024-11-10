@@ -21,8 +21,8 @@ import {Col, PillarItem, PillarTitle, Row} from '.';
 const CareerList: FC<{
   name: string;
   paipanInfo: PaipanInfo;
-}> = (props) => {
-  const {paipanInfo} = props
+}> = props => {
+  const {paipanInfo} = props;
   // 所有柱数据
   const [pillarData, setPillarData] = useState<PillarItem[]>([]);
   const pillarShowData = useMemo(
@@ -75,6 +75,9 @@ const CareerList: FC<{
   }, [paipanInfo]);
 
   const setModal = (text: string) => {
+    if (text === '' || typeof text === 'undefined') {
+      return;
+    }
     setModalText(text);
     setIsShowMoal(true);
   };
@@ -181,7 +184,7 @@ const CareerList: FC<{
                 return (
                   <Col key={'dzcg' + dzcg + index + y}>
                     <TouchableOpacity
-                      onPress={() => setModal(textJSON[dzcg[0] as DZ])}>
+                      onPress={() => setModal(textJSON[dzcg?.[0] as DZ])}>
                       <WuxingText text={dzcg} size="mini" />
                     </TouchableOpacity>
                   </Col>
@@ -348,9 +351,7 @@ const CareerList: FC<{
       <View style={styles.topInfo}>
         <Row>
           <Col>
-            <Text style={styles.yinyangText}>
-               {props.name || '未命名'}{' '}
-            </Text>
+            <Text style={styles.yinyangText}>{props.name || '未命名'} </Text>
           </Col>
           <Col>
             <Text style={styles.yinyangText}>
@@ -379,8 +380,6 @@ const CareerList: FC<{
       <MyModal isShow={isShowModal} onClose={() => setIsShowMoal(false)}>
         <Text style={{fontSize: 20}}>{modalText}</Text>
       </MyModal>
-
-      
     </ScrollView>
   );
 };
@@ -392,7 +391,7 @@ const styles = StyleSheet.create({
   },
   pagesScrollView: {
     paddingHorizontal: 8,
-    // paddingBottom: 16,
+    // paddingBottom: 24,
   },
   topInfo: {
     padding: 8,
