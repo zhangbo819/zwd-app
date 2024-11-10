@@ -14,7 +14,7 @@ import {isiOS, loadStorage, saveStorage} from '../../constant/config';
 import {RootStackParamList, StackPages} from '../../types/interface';
 import {BaziListKey} from '.';
 import {COLOR_THEME_COMMON} from '../../constant/UI';
-import WuxingText from './Info/WuxingText';
+import WuxingText from './components/WuxingText';
 import paipan from '../../util/paipan';
 
 const Paipan: FC<

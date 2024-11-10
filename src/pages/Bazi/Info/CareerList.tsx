@@ -14,8 +14,8 @@ import {PaipanInfo} from '../../../util/paipan';
 import Shensha from '../../../util/shensha';
 import NaYin from '../../../util/Nayin';
 import textJSON from '../../../util/text';
-import WuxingText from './WuxingText';
-import DaYunLiuNian from './DaYunLiuNian';
+import WuxingText from '../components/WuxingText';
+import DaYunLiuNian from './components/DaYunLiuNian';
 import {Col, PillarItem, PillarTitle, Row} from '.';
 
 const CareerList: FC<{

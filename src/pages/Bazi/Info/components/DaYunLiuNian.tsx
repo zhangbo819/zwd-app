@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {DZ, JQ_12, JZ_60, TG, TG_10} from '../../../util/wuxing';
-import paipan, {PaipanInfo} from '../../../util/paipan';
-import NaYin from '../../../util/Nayin';
-import Shensha from '../../../util/shensha';
-import WuxingText from './WuxingText';
-import {PillarItem, PillarTitle} from '.';
-import {COLOR_THEME_COMMON} from '../../../constant/UI';
+import {DZ, JQ_12, JZ_60, TG, TG_10} from '../../../../util/wuxing';
+import paipan, {PaipanInfo} from '../../../../util/paipan';
+import NaYin from '../../../../util/Nayin';
+import Shensha from '../../../../util/shensha';
+import WuxingText from '../../components/WuxingText';
+import {PillarItem, PillarTitle} from '..';
+import {COLOR_THEME_COMMON} from '../../../../constant/UI';
 
 const DaYunLiuNian: FC<{
   paipanInfo: PaipanInfo;
