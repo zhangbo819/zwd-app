@@ -23,11 +23,12 @@ import {
   FONT_PFS,
 } from '../../constant/UI';
 
-import {VERSION_NUMBER_NORM} from '../../constant/config';
+// import {VERSION_NUMBER_NORM} from '../../constant/config';
 import {Parsers} from '../../constant/moss';
 import STYLES from '../../constant/STYLES';
 import {getHeight} from '../../constant/Util';
-import { RootStackParamList, StackPages } from '../../types/interface';
+import {RootStackParamList, StackPages} from '../../types/interface';
+import version from '../../constant/version';
 
 const navHeight = STATUS_BAR_HEIGHT + NAV_COMMON_HEIGHT;
 
@@ -91,7 +92,7 @@ const About: FC<
             resizeMode={'stretch'}
           />
           <Text style={css_text.appNameTitle}>
-            {'珍味道 V ' + VERSION_NUMBER_NORM}
+            {'珍味道 V ' + version.newVersionName}
           </Text>
         </View>
 

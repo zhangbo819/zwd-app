@@ -5,7 +5,8 @@ import {COLOR_THEME_COMMON} from '../constant/UI';
 const Spin: FC<{
   spinning?: boolean;
   children?: ReactNode;
-}> = ({spinning, children}) => {
+  hiddenText?: boolean;
+}> = ({spinning, children, hiddenText = false}) => {
   const [hiddenLoading, setHiddenLoading] = useState(false);
   const loading_opacity = new Animated.Value(1);
   const blurValue = new Animated.Value(0.3);
@@ -27,7 +28,7 @@ const Spin: FC<{
         }
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spinning]);
 
   return (
@@ -38,9 +39,11 @@ const Spin: FC<{
           {opacity: loading_opacity, display: hiddenLoading ? 'none' : 'flex'},
         ]}>
         <ActivityIndicator size="large" color={COLOR_THEME_COMMON} />
-        <Text style={[styles.loadingText, {color: COLOR_THEME_COMMON}]}>
-          Loading...
-        </Text>
+        {!hiddenText && (
+          <Text style={[styles.loadingText, {color: COLOR_THEME_COMMON}]}>
+            Loading...
+          </Text>
+        )}
       </Animated.View>
 
       <Animated.View style={[styles.container, {opacity: blurValue}]}>

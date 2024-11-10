@@ -52,4 +52,20 @@ fs.readFile(buildGradlePath, 'utf8', (err, data) => {
       `版本号更新成功: versionCode = ${newVersionCode}, versionName = "${newVersionName}"`,
     );
   });
+
+  // 更新ts中的版本号
+  const tsPath = path.join(__dirname, 'src', 'constant', 'version.ts');
+  const tsContent = `export default {
+  newVersionCode: ${newVersionCode},
+  newVersionName: '${newVersionName}',
+};`;
+  fs.writeFile(tsPath, tsContent, 'utf8', err => {
+    if (err) {
+      console.error('写入 ts 文件失败:', err);
+      return;
+    }
+    console.log(
+      `ts文件更新成功: versionCode = ${newVersionCode}, versionName = ${newVersionName}`,
+    );
+  });
 });

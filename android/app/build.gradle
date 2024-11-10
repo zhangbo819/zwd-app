@@ -74,7 +74,8 @@ def enableProguardInReleaseBuilds = true
 def jscFlavor = 'org.webkit:android-jsc:+'
 
 def releaseTime() {
-    return new Date().format("YYMMddHHmm")
+    // return new Date().format("YYMMddHHmm")
+    return new Date().format("YYMMddHH")
 }
 
 project.ext.react = [
@@ -92,8 +93,8 @@ android {
         applicationId "com.zwd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 20
-        versionName "0.2.19"
+        versionCode 21
+        versionName "0.2.20"
     }
     signingConfigs {
         debug {
@@ -120,7 +121,10 @@ android {
             android.applicationVariants.all { variant ->
                 variant.outputs.all {
                     // _${variant.flavorName}
-                    outputFileName = "zwd_v${defaultConfig.versionName}_${releaseTime()}.apk"
+
+                    // outputFileName = "zwd_v${defaultConfig.versionName}_${releaseTime()}.apk"
+                    // 暂时使用固定的名字
+                    outputFileName = "zwd_v${defaultConfig.versionName}.apk"
 
                     // new File("$projectDir/afterBuild/$variant.flavorName" + ".js").text = "var flavorName = '${variant.flavorName}';\nvar outputFileName = '${outputFileName}';"
                     // new File("$projectDir/afterBuild/afterBuild.sh").text = "echo \"\n\n ${outputFileName} \n\""

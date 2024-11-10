@@ -1,29 +1,40 @@
-import React, {FC} from 'react';
+import React, {FC, useState} from 'react';
 import {
   Alert,
+  Button,
   PermissionsAndroid,
   Platform,
   StyleSheet,
   View,
 } from 'react-native';
 
-import WebView from 'react-native-webview';
+// import WebView from 'react-native-webview';
 import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
+
+import {NativeModules} from 'react-native';
+import version from '../../constant/version';
+import Spin from '../../components/Spin';
+
+// 获取 CalendarModule 模块
+const {CalendarModule} = NativeModules;
+
+const apkPath = `https://github.com/zhangbo819/zwd-app/releases/download/v0.2.0/zwd_v${version.newVersionName}.apk`;
 
 const DownloadApk: FC<{
   setIsShowWebview: React.Dispatch<React.SetStateAction<boolean>>;
 }> = props => {
-  const onShouldStartLoadWithRequest = request => {
-    // 检查是否是要下载的链接
-    if (request.url.endsWith('.apk')) {
-      //   handleDownload(request.url);
-      downloadAPK(request.url);
+  const [, setLoading] = useState(false);
+  // const onShouldStartLoadWithRequest = (request: any) => {
+  //   // 检查是否是要下载的链接
+  //   if (request.url.endsWith('.apk')) {
+  //     //   handleDownload(request.url);
+  //     downloadAPK(request.url);
 
-      return false; // 阻止 WebView 加载
-    }
-    return true; // 允许 WebView 加载其他链接
-  };
+  //     return false; // 阻止 WebView 加载
+  //   }
+  //   return true; // 允许 WebView 加载其他链接
+  // };
 
   const downloadAPK = async (apkUrl: string) => {
     props.setIsShowWebview(s => !s);
@@ -48,6 +59,9 @@ const DownloadApk: FC<{
       return;
     }
 
+    Alert.alert('提示', '开始下载最新安装包，请耐心等待');
+    setLoading(true);
+
     const apkUrlArr = apkUrl.split('/');
 
     const path = `${RNFS.ExternalDirectoryPath}/${
@@ -61,23 +75,41 @@ const DownloadApk: FC<{
     })
       .fetch('GET', apkUrl)
       .then(res => {
+        setLoading(false);
         // 下载完成，开始安装
-        Alert.alert('下载完成，请手动安装 APK 文件。', `文件已保存到: ${res.path()}`);
+        Alert.alert('提示', `下载完成，文件已保存到: ${res.path()}。`, [
+          {
+            text: '开始安装',
+            onPress: () => {
+              console.log('res path', res.path());
+              CalendarModule.openDirectory(res.path());
+            },
+          },
+        ]);
       })
       .catch(error => {
         Alert.alert('下载失败', error.message);
+        setLoading(false);
       });
   };
 
   return (
     <View style={styles.container}>
-      <WebView
+      <Spin spinning hiddenText>
+        <Button
+          onPress={() => {
+            downloadAPK(apkPath);
+          }}
+          title="下载最新安装包"
+        />
+      </Spin>
+      {/* <WebView
         source={{
           uri: 'https://github.com/zhangbo819/zwd-app/releases/tag/v0.2.0',
         }}
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
         style={styles.webview}
-      />
+      /> */}
     </View>
   );
 };

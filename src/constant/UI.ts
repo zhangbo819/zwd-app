@@ -23,7 +23,7 @@ if (isiOS) {
   statusBarHeight = StatusBar.currentHeight;
 }
 
-export const STATUS_BAR_HEIGHT = statusBarHeight;
+export const STATUS_BAR_HEIGHT = statusBarHeight || 0;
 export const NAV_COMMON_HEIGHT = 44;
 
 export const COLOR_COMMON_BLUE = '#1B82D2';
