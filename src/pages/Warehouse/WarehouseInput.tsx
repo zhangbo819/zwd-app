@@ -26,7 +26,7 @@ import {
     COLOR_ORANGE
 } from '../../constant/UI';
 import { Parsers } from '../../constant/moss';
-import { getHeight } from '../../constant/Util'
+import { getHeight } from '../../util'
 
 
 const StorageWHKey = 'warehouseData';

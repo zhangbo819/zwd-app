@@ -3,7 +3,7 @@ import {Dimensions, StatusBar, PixelRatio, Platform} from 'react-native';
 import {isiOS} from './config';
 import paipan from '../util/paipan';
 import {getColorByWuxing} from '../util/wuxing';
-import {mixHexColors} from './Util';
+import {mixHexColors} from '../util';
 // import { getRandomColor } from './Util';
 
 export const {width: viewportWidth, height: viewportHeight} =

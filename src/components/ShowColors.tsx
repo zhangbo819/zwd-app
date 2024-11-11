@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {getColorByWuxing, JZ_60} from '../util/wuxing';
-import {mixHexColors} from '../constant/Util';
+import {mixHexColors} from '../util';
 import {COLOR_THEME_COMMON} from '../constant/UI';
 
 const ShowColors: FC<{}> = () => {

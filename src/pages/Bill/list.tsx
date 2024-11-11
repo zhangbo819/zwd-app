@@ -34,7 +34,7 @@ import {
 import {saveStorage, loadStorage, isiOS} from '../../constant/config';
 import {StorageBillKey} from './interface';
 import {Parsers} from '../../constant/moss';
-import {getHeight} from '../../constant/Util';
+import {getHeight} from '../../util';
 
 const minLoadingTime = 0.7 * 1000;
 // 列表

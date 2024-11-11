@@ -32,7 +32,7 @@ export const getHeight = (number: number) => {
   return Math.floor((number * viewportHeight) / designHeight);
 };
 
-//获得随机颜色
+// 获得随机颜色
 export const getRandomColor = (opacity = 1) => {
   //
   let arr = COLOR_RANGE,
@@ -51,6 +51,7 @@ export const getRandomColor = (opacity = 1) => {
   return str;
 };
 
+// 获取反转颜色
 export const getReverseColor = (color = '') => {
   let result = '#';
   const diaphaneity = color.slice(-2);

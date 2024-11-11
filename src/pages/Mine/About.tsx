@@ -26,7 +26,7 @@ import {
 // import {VERSION_NUMBER_NORM} from '../../constant/config';
 import {Parsers} from '../../constant/moss';
 import STYLES from '../../constant/STYLES';
-import {getHeight} from '../../constant/Util';
+import {getHeight} from '../../util';
 import {RootStackParamList, StackPages} from '../../types/interface';
 import version from '../../constant/version';
 

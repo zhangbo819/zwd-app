@@ -32,7 +32,7 @@ import {
     STATUS_BAR_HEIGHT
 } from '../../constant/UI';
 import { Parsers } from '../../constant/moss';
-import { getHeight, getWidth } from '../../constant/Util';
+import { getHeight, getWidth } from '../../util';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 

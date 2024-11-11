@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View, ViewStyle} from 'react-native';
 import STYLES from '../constant/STYLES';
-import {getHeight} from '../constant/Util';
+import {getHeight} from '../util';
 
 export function ListEmptyComponent() {
   return (
