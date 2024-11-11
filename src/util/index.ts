@@ -1,5 +1,6 @@
 import {Dimensions} from 'react-native';
 import version from '../constant/version';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 
@@ -166,10 +167,17 @@ export type fetchToCheckVersionRes = {
 };
 export async function fetchToCheckVersion(): Promise<fetchToCheckVersionRes> {
   return new Promise((resolve, reject) => {
-    fetch('https://api.github.com/repos/zhangbo819/zwd-app/releases/latest')
+    RNFetchBlob.fetch(
+      'GET',
+      'https://api.github.com/repos/zhangbo819/zwd-app/releases/latest',
+    )
       .then(response => response.json())
       .then((data: any) => {
-        // console.log('data', JSON.stringify(data, null, 4));
+        console.log('data', JSON.stringify(data, null, 4));
+        if (!data.assets) {
+          reject('无远程资源');
+          return;
+        }
         const apkData = data.assets.find(
           (i: any) =>
             i.content_type === 'application/vnd.android.package-archive',
