@@ -41,9 +41,18 @@ const BaseInfo: FC<{
     weight_d: 0,
     weight_h: 0,
   });
-  const [dz12, setDz12] = useState<{dzcg: number[][]; dzcg_text: string[][]}>({
+  const [dz12, setDz12] = useState<{
+    dzcg: number[][];
+    dzcg_text: string[][];
+    rizhuWuxing: WX;
+    yueling: WX;
+    isDeLing: boolean;
+  }>({
     dzcg: [],
     dzcg_text: [],
+    rizhuWuxing: WX.土,
+    yueling: WX.土,
+    isDeLing: false,
   });
   const [isShowTgdz, setIsShowTgdz] = useState(false);
 
@@ -60,7 +69,18 @@ const BaseInfo: FC<{
       [11].concat(new Array(11).fill(0).map((_, i) => i)),
     );
     // console.log('dzcg, dzcg_text', dzcg, dzcg_text);
-    setDz12({dzcg, dzcg_text});
+    const yueling = getWuxing(paipanInfo.bazi[1][1]) as WX;
+    const rizhuWuxing = getWuxing(paipanInfo.bazi[2][0]) as WX;
+    const yuelingIndex = YueLinByWuxing[yueling].findIndex(
+      i => i === rizhuWuxing,
+    );
+    setDz12({
+      dzcg,
+      dzcg_text,
+      rizhuWuxing,
+      yueling,
+      isDeLing: yuelingIndex === 0 || yuelingIndex === 1,
+    });
   }, [paipanInfo]);
 
   // 阴阳历日期
@@ -75,13 +95,12 @@ const BaseInfo: FC<{
       : `${paipanInfo.bazi?.[3]?.[1]}时`;
     return (
       <Row>
-        <Text style={styles.yinyangText}>{res}</Text>
+        <Text style={styles.commonText}>{res}</Text>
       </Row>
     );
   };
 
   const color_rizhu = getColorByWuxing(paipanInfo.bazi[2][0]);
-  const yueling = getWuxing(paipanInfo.bazi[1][1]) as WX;
 
   return (
     <ScrollView style={styles.contentContainer}>
@@ -89,10 +108,10 @@ const BaseInfo: FC<{
       <View style={[styles.topInfo, {marginTop: 0}]}>
         <Row>
           <Col>
-            <Text style={styles.yinyangText}>{props.name || '未命名'} </Text>
+            <Text style={styles.commonText}>{props.name || '未命名'} </Text>
           </Col>
           <Col>
-            <Text style={styles.yinyangText}>
+            <Text style={styles.commonText}>
               {paipanInfo.gender ? '女' : '男'}
             </Text>
           </Col>
@@ -102,43 +121,50 @@ const BaseInfo: FC<{
         {renderDateText(true)}
         <Row>
           <Col>
+            <Text style={styles.commonText}>属相：{paipanInfo.sx}</Text>
+          </Col>
+          <Col>
+            <Text style={styles.commonText}>星座：{paipanInfo.xz}</Text>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
             <Row alignItems="center" margin={0}>
-              <Text style={[styles.yinyangText]}>日主五行：</Text>
+              <Text style={[styles.commonText]}>日主五行：</Text>
               <WuxingText
                 style={{marginLeft: 4}}
                 size="mini"
-                text={getWuxing(paipanInfo.bazi[2][0])}
+                text={dz12.rizhuWuxing}
               />
             </Row>
           </Col>
           <Col>
-            <Text style={[styles.yinyangText]}>
+            <Text style={[styles.commonText]}>
               阴阳：
               <Text>{paipanInfo.tg[2] % 2 === 0 ? '阳' : '阴'}</Text>
             </Text>
           </Col>
         </Row>
-        <Row>
+        {/* <Row>
           <Row alignItems="center" margin={0}>
-            <Text style={[styles.yinyangText]}>月令：</Text>
-            <WuxingText style={{marginLeft: 4}} size="mini" text={yueling} />
+            <Text style={[styles.commonText]}>月令：</Text>
+            <WuxingText
+              style={{marginLeft: 4}}
+              size="mini"
+              text={dz12.yueling}
+            />
           </Row>
-        </Row>
-        <Row>
-          <Col>
-            <Text style={styles.yinyangText}>属相：{paipanInfo.sx}</Text>
-          </Col>
-          <Col>
-            <Text style={styles.yinyangText}>星座：{paipanInfo.xz}</Text>
-          </Col>
-        </Row>
+        </Row> */}
       </View>
 
       <View style={styles.topInfo}>
         <Text style={styles.wuxingTitle}>五行力量</Text>
+        {/* 五行数量，整体阴阳 */}
+        {/* 各五行通根 天干虚浮 地支无透 情况 */}
+        {/* 三合三会 */}
         <Row>
           {YueClass5.map((item, index) => {
-            const map = YueLinByWuxing[yueling];
+            const map = YueLinByWuxing[dz12.yueling];
             return (
               <Col
                 key={item}
@@ -151,17 +177,21 @@ const BaseInfo: FC<{
             );
           })}
         </Row>
+        <Text style={styles.commonText}>
+          月令情况：{dz12.isDeLing ? '得令' : '失令'}
+        </Text>
+        <Text style={styles.hint}>旺相为得令，休囚死为失令</Text>
       </View>
 
       {/* 天干地支关系表 */}
       <View style={styles.topInfo}>
         <Row alignItems="center">
-          <Text style={styles.yinyangText}>天干地支关系表</Text>
+          <Text style={styles.commonText}>天干地支关系表</Text>
           <Switch
             style={{marginLeft: 8}}
-            trackColor={{false: '#FFC0CB', true: COLOR_THEME_COMMON}}
+            trackColor={{false: '#474749', true: COLOR_THEME_COMMON}}
             // thumbColor={isShowTgdz ? '#f5dd4b' : '#FFC0CB'}
-            ios_backgroundColor="#3e3e3e"
+            ios_backgroundColor="#474749"
             onValueChange={() => setIsShowTgdz(g => !g)}
             value={isShowTgdz}
           />
@@ -237,7 +267,7 @@ const BaseInfo: FC<{
       {/* 袁天罡称骨： */}
       <View style={styles.topInfo}>
         <Row>
-          <Text style={[styles.yinyangText]}>袁天罡称骨：</Text>
+          <Text style={[styles.commonText]}>袁天罡称骨：</Text>
           <TouchableOpacity
             onPress={() =>
               Alert.alert(
@@ -245,13 +275,13 @@ const BaseInfo: FC<{
                 `年${ytgcgData.weight_y}两 + 月${ytgcgData.weight_m}两 + 日${ytgcgData.weight_d}两 + 时${ytgcgData.weight_h}两`,
               )
             }>
-            <Text style={[styles.yinyangText, {color: COLOR_THEME_COMMON}]}>
+            <Text style={[styles.commonText, {color: COLOR_THEME_COMMON}]}>
               {ytgcgData.weight_text}
             </Text>
           </TouchableOpacity>
         </Row>
         <Row>
-          <Text style={styles.yinyangText}>{ytgcgData.comment}</Text>
+          <Text style={styles.commonText}>{ytgcgData.comment}</Text>
         </Row>
       </View>
 
@@ -269,7 +299,12 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: '#fff',
   },
-  yinyangText: {
+  commonText: {
+    fontSize: 16,
+  },
+  hint: {
+    marginTop: 4,
+    color: '#888',
     fontSize: 16,
   },
 
