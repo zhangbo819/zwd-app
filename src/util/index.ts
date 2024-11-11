@@ -1,4 +1,5 @@
 import {Dimensions} from 'react-native';
+import version from '../constant/version';
 
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
 
@@ -149,4 +150,93 @@ export function mixHexColors(
   return `#${componentToHex(blendedR)}${componentToHex(
     blendedG,
   )}${componentToHex(blendedB)}`;
+}
+
+export type fetchToCheckVersionRes = {
+  hasUpdate: boolean;
+  tagName: string;
+  published_at: string;
+  apk: {
+    name: string;
+    download_count: string;
+    size: string;
+    url: string;
+    updated_at: string;
+  };
+};
+export async function fetchToCheckVersion(): Promise<fetchToCheckVersionRes> {
+  return new Promise((resolve, reject) => {
+    fetch('https://api.github.com/repos/zhangbo819/zwd-app/releases/latest')
+      .then(response => response.json())
+      .then((data: any) => {
+        // console.log('data', data);
+        const apkData = data.assets.find(
+          (i: any) =>
+            i.content_type === 'application/vnd.android.package-archive',
+        );
+        // console.log('apkData', apkData);
+
+        if (!apkData) {
+          reject('远程资源列表无 apk 文件');
+        }
+
+        const nowVersion = version.newVersionName;
+        const newApkVersion = extractVersion(apkData.name);
+        const hasUpdate = compareVersions(newApkVersion, nowVersion);
+        // console.log('hasUpdate, nowVersion, newApkVersion', hasUpdate, nowVersion, newApkVersion)
+
+        resolve({
+          hasUpdate,
+          tagName: data.name,
+          published_at: data.published_at,
+          apk: {
+            name: apkData.name,
+            download_count: apkData.download_count,
+            size: apkData.size,
+            url: apkData.browser_download_url,
+            updated_at: apkData.updated_at,
+          },
+        });
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        reject(error);
+      });
+  });
+}
+
+function extractVersion(filename: string): string {
+  const regex = /v([0-9]+(?:\.[0-9]+)*)(?:[-\.].*)?$/;
+  const match = filename.match(regex);
+
+  if (match) {
+    return match[1]; // 返回版本号
+  }
+  return '0.0.0'; // 未找到版本号
+}
+
+// 比较版本号判断是否需要更新
+function compareVersions(newVersion: string, oldVersion: string): boolean {
+  // 将版本号拆分为数组并转换为数字
+  const newParts = newVersion.split('.').map(Number);
+  const oldParts = oldVersion.split('.').map(Number);
+
+  // 使得两个版本号数组的长度相同，通过添加 0 填充
+  while (newParts.length < 3) {
+    newParts.push(0);
+  }
+  while (oldParts.length < 3) {
+    oldParts.push(0);
+  }
+
+  // 按照每个部分逐个比较
+  for (let i = 0; i < 3; i++) {
+    if (newParts[i] > oldParts[i]) {
+      return true;
+    } else if (newParts[i] < oldParts[i]) {
+      return false;
+    }
+  }
+
+  return false; // 版本号相等
 }

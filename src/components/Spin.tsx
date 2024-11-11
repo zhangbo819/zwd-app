@@ -1,41 +1,61 @@
-import React, {FC, ReactNode, useEffect, useState} from 'react';
-import {ActivityIndicator, Animated, StyleSheet, Text} from 'react-native';
+import React, {FC, ReactNode, useEffect, useRef, useState} from 'react';
+import {
+  ActivityIndicator,
+  Animated,
+  StyleProp,
+  StyleSheet,
+  Text,
+  ViewStyle,
+} from 'react-native';
 import {COLOR_THEME_COMMON} from '../constant/UI';
 
 const Spin: FC<{
   spinning?: boolean;
   children?: ReactNode;
   hiddenText?: boolean;
-}> = ({spinning, children, hiddenText = false}) => {
+  style?: StyleProp<ViewStyle>;
+}> = ({spinning, children, hiddenText = false, style}) => {
+  const refLastSpinning = useRef(false);
   const [hiddenLoading, setHiddenLoading] = useState(false);
   const loading_opacity = new Animated.Value(1);
-  const blurValue = new Animated.Value(0.3);
+  const content_opacity = new Animated.Value(0.3);
 
   useEffect(() => {
-    if (!spinning) {
-      Animated.timing(blurValue, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-      Animated.timing(loading_opacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(({finished}) => {
+    if (!refLastSpinning.current && spinning) {
+      // 开始 loading
+      setHiddenLoading(false);
+      loading_opacity.setValue(1);
+      content_opacity.setValue(0.3);
+    } else if (refLastSpinning.current && !spinning) {
+      // 结束 loading
+      Animated.parallel([
+        Animated.timing(content_opacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(loading_opacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start(({finished}) => {
         if (finished) {
           setHiddenLoading(true);
         }
       });
     }
+
+    refLastSpinning.current = Boolean(spinning);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spinning]);
 
   return (
-    <>
+    <Animated.View
+      style={[styles.container, {opacity: content_opacity}, style]}>
       <Animated.View
         style={[
-          styles.contentContainer,
+          styles.loadingContainer,
           {opacity: loading_opacity, display: hiddenLoading ? 'none' : 'flex'},
         ]}>
         <ActivityIndicator size="large" color={COLOR_THEME_COMMON} />
@@ -45,20 +65,17 @@ const Spin: FC<{
           </Text>
         )}
       </Animated.View>
-
-      <Animated.View style={[styles.container, {opacity: blurValue}]}>
-        {children}
-      </Animated.View>
-    </>
+      {children}
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    position: 'relative',
     flex: 1,
   },
-  hidden: {opacity: 0.3},
-  contentContainer: {
+  loadingContainer: {
     position: 'absolute',
     top: 0,
     left: 0,
