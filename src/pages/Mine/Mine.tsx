@@ -30,6 +30,7 @@ import {
 } from '../../types/interface';
 // import DownloadApk from './DownloadApk';
 import {fetchToCheckVersion} from '../../util';
+import {isDev} from '../../constant/config';
 
 // 获取 CalendarModule 模块
 
@@ -43,6 +44,9 @@ const Mine: FC<
 
   useEffect(() => {
     // TODO move to store
+    if (!isDev) {
+      return;
+    }
     fetchToCheckVersion().then(data => {
       if (data.hasUpdate) {
         setHasUpdate(true);

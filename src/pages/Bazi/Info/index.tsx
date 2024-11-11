@@ -1,5 +1,5 @@
 import React, {FC, ReactNode, useEffect, useState} from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
+import {FlexStyle, StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 
@@ -109,13 +109,26 @@ const BaziInfo: FC<
 export const Row: FC<{
   children?: ReactNode;
   style?: StyleProp<ViewStyle>;
-}> = ({style, children}) => {
-  return <View style={[styles.row, style]}>{children}</View>;
+  margin?: FlexStyle['margin'];
+  alignItems?: FlexStyle['alignItems'];
+}> = ({style, children, margin, alignItems}) => {
+  return (
+    <View
+      style={[
+        styles.row,
+        {alignItems},
+        typeof margin !== 'undefined' && {margin},
+        style,
+      ]}>
+      {children}
+    </View>
+  );
 };
 export const Col: FC<{
   children?: ReactNode;
-}> = ({children}) => {
-  return <View style={[styles.col]}>{children}</View>;
+  style?: StyleProp<ViewStyle>;
+}> = ({children, style}) => {
+  return <View style={[styles.col, style]}>{children}</View>;
 };
 
 const styles = StyleSheet.create({
@@ -140,7 +153,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   row: {
-    marginVertical: 4,
+    margin: 4,
+    marginHorizontal: 0,
     flexDirection: 'row',
     justifyContent: 'flex-start',
   },

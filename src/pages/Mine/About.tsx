@@ -189,15 +189,16 @@ const css: Record<string, StyleProp<ViewStyle>> = {
   content: {
     flex: 1,
     justifyContent: 'flex-start',
+    // justifyContent: 'center',
     alignItems: 'center',
-    ...Parsers.padding([getHeight(40), 14, 0]),
+    ...Parsers.padding([60, 14, 0]),
     height: viewportHeight - navHeight,
   },
 };
 const css_image: Record<string, StyleProp<ImageStyle>> = {
   appIconImage: {
-    marginTop: 16,
-    ...Parsers.size([80]),
+    marginTop: 24,
+    ...Parsers.size([100]),
     borderRadius: 18,
     // borderWidth: MinPix * 2,
     borderColor: '#B5B7C5',

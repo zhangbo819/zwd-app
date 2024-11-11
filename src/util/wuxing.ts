@@ -131,7 +131,7 @@ export enum Ten {
   元女 = '元女',
 }
 
-enum WX {
+export enum WX {
   金 = '金',
   木 = '木',
   水 = '水',
@@ -203,10 +203,41 @@ export const JQ_12 = [
   return r;
 }, [] as string[]);
 
+enum YueClass {
+  '旺' = '旺',
+  '相' = '相',
+  '休' = '休',
+  '囚' = '囚',
+  '死' = '死',
+}
+
+export const YueClass5 = [
+  YueClass.旺,
+  YueClass.相,
+  YueClass.休,
+  YueClass.囚,
+  YueClass.死,
+];
+
+export const YueLinByWuxing = {
+  // [WX.金]: [YueClass.旺, YueClass.死, YueClass.相, YueClass.囚, YueClass.休],
+  [WX.金]: [WX.金, WX.水, WX.土, WX.火, WX.木],
+  // [WX.木]: [YueClass.休, YueClass.旺, YueClass.休, YueClass.相, YueClass.死],
+  [WX.木]: [WX.木, WX.火, WX.水, WX.金, WX.土],
+  // [WX.水]: [YueClass.休, YueClass.相, YueClass.旺, YueClass.死, YueClass.休],
+  [WX.水]: [WX.水, WX.木, WX.金, WX.土, WX.火],
+  // [WX.火]: [YueClass.死, YueClass.休, YueClass.囚, YueClass.旺, YueClass.相],
+  [WX.火]: [WX.火, WX.土, WX.木, WX.水, WX.金],
+  // [WX.土]: [YueClass.相, YueClass.囚, YueClass.死, YueClass.休, YueClass.旺],
+  [WX.土]: [WX.土, WX.金, WX.木, WX.火, WX.水],
+};
+
 // 根据天干或地支得到对应的五行
-export function getWuxing(text: TG | DZ | string) {
+export function getWuxing(text: TG | DZ | WX | string) {
   const wuxingArr = WuXing5;
-  if (text in TG) {
+  if (text in WX) {
+    return text;
+  } else if (text in TG) {
     const index = TG_10.findIndex(i => i === text);
     const wuxingIndex = [1, 1, 3, 3, 4, 4, 0, 0, 2, 2][index];
     return wuxingArr[wuxingIndex];
@@ -218,7 +249,7 @@ export function getWuxing(text: TG | DZ | string) {
   return '';
 }
 
-export function getColorByWuxing(text: TG | DZ | string) {
+export function getColorByWuxing(text: TG | DZ | string | WX) {
   const ColorsMap: Record<WX | string, any> = {
     [WX.木]: '#4CAF50',
     [WX.火]: '#F44336',

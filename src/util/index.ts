@@ -167,13 +167,21 @@ export type fetchToCheckVersionRes = {
 };
 export async function fetchToCheckVersion(): Promise<fetchToCheckVersionRes> {
   return new Promise((resolve, reject) => {
+    // fetch(
+    //   'https://github.com/zhangbo819/zwd-app/releases/download/v0.2.0/zwd_v0.2.20.apk',
+    //   {
+    //     method: 'HEAD',
+    //   },
+    // ).then((data: any) => {
+    //   console.log('data', JSON.stringify(data, null, 4));
+    // });
     RNFetchBlob.fetch(
       'GET',
       'https://api.github.com/repos/zhangbo819/zwd-app/releases/latest',
     )
       .then(response => response.json())
       .then((data: any) => {
-        console.log('data', JSON.stringify(data, null, 4));
+        // console.log('data', JSON.stringify(data, null, 4));
         if (!data.assets) {
           reject('无远程资源');
           return;

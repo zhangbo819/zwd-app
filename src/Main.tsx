@@ -16,6 +16,7 @@ import WarehouseList from './pages/Warehouse/WarehouseList';
 import BillScan from './pages/Bill';
 import BaziTab from './pages/Bazi';
 import {fetchToCheckVersion} from './util';
+import {isDev} from './constant/config';
 
 // import {MinPix, COLOR_THEME_COMMON, COLOR_BLACK} from './constant/UI';
 // import {getTabNavigatorConfig} from './navigation/config';
@@ -43,6 +44,9 @@ export default function () {
   const [MineTabBarBadge, setMineTabBarBadge] = useState(0);
 
   useEffect(() => {
+    if (!isDev) {
+      return;
+    }
     fetchToCheckVersion().then(data => {
       if (data.hasUpdate) {
         setMineTabBarBadge(1);
