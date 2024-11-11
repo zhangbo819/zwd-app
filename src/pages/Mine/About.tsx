@@ -158,7 +158,9 @@ const About: FC<
                 </View>
               ) : (
                 <>
-                  <Text style={styles.apkText}>发现最新版本，{newApiData.apk.name}</Text>
+                  <Text style={styles.apkText}>
+                    发现最新版本，{newApiData.apk.name}
+                  </Text>
                   <TouchableOpacity
                     style={styles.apkBtnTouch}
                     onPress={() => {
@@ -170,7 +172,9 @@ const About: FC<
               )}
             </>
           )}
-          {!newApiData?.hasUpdate && <Text style={styles.apkText}>当前已是最新版本，无需更新</Text>}
+          {!newApiData?.hasUpdate && (
+            <Text style={styles.apkText}>当前已是最新版本，无需更新</Text>
+          )}
         </View>
       </ScrollView>
     </View>

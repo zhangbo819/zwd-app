@@ -169,7 +169,7 @@ export async function fetchToCheckVersion(): Promise<fetchToCheckVersionRes> {
     fetch('https://api.github.com/repos/zhangbo819/zwd-app/releases/latest')
       .then(response => response.json())
       .then((data: any) => {
-        // console.log('data', data);
+        // console.log('data', JSON.stringify(data, null, 4));
         const apkData = data.assets.find(
           (i: any) =>
             i.content_type === 'application/vnd.android.package-archive',
@@ -178,6 +178,7 @@ export async function fetchToCheckVersion(): Promise<fetchToCheckVersionRes> {
 
         if (!apkData) {
           reject('远程资源列表无 apk 文件');
+          return;
         }
 
         const nowVersion = version.newVersionName;
