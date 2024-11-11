@@ -31,7 +31,6 @@ import {
   FONT_PFS,
   COLOR_THEME_COMMON,
 } from '../../constant/UI';
-import Spin from '../../components/Spin';
 import {Parsers} from '../../constant/moss';
 import STYLES from '../../constant/STYLES';
 import {
@@ -193,6 +192,7 @@ const css: Record<string, StyleProp<ViewStyle>> = {
 };
 const css_image: Record<string, StyleProp<ImageStyle>> = {
   appIconImage: {
+    marginTop: 16,
     ...Parsers.size([80]),
     borderRadius: 18,
     // borderWidth: MinPix * 2,
