@@ -1,13 +1,21 @@
 import React, {FC, ReactNode} from 'react';
 import {DZ, getColorByWuxing, TG} from '../../../util/wuxing';
-import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
+import {
+  StyleProp,
+  StyleSheet,
+  Text,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 const WuxingText: FC<{
   text: TG | DZ | string;
   children?: ReactNode;
   size?: 'default' | 'mid' | 'mini';
+  fontWeight?: TextStyle['fontWeight'];
   style?: StyleProp<ViewStyle>;
-}> = ({text = '', children, size = 'default', style}) => {
+}> = ({text = '', children, size = 'default', fontWeight, style}) => {
   // 五行颜色
   const color_text = text.length > 1 ? text[0] : text;
 
@@ -18,6 +26,7 @@ const WuxingText: FC<{
           styles.wuxing,
           size === 'mid' && styles.wuxing_mid,
           size === 'mini' && styles.wuxing_mini,
+          {fontWeight},
           {color: getColorByWuxing(color_text)},
         ]}>
         {text || ' '}

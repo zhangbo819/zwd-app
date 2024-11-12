@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import * as Progress from 'react-native-progress';
 
 import ShowColors from '../../../components/ShowColors';
 import paipan, {PaipanInfo} from '../../../util/paipan';
@@ -17,13 +18,18 @@ import {
   getColorByWuxing,
   getWuxing,
   TG_10,
+  WuXing5,
   WX,
   YueClass5,
   YueLinByWuxing,
 } from '../../../util/wuxing';
-import {Col, Row} from '.';
 import WuxingText from '../components/WuxingText';
-import {COLOR_THEME_COMMON} from '../../../constant/UI';
+import {
+  COLOR_LINEGRAY,
+  COLOR_THEME_COMMON,
+  viewportWidth,
+} from '../../../constant/UI';
+import {Col, Row} from '.';
 
 const SHOW_DZ_12 = [DZ_12[11], ...DZ_12.slice(0, 11)];
 
@@ -32,6 +38,24 @@ const BaseInfo: FC<{
   paipanInfo: PaipanInfo;
 }> = props => {
   const {paipanInfo} = props;
+
+  const [pageData, setPageData] = useState<{
+    dzcg: number[][];
+    dzcg_text: string[][];
+    rizhuWuxing: WX;
+    wuxingNumber: {name: WX; number: number}[];
+    wuxingCgNumber: {name: WX; number: number}[];
+    yueling: WX;
+    isDeLing: boolean;
+  }>({
+    dzcg: [],
+    dzcg_text: [],
+    rizhuWuxing: WX.土,
+    wuxingNumber: [],
+    wuxingCgNumber: [],
+    yueling: WX.土,
+    isDeLing: false,
+  });
   const [ytgcgData, setYtgcgData] = useState({
     weight_text: '',
     comment: '',
@@ -40,22 +64,11 @@ const BaseInfo: FC<{
     weight_d: 0,
     weight_h: 0,
   });
-  const [dz12, setDz12] = useState<{
-    dzcg: number[][];
-    dzcg_text: string[][];
-    rizhuWuxing: WX;
-    yueling: WX;
-    isDeLing: boolean;
-  }>({
-    dzcg: [],
-    dzcg_text: [],
-    rizhuWuxing: WX.土,
-    yueling: WX.土,
-    isDeLing: false,
-  });
+  const [isShowDzcg, setIsShowDzcg] = useState(false);
   const [isShowTgdz, setIsShowTgdz] = useState(false);
 
   useEffect(() => {
+    // 称骨数据
     const newYtgcgData = Ytgcg.getData(
       paipanInfo.bazi,
       paipanInfo.yinli[1],
@@ -64,19 +77,61 @@ const BaseInfo: FC<{
     // console.log('newYtgcgData', newYtgcgData)
     setYtgcgData(newYtgcgData);
 
+    // 页面数据
+    const bazi = paipanInfo.bazi;
     const {dzcg, dzcg_text} = paipan.getDzcgText(
       [11].concat(new Array(11).fill(0).map((_, i) => i)),
     );
     // console.log('dzcg, dzcg_text', dzcg, dzcg_text);
-    const yueling = getWuxing(paipanInfo.bazi[1][1]) as WX;
-    const rizhuWuxing = getWuxing(paipanInfo.bazi[2][0]) as WX;
+    const yueling = getWuxing(bazi[1][1]) as WX;
+    const rizhuWuxing = getWuxing(bazi[2][0]) as WX;
     const yuelingIndex = YueLinByWuxing[yueling].findIndex(
       i => i === rizhuWuxing,
     );
-    setDz12({
+
+    // console.log(JSON.stringify(paipanInfo, null, 4));
+    // 五行数量
+    const wuxingNumber = bazi.reduce(
+      (r, i) => {
+        r.forEach(j => {
+          if (j.name === getWuxing(i[0]) || j.name === getWuxing(i[1])) {
+            j.number++;
+          }
+        });
+
+        return r;
+      },
+      WuXing5.map(i => ({name: i, number: 0})),
+    );
+
+    // 藏干数量
+    const wuxingCgNumber = paipanInfo.bazi
+      .map(i => i[0])
+      .concat(
+        paipanInfo.dzcg_text.reduce((r, i) => {
+          i.forEach(i => r.push(i[0]));
+          return r;
+        }, []),
+      )
+      .reduce(
+        (r, i) => {
+          r.forEach(j => {
+            if (j.name === getWuxing(i)) {
+              j.number++;
+            }
+          });
+
+          return r;
+        },
+        WuXing5.map(i => ({name: i, number: 0})),
+      );
+
+    setPageData({
       dzcg,
       dzcg_text,
       rizhuWuxing,
+      wuxingNumber,
+      wuxingCgNumber,
       yueling,
       isDeLing: yuelingIndex === 0 || yuelingIndex === 1,
     });
@@ -99,90 +154,10 @@ const BaseInfo: FC<{
     );
   };
 
-  const color_rizhu = getColorByWuxing(paipanInfo.bazi[2][0]);
-
-  return (
-    <ScrollView style={styles.contentContainer}>
-      {/* 顶部基本信息 */}
-      <View style={[styles.topInfo, {marginTop: 0}]}>
-        <Row>
-          <Col>
-            <Text style={styles.commonText}>{props.name || '未命名'} </Text>
-          </Col>
-          <Col>
-            <Text style={styles.commonText}>
-              {paipanInfo.gender ? '女' : '男'}
-            </Text>
-          </Col>
-        </Row>
-        {/* 阴历阳历 */}
-        {renderDateText(false)}
-        {renderDateText(true)}
-        <Row>
-          <Col>
-            <Text style={styles.commonText}>属相：{paipanInfo.sx}</Text>
-          </Col>
-          <Col>
-            <Text style={styles.commonText}>星座：{paipanInfo.xz}</Text>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Row alignItems="center" margin={0}>
-              <Text style={[styles.commonText]}>日主五行：</Text>
-              <WuxingText
-                style={{marginLeft: 4}}
-                size="mini"
-                text={dz12.rizhuWuxing}
-              />
-            </Row>
-          </Col>
-          <Col>
-            <Text style={[styles.commonText]}>
-              阴阳：
-              <Text>{paipanInfo.tg[2] % 2 === 0 ? '阳' : '阴'}</Text>
-            </Text>
-          </Col>
-        </Row>
-        {/* <Row>
-          <Row alignItems="center" margin={0}>
-            <Text style={[styles.commonText]}>月令：</Text>
-            <WuxingText
-              style={{marginLeft: 4}}
-              size="mini"
-              text={dz12.yueling}
-            />
-          </Row>
-        </Row> */}
-      </View>
-
-      <View style={styles.topInfo}>
-        <Text style={styles.wuxingTitle}>五行力量</Text>
-        {/* 五行数量，整体阴阳 */}
-        {/* 各五行通根 天干虚浮 地支无透 情况 */}
-        {/* 三合三会 */}
-        <Row>
-          {YueClass5.map((item, index) => {
-            const map = YueLinByWuxing[dz12.yueling];
-            return (
-              <Col
-                key={item}
-                style={{backgroundColor: getColorByWuxing(map[index])}}>
-                <Text style={styles.wuxingYueline}>
-                  {map[index]}
-                  {item}
-                </Text>
-              </Col>
-            );
-          })}
-        </Row>
-        <Text style={styles.commonText}>
-          月令情况：{dz12.isDeLing ? '得令' : '失令'}
-        </Text>
-        <Text style={styles.hint}>旺相为得令，休囚死为失令</Text>
-      </View>
-
-      {/* 天干地支关系表 */}
+  // 天干地支关系表
+  const renderTgDzModlue = () => {
+    const color_rizhu = getColorByWuxing(paipanInfo.bazi[2][0]);
+    return (
       <View style={styles.topInfo}>
         <Row alignItems="center">
           <Text style={styles.commonText}>天干地支关系表</Text>
@@ -229,11 +204,11 @@ const BaseInfo: FC<{
                   <WuxingText text={item} />
                   <Row>
                     {/* <Text style={{color: '#000', fontSize: 18, fontWeight: 'bold'}}>
-                  {'藏干'}
-                </Text> */}
-                    {dz12.dzcg_text &&
-                      Array.isArray(dz12.dzcg_text[index]) &&
-                      dz12.dzcg_text[index].map((j, k) => {
+              {'藏干'}
+            </Text> */}
+                    {pageData.dzcg_text &&
+                      Array.isArray(pageData.dzcg_text[index]) &&
+                      pageData.dzcg_text[index].map((j, k) => {
                         const isRizhu = j[0] === paipanInfo.bazi[2][0];
 
                         return (
@@ -250,7 +225,7 @@ const BaseInfo: FC<{
                               text={j}
                             />
                             <Text style={styles.tenText}>
-                              {paipanInfo.tenMap[dz12.dzcg[index][k]]}
+                              {paipanInfo.tenMap[pageData.dzcg[index][k]]}
                             </Text>
                           </View>
                         );
@@ -262,8 +237,12 @@ const BaseInfo: FC<{
           })}
         </Row>
       </View>
+    );
+  };
 
-      {/* 袁天罡称骨： */}
+  // 袁天罡称骨
+  const renderYtgcg = () => {
+    return (
       <View style={styles.topInfo}>
         <Row>
           <Text style={[styles.commonText]}>袁天罡称骨：</Text>
@@ -282,7 +261,140 @@ const BaseInfo: FC<{
         <Row>
           <Text style={styles.commonText}>{ytgcgData.comment}</Text>
         </Row>
+        <Text style={styles.hint}>
+          称骨法作为扩展有一定的参考作用，但具体情况还是要结合全局分析
+        </Text>
       </View>
+    );
+  };
+
+  return (
+    <ScrollView style={styles.contentContainer}>
+      {/* 顶部基本信息 */}
+      <View style={[styles.topInfo, {marginTop: 0}]}>
+        <Row>
+          <Col>
+            <Text style={styles.commonText}>{props.name || '未命名'} </Text>
+          </Col>
+          <Col>
+            <Text style={styles.commonText}>
+              {paipanInfo.gender ? '女' : '男'}
+            </Text>
+          </Col>
+        </Row>
+        {/* 阴历阳历 */}
+        {renderDateText(false)}
+        {renderDateText(true)}
+        <Row>
+          <Col>
+            <Text style={styles.commonText}>属相：{paipanInfo.sx}</Text>
+          </Col>
+          <Col>
+            <Text style={styles.commonText}>星座：{paipanInfo.xz}</Text>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Row alignItems="center" margin={0}>
+              <Text style={[styles.commonText]}>日主五行：</Text>
+              <WuxingText
+                style={{marginLeft: 4}}
+                size="mini"
+                text={pageData.rizhuWuxing}
+              />
+            </Row>
+          </Col>
+          <Col>
+            <Text style={[styles.commonText]}>
+              阴阳：
+              <Text>{paipanInfo.tg[2] % 2 === 0 ? '阳' : '阴'}</Text>
+            </Text>
+          </Col>
+        </Row>
+        {/* <Row>
+          <Row alignItems="center" margin={0}>
+            <Text style={[styles.commonText]}>月令：</Text>
+            <WuxingText
+              style={{marginLeft: 4}}
+              size="mini"
+              text={pageData.yueling}
+            />
+          </Row>
+        </Row> */}
+      </View>
+
+      <View style={styles.topInfo}>
+        <Text style={styles.wuxingTitle}>五行力量分析</Text>
+        {/* 五行数量，整体阴阳 */}
+        <View style={styles.wuxingView}>
+          <Row alignItems="center">
+            <Text style={styles.commonText}>是否展示藏干</Text>
+            <Switch
+              style={{marginLeft: 8}}
+              trackColor={{false: '#474749', true: COLOR_THEME_COMMON}}
+              ios_backgroundColor="#474749"
+              onValueChange={() => setIsShowDzcg(g => !g)}
+              value={isShowDzcg}
+            />
+          </Row>
+          {(isShowDzcg ? pageData.wuxingCgNumber : pageData.wuxingNumber).map(
+            i => {
+              const nowWuxingColor = getColorByWuxing(i.name);
+              return (
+                <Row key={'wuxingNumber_' + i.name} alignItems="center">
+                  <WuxingText size="mid" fontWeight="bold" text={i.name} />
+                  <Col style={{marginHorizontal: 4}}>
+                    <Progress.Bar
+                      progress={i.number / 8}
+                      width={viewportWidth - 100} // todo 100
+                      color={nowWuxingColor}
+                      borderColor="#fff"
+                    />
+                  </Col>
+                  <Text style={[styles.commonText, {color: nowWuxingColor}]}>
+                    {i.number}个
+                  </Text>
+                </Row>
+              );
+            },
+          )}
+          <Text style={styles.hint}>
+            五行数量（不加藏干）3个及以上为多，1个及以下为少。
+          </Text>
+        </View>
+
+        {/* 各五行通根 天干虚浮 地支无透 情况 */}
+        {/* 三合三会 */}
+
+        {/* 月令 */}
+        <View style={styles.wuxingView}>
+          <Row>
+            {YueClass5.map((item, index) => {
+              const map = YueLinByWuxing[pageData.yueling];
+              return (
+                <Col
+                  key={item}
+                  style={{backgroundColor: getColorByWuxing(map[index])}}>
+                  <Text style={styles.wuxingYueline}>
+                    {map[index]}
+                    {item}
+                  </Text>
+                </Col>
+              );
+            })}
+          </Row>
+          <Text style={styles.commonText}>
+            月令情况：{pageData.isDeLing ? '得令' : '失令'}
+          </Text>
+          <Text style={styles.hint}>旺相为得令，休囚死为失令</Text>
+        </View>
+      </View>
+
+      {/* 天干地支关系表 */}
+      {renderTgDzModlue()}
+
+      {/* 袁天罡称骨 */}
+      {renderYtgcg()}
 
       <ShowColors />
     </ScrollView>
@@ -313,6 +425,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000',
     textAlign: 'center',
+  },
+  wuxingView: {
+    marginVertical: 4,
+    paddingBottom: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: COLOR_LINEGRAY,
   },
   wuxingYueline: {
     marginVertical: 4,

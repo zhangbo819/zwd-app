@@ -4,8 +4,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 
 import Spin from '../../../components/Spin';
-import {isiOS} from '../../../constant/config';
-import {COLOR_THEME_COMMON, NAV_COMMON_HEIGHT} from '../../../constant/UI';
+import {COLOR_THEME_COMMON} from '../../../constant/UI';
 import {RootStackParamList, StackPages} from '../../../types/interface';
 import {DZ, Ten, TG, ZhangSheng} from '../../../util/wuxing';
 import paipan, {PaipanInfo} from '../../../util/paipan';
@@ -53,7 +52,7 @@ const BaziInfo: FC<
   }, [props.route.params]);
 
   return (
-    <View style={[styles.container, isiOS && {paddingTop: NAV_COMMON_HEIGHT}]}>
+    <View style={[styles.container]}>
       <Spin spinning={paipanInfo === null}>
         <TabView
           navigationState={{
@@ -110,13 +109,14 @@ export const Row: FC<{
   children?: ReactNode;
   style?: StyleProp<ViewStyle>;
   margin?: FlexStyle['margin'];
+  justifyContent?: FlexStyle['justifyContent'];
   alignItems?: FlexStyle['alignItems'];
-}> = ({style, children, margin, alignItems}) => {
+}> = ({style, children, margin, justifyContent, alignItems}) => {
   return (
     <View
       style={[
         styles.row,
-        {alignItems},
+        {alignItems, justifyContent},
         typeof margin !== 'undefined' && {margin},
         style,
       ]}>
