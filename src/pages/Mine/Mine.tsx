@@ -44,7 +44,7 @@ const Mine: FC<
 
   useEffect(() => {
     // TODO move to store
-    if (!isDev) {
+    if (isDev) {
       return;
     }
     fetchToCheckVersion().then(data => {

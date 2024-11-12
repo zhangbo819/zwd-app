@@ -44,7 +44,7 @@ export default function () {
   const [MineTabBarBadge, setMineTabBarBadge] = useState(0);
 
   useEffect(() => {
-    if (!isDev) {
+    if (isDev) {
       return;
     }
     fetchToCheckVersion().then(data => {
