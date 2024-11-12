@@ -395,22 +395,30 @@ class WuXingClass {
 
     // 从后向前
     for (let i = target.length - 1; i >= 0; i--) {
-      const relation = [];
+      const relation: {
+        name: DZ | DZ[];
+        index: number | number[];
+        text: string;
+      }[] = [];
       for (let j = i - 1; j >= 0; j--) {
         // console.log(target[i], target[j]);
         // 2
         const gx = this.checkDZRelation(target[i], target[j]);
-        if (gx !== null) {
-          relation.push({name: target[j], index: j, text: gx});
+        if (gx.length) {
+          gx.forEach(gxItem => {
+            relation.push({name: target[j], index: j, text: gxItem});
+          });
         }
         // 3
         for (let k = j - 1; k >= 0; k--) {
           const gx3 = this.checkDZRelation(target[i], target[j], target[k]);
-          if (gx3 !== null) {
-            relation.push({
-              name: [target[j], target[k]],
-              index: [j, k],
-              text: gx3,
+          if (gx3.length) {
+            gx3.forEach(gx3Item => {
+              relation.push({
+                name: [target[j], target[k]],
+                index: [j, k],
+                text: gx3Item,
+              });
             });
           }
         }
@@ -494,7 +502,7 @@ class WuXingClass {
       ],
     };
 
-    let res: string | null = null;
+    const res: string[] = [];
     const inputs = (c === null ? [a, b] : [a, b, c])
       .sort((x, y) => x.charCodeAt(0) - y.charCodeAt(0))
       .join('');
@@ -508,13 +516,13 @@ class WuXingClass {
           switch (key) {
             case DZ_GX.合:
               const map_he = [WX.土, WX.木, WX.火, WX.金, WX.水, WX.土];
-              res = gxItems[0] + gxItems[1] + DZ_GX.合 + map_he[index];
+              res.push(gxItems[0] + gxItems[1] + DZ_GX.合 + map_he[index]);
               break;
             case DZ_GX.暗合:
-              res = gxItems[0] + gxItems[1] + DZ_GX.暗合;
+              res.push(gxItems[0] + gxItems[1] + DZ_GX.暗合);
               break;
             case DZ_GX.冲:
-              res = gxItems[0] + gxItems[1] + DZ_GX.冲;
+              res.push(gxItems[0] + gxItems[1] + DZ_GX.冲);
               break;
             case DZ_GX.穿:
               const map_chuan = [
@@ -525,34 +533,35 @@ class WuXingClass {
                 '庚金克甲木',
                 '丁火克辛金',
               ];
-              res =
+              res.push(
                 gxItems[0] +
-                DZ_GX.穿 +
-                gxItems[1] +
-                '(' +
-                map_chuan[index] +
-                ')';
+                  DZ_GX.穿 +
+                  gxItems[1] +
+                  '(' +
+                  map_chuan[index] +
+                  ')',
+              );
               break;
             case DZ_GX.刑:
               if (a === b) {
-                res = gxItems[0] + gxItems[1] + '自刑';
+                res.push(gxItems[0] + gxItems[1] + '自刑');
               } else {
-                res = gxItems[0] + gxItems[1] + '相刑';
+                res.push(gxItems[0] + gxItems[1] + '相刑');
               }
               break;
             case DZ_GX.破:
-              res = gxItems[0] + gxItems[1] + DZ_GX.破;
+              res.push(gxItems[0] + gxItems[1] + DZ_GX.破);
               break;
             case DZ_GX.三合:
               const map_3he = [WX.火, WX.水, WX.金, WX.木];
-              res = a + b + c + DZ_GX.三合 + map_3he[index] + '局';
+              res.push(a + b + c + DZ_GX.三合 + map_3he[index] + '局');
               break;
             case DZ_GX.三会:
               const map_3hui = [WX.木, WX.火, WX.金, WX.水];
-              res = a + b + c + DZ_GX.三会 + map_3hui[index] + '局';
+              res.push(a + b + c + DZ_GX.三会 + map_3hui[index] + '局');
               break;
             case DZ_GX.三刑:
-              res = a + b + c + DZ_GX.三刑;
+              res.push(a + b + c + DZ_GX.三刑);
           }
         }
       });

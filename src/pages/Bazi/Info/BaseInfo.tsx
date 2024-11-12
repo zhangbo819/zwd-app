@@ -17,7 +17,6 @@ import {
   getColorByWuxing,
   getWuxing,
   TG_10,
-  WuXing5,
   WX,
   YueClass5,
   YueLinByWuxing,

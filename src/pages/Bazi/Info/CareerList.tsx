@@ -329,7 +329,7 @@ const CareerList: FC<{
                 return i.relation.map(j => {
                   return (
                     <Text
-                      key={'relation_dz' + i.index + j.index}
+                      key={'relation_dz' + i.index + j.index + j.text}
                       style={styles.tgGxItem}>
                       {j.text}
                     </Text>
