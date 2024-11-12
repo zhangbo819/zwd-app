@@ -294,33 +294,11 @@ const BaseInfo: FC<{
           </Col>
         </Row>
         <Row>
-          <Col>
-            <Row alignItems="center" margin={0}>
-              <Text style={[styles.commonText]}>日主五行：</Text>
-              <WuxingText
-                style={{marginLeft: 4}}
-                size="mini"
-                text={pageData.rizhuWuxing}
-              />
-            </Row>
-          </Col>
-          <Col>
-            <Text style={[styles.commonText]}>
-              阴阳：
-              <Text>{paipanInfo.tg[2] % 2 === 0 ? '阳' : '阴'}</Text>
-            </Text>
-          </Col>
+          <Text style={[styles.commonText]}>
+            阴阳：
+            <Text>{paipanInfo.tg[2] % 2 === 0 ? '阳' : '阴'}</Text>
+          </Text>
         </Row>
-        {/* <Row>
-          <Row alignItems="center" margin={0}>
-            <Text style={[styles.commonText]}>月令：</Text>
-            <WuxingText
-              style={{marginLeft: 4}}
-              size="mini"
-              text={pageData.yueling}
-            />
-          </Row>
-        </Row> */}
       </View>
 
       <View style={styles.topInfo}>
@@ -363,9 +341,6 @@ const BaseInfo: FC<{
           </Text>
         </View>
 
-        {/* 各五行通根 天干虚浮 地支无透 情况 */}
-        {/* 三合三会 */}
-
         {/* 月令 */}
         <View style={styles.wuxingView}>
           <Row>
@@ -383,11 +358,39 @@ const BaseInfo: FC<{
               );
             })}
           </Row>
+          <Row>
+            <Col>
+              <Row alignItems="center" margin={0}>
+                <Text style={[styles.commonText]}>日主五行：</Text>
+                <WuxingText
+                  style={{marginLeft: 4}}
+                  size="mini"
+                  text={pageData.rizhuWuxing}
+                />
+              </Row>
+            </Col>
+            <Col>
+              <Row alignItems="center" margin={0}>
+                <Text style={[styles.commonText]}>月令：</Text>
+                <WuxingText
+                  style={{marginLeft: 4}}
+                  size="mini"
+                  text={pageData.yueling}
+                />
+              </Row>
+            </Col>
+          </Row>
           <Text style={styles.commonText}>
-            月令情况：{pageData.isDeLing ? '得令' : '失令'}
+            月令情况：{pageData.isDeLing ? '得令（得时）' : '失令（失时）'}
           </Text>
           <Text style={styles.hint}>旺相为得令，休囚死为失令</Text>
+          <Text style={styles.hint}>
+            月令是判断五行力量的首要条件，但不是唯一条件，还要结合天干地支情况
+          </Text>
         </View>
+
+        {/* 得地 各五行通根 天干虚浮 地支无透 */}
+        {/* 得势 三合三会 */}
       </View>
 
       {/* 天干地支关系表 */}
