@@ -267,24 +267,6 @@ type Xun =
   | JZ_60.甲戌
   | JZ_60.甲申
   | JZ_60.甲辰;
-// 根据JZ_60得到对应的旬
-export function getXun(target: JZ_60): Xun {
-  const tg_index = TG_10.findIndex(i => i === target[0]);
-  if (tg_index === 0) {
-    return target as Xun;
-  } else {
-    const dz_index = DZ_12.findIndex(i => i === target[1]);
-    // 找到该旬的甲对应的地支
-    // 如 戊申 -> 4, 8 -> 8 - 4 = 4 -> 4为辰, 所以为甲辰旬
-    // 如 壬辰 -> 8, 4 -> 4 - 8 + 12 = 8 -> 8为申, 所以为甲申旬
-    const xun_dizhi_index =
-      dz_index - tg_index < 0
-        ? dz_index - tg_index + DZ_12.length
-        : dz_index - tg_index;
-
-    return (TG.甲 + DZ_12[xun_dizhi_index]) as Xun;
-  }
-}
 
 enum TG_GX {
   克 = '克',
@@ -304,6 +286,90 @@ enum DZ_GX {
 }
 
 class WuXingClass {
+  map_dzgx = {
+    [DZ_GX.合]: [
+      [DZ.子, DZ.丑], // 合化土
+      [DZ.寅, DZ.亥], // 合化木
+      [DZ.卯, DZ.戌], // 合化火
+      [DZ.辰, DZ.酉], // 合化金
+      [DZ.巳, DZ.申], // 合化水
+      [DZ.午, DZ.未], // 合化土
+    ],
+    [DZ_GX.暗合]: [
+      [DZ.卯, DZ.申],
+      [DZ.寅, DZ.丑],
+      [DZ.午, DZ.亥],
+    ],
+    [DZ_GX.冲]: [
+      [DZ.子, DZ.午],
+      [DZ.卯, DZ.酉],
+      [DZ.寅, DZ.申],
+      [DZ.巳, DZ.亥],
+      [DZ.辰, DZ.戌],
+      [DZ.丑, DZ.未],
+    ],
+    [DZ_GX.穿]: [
+      [DZ.未, DZ.子], // 己土穿癸水
+      [DZ.丑, DZ.午], // 癸水克丁火
+      [DZ.巳, DZ.寅], // 庚金克甲木
+      [DZ.卯, DZ.辰], // 木克土
+      [DZ.申, DZ.亥], // 庚金克甲木
+      [DZ.戌, DZ.酉], // 丁火克辛金
+    ],
+    [DZ_GX.刑]: [
+      [DZ.子, DZ.卯],
+      [DZ.午, DZ.酉],
+
+      [DZ.辰, DZ.辰],
+      [DZ.酉, DZ.酉],
+      [DZ.亥, DZ.亥],
+      [DZ.午, DZ.午],
+    ],
+    [DZ_GX.破]: [
+      [DZ.子, DZ.酉],
+      [DZ.午, DZ.卯],
+      [DZ.巳, DZ.申],
+      [DZ.寅, DZ.亥],
+      [DZ.辰, DZ.丑],
+      [DZ.未, DZ.戌],
+    ],
+    [DZ_GX.三合]: [
+      [DZ.寅, DZ.午, DZ.戌],
+      [DZ.申, DZ.子, DZ.辰],
+      [DZ.巳, DZ.酉, DZ.丑],
+      [DZ.亥, DZ.卯, DZ.未],
+    ],
+    [DZ_GX.三会]: [
+      [DZ.寅, DZ.卯, DZ.辰],
+      [DZ.巳, DZ.午, DZ.未],
+      [DZ.申, DZ.酉, DZ.戌],
+      [DZ.亥, DZ.子, DZ.丑],
+    ],
+    [DZ_GX.三刑]: [
+      [DZ.丑, DZ.未, DZ.戌], //（土力量增加，藏干互毁）
+      [DZ.寅, DZ.巳, DZ.申], //（本气互毁）
+    ],
+  };
+
+  // 根据JZ_60得到对应的旬
+  public getXun(target: JZ_60): Xun {
+    const tg_index = TG_10.findIndex(i => i === target[0]);
+    if (tg_index === 0) {
+      return target as Xun;
+    } else {
+      const dz_index = DZ_12.findIndex(i => i === target[1]);
+      // 找到该旬的甲对应的地支
+      // 如 戊申 -> 4, 8 -> 8 - 4 = 4 -> 4为辰, 所以为甲辰旬
+      // 如 壬辰 -> 8, 4 -> 4 - 8 + 12 = 8 -> 8为申, 所以为甲申旬
+      const xun_dizhi_index =
+        dz_index - tg_index < 0
+          ? dz_index - tg_index + DZ_12.length
+          : dz_index - tg_index;
+
+      return (TG.甲 + DZ_12[xun_dizhi_index]) as Xun;
+    }
+  }
+
   // 拿到天干关系
   public getTgRelation(target: TG[]) {
     const res: {
@@ -390,6 +456,7 @@ class WuXingClass {
         name: DZ | DZ[];
         index: number | number[];
         text: string;
+        color: string;
       }[];
     }[] = [];
 
@@ -399,25 +466,27 @@ class WuXingClass {
         name: DZ | DZ[];
         index: number | number[];
         text: string;
+        color: string;
       }[] = [];
       for (let j = i - 1; j >= 0; j--) {
         // console.log(target[i], target[j]);
         // 2
         const gx = this.checkDZRelation(target[i], target[j]);
         if (gx.length) {
-          gx.forEach(gxItem => {
-            relation.push({name: target[j], index: j, text: gxItem});
+          gx.forEach(({text, color}) => {
+            relation.push({name: target[j], index: j, text, color});
           });
         }
         // 3
         for (let k = j - 1; k >= 0; k--) {
           const gx3 = this.checkDZRelation(target[i], target[j], target[k]);
           if (gx3.length) {
-            gx3.forEach(gx3Item => {
+            gx3.forEach(({text, color}) => {
               relation.push({
                 name: [target[j], target[k]],
                 index: [j, k],
-                text: gx3Item,
+                text,
+                color,
               });
             });
           }
@@ -437,92 +506,31 @@ class WuXingClass {
 
   // 校验地支关系
   private checkDZRelation(a: DZ, b: DZ, c: DZ | null = null) {
-    const map = {
-      [DZ_GX.合]: [
-        [DZ.子, DZ.丑], // 合化土
-        [DZ.寅, DZ.亥], // 合化木
-        [DZ.卯, DZ.戌], // 合化火
-        [DZ.辰, DZ.酉], // 合化金
-        [DZ.巳, DZ.申], // 合化水
-        [DZ.午, DZ.未], // 合化土
-      ],
-      [DZ_GX.暗合]: [
-        [DZ.卯, DZ.申],
-        [DZ.寅, DZ.丑],
-        [DZ.午, DZ.亥],
-      ],
-      [DZ_GX.冲]: [
-        [DZ.子, DZ.午],
-        [DZ.卯, DZ.酉],
-        [DZ.寅, DZ.申],
-        [DZ.巳, DZ.亥],
-        [DZ.辰, DZ.戌],
-        [DZ.丑, DZ.未],
-      ],
-      [DZ_GX.穿]: [
-        [DZ.未, DZ.子], // 己土穿癸水
-        [DZ.丑, DZ.午], // 癸水克丁火
-        [DZ.巳, DZ.寅], // 庚金克甲木
-        [DZ.卯, DZ.辰], // 木克土
-        [DZ.申, DZ.亥], // 庚金克甲木
-        [DZ.戌, DZ.酉], // 丁火克辛金
-      ],
-      [DZ_GX.刑]: [
-        [DZ.子, DZ.卯],
-        [DZ.午, DZ.酉],
-
-        [DZ.辰, DZ.辰],
-        [DZ.酉, DZ.酉],
-        [DZ.亥, DZ.亥],
-        [DZ.午, DZ.午],
-      ],
-      [DZ_GX.破]: [
-        [DZ.子, DZ.酉],
-        [DZ.午, DZ.卯],
-        [DZ.巳, DZ.申],
-        [DZ.寅, DZ.亥],
-        [DZ.辰, DZ.丑],
-        [DZ.未, DZ.戌],
-      ],
-      [DZ_GX.三合]: [
-        [DZ.寅, DZ.午, DZ.戌],
-        [DZ.申, DZ.子, DZ.辰],
-        [DZ.巳, DZ.酉, DZ.丑],
-        [DZ.亥, DZ.卯, DZ.未],
-      ],
-      [DZ_GX.三会]: [
-        [DZ.寅, DZ.卯, DZ.辰],
-        [DZ.巳, DZ.午, DZ.未],
-        [DZ.申, DZ.酉, DZ.戌],
-        [DZ.亥, DZ.子, DZ.丑],
-      ],
-      [DZ_GX.三刑]: [
-        [DZ.丑, DZ.未, DZ.戌], //（土力量增加，藏干互毁）
-        [DZ.寅, DZ.巳, DZ.申], //（本气互毁）
-      ],
-    };
-
-    const res: string[] = [];
+    const res: {text: string; color: string}[] = [];
     const inputs = (c === null ? [a, b] : [a, b, c])
       .sort((x, y) => x.charCodeAt(0) - y.charCodeAt(0))
       .join('');
-    for (let key in map) {
-      map[key as DZ_GX].forEach((gxItems, index) => {
+    for (let key in this.map_dzgx) {
+      this.map_dzgx[key as DZ_GX].forEach((gxItems, index) => {
         if (
           gxItems.length === inputs.length &&
           gxItems.sort((x, y) => x.charCodeAt(0) - y.charCodeAt(0)).join('') ===
             inputs
         ) {
           switch (key) {
+            // TODO use color
             case DZ_GX.合:
               const map_he = [WX.土, WX.木, WX.火, WX.金, WX.水, WX.土];
-              res.push(gxItems[0] + gxItems[1] + DZ_GX.合 + map_he[index]);
+              res.push({
+                text: gxItems[0] + gxItems[1] + DZ_GX.合 + map_he[index],
+                color: '',
+              });
               break;
             case DZ_GX.暗合:
-              res.push(gxItems[0] + gxItems[1] + DZ_GX.暗合);
+              res.push({text: gxItems[0] + gxItems[1] + DZ_GX.暗合, color: ''});
               break;
             case DZ_GX.冲:
-              res.push(gxItems[0] + gxItems[1] + DZ_GX.冲);
+              res.push({text: gxItems[0] + gxItems[1] + DZ_GX.冲, color: ''});
               break;
             case DZ_GX.穿:
               const map_chuan = [
@@ -533,35 +541,45 @@ class WuXingClass {
                 '庚金克甲木',
                 '丁火克辛金',
               ];
-              res.push(
-                gxItems[0] +
+              res.push({
+                text:
+                  gxItems[0] +
                   DZ_GX.穿 +
                   gxItems[1] +
                   '(' +
                   map_chuan[index] +
                   ')',
-              );
+                color: '',
+              });
               break;
             case DZ_GX.刑:
+              let text = '';
               if (a === b) {
-                res.push(gxItems[0] + gxItems[1] + '自刑');
+                text = gxItems[0] + gxItems[1] + '自刑';
               } else {
-                res.push(gxItems[0] + gxItems[1] + '相刑');
+                text = gxItems[0] + gxItems[1] + '相刑';
               }
+              res.push({text, color: ''});
               break;
             case DZ_GX.破:
-              res.push(gxItems[0] + gxItems[1] + DZ_GX.破);
+              res.push({text: gxItems[0] + gxItems[1] + DZ_GX.破, color: ''});
               break;
             case DZ_GX.三合:
               const map_3he = [WX.火, WX.水, WX.金, WX.木];
-              res.push(a + b + c + DZ_GX.三合 + map_3he[index] + '局');
+              res.push({
+                text: a + b + c + DZ_GX.三合 + map_3he[index] + '局',
+                color: '',
+              });
               break;
             case DZ_GX.三会:
               const map_3hui = [WX.木, WX.火, WX.金, WX.水];
-              res.push(a + b + c + DZ_GX.三会 + map_3hui[index] + '局');
+              res.push({
+                text: a + b + c + DZ_GX.三会 + map_3hui[index] + '局',
+                color: '',
+              });
               break;
             case DZ_GX.三刑:
-              res.push(a + b + c + DZ_GX.三刑);
+              res.push({text: a + b + c + DZ_GX.三刑, color: ''});
           }
         }
       });

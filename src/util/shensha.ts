@@ -1,4 +1,4 @@
-import {DZ, DZ_12, getXun, JZ_60, TG} from './wuxing';
+import {DZ, DZ_12, JZ_60, TG, WuXing} from './wuxing';
 
 // TODO add more
 export enum ShenshaItem {
@@ -949,7 +949,7 @@ export default class Shensha {
 
         function verifyXun(t: JZ_60) {
           let res: DZ[] = [];
-          const xun = getXun(t);
+          const xun = WuXing.getXun(t);
           switch (xun) {
             case JZ_60.甲子:
               res = [DZ.戌, DZ.亥];
