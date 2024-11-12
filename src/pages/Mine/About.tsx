@@ -19,6 +19,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
+import * as Progress from 'react-native-progress';
 
 // import MyHeader from '../../components/Myheader';
 
@@ -33,11 +34,7 @@ import {
 } from '../../constant/UI';
 import {Parsers} from '../../constant/moss';
 import STYLES from '../../constant/STYLES';
-import {
-  fetchToCheckVersion,
-  fetchToCheckVersionRes,
-  getHeight,
-} from '../../util';
+import {fetchToCheckVersion, fetchToCheckVersionRes} from '../../util';
 import {RootStackParamList, StackPages} from '../../types/interface';
 import version from '../../constant/version';
 import {isiOS} from '../../constant/config';
@@ -51,7 +48,7 @@ const About: FC<
 > = () => {
   const [newApiData, setNewApiData] = useState<fetchToCheckVersionRes>();
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState('0%'); // 下载进度（0 到 100）
+  const [progress, setProgress] = useState(0); // 下载进度（0 到 100）
 
   //   const openUrl = url => {
   //     if (url) {
@@ -88,7 +85,7 @@ const About: FC<
       return;
     }
 
-    Alert.alert('提示', '开始下载最新安装包，请耐心等待');
+    // Alert.alert('提示', '开始下载最新安装包，请耐心等待');
     setLoading(true);
 
     const apkUrlArr = apkUrl.split('/');
@@ -105,7 +102,8 @@ const About: FC<
       .fetch('GET', apkUrl)
       .progress((received, total) => {
         // 计算下载进度百分比
-        const progressPercent = ((received / total) * 100).toFixed(2) + '%';
+        // const progressPercent = ((received / total) * 100).toFixed(2) + '%';
+        const progressPercent = (received / total) * 100;
         setProgress(progressPercent);
       })
       .then(res => {
@@ -152,9 +150,13 @@ const About: FC<
               {loading ? (
                 <View style={styles.apkSpin}>
                   <ActivityIndicator size="large" color={COLOR_THEME_COMMON} />
-                  <Text>下载中... {progress}</Text>
+                  <Text>下载中... </Text>
                   {/* 进度条组件 */}
-                  {/* <ProgressBarAndroid styleAttr="Horizontal" indeterminate={false} progress={progress / 100} /> */}
+                  <Progress.Bar
+                    style={{marginTop: 4}}
+                    progress={progress / 100}
+                    color={COLOR_THEME_COMMON}
+                  />
                 </View>
               ) : (
                 <>
