@@ -4,13 +4,14 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 
 import Spin from '../../../components/Spin';
-import {COLOR_THEME_COMMON} from '../../../constant/UI';
+import {COLOR_THEME_COMMON, NAV_COMMON_HEIGHT} from '../../../constant/UI';
 import {RootStackParamList, StackPages} from '../../../types/interface';
 import {DZ, Ten, TG, ZhangSheng} from '../../../util/wuxing';
 import paipan, {PaipanInfo} from '../../../util/paipan';
 import {ShenshaItem} from '../../../util/shensha';
 import BaseInfo from './BaseInfo';
 import CareerList from './CareerList';
+import {isiOS} from '../../../constant/config';
 
 // const init_Data = paipan.GetInfo(1, Date.now());
 export enum PillarTitle {
@@ -52,7 +53,7 @@ const BaziInfo: FC<
   }, [props.route.params]);
 
   return (
-    <View style={[styles.container]}>
+    <View style={[styles.container, isiOS && {paddingTop: NAV_COMMON_HEIGHT}]}>
       <Spin spinning={paipanInfo === null}>
         <TabView
           navigationState={{
@@ -127,8 +128,14 @@ export const Row: FC<{
 export const Col: FC<{
   children?: ReactNode;
   style?: StyleProp<ViewStyle>;
-}> = ({children, style}) => {
-  return <View style={[styles.col, style]}>{children}</View>;
+  justifyContent?: FlexStyle['justifyContent'];
+  alignItems?: FlexStyle['alignItems'];
+}> = ({children, style, justifyContent, alignItems}) => {
+  return (
+    <View style={[styles.col, {justifyContent, alignItems}, style]}>
+      {children}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({

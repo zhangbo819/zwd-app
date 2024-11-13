@@ -17,11 +17,14 @@ import {
   DZ_12,
   getColorByWuxing,
   getWuxing,
+  Ten,
   TG_10,
   WuXing5,
+  WuXing,
   WX,
   YueClass5,
   YueLinByWuxing,
+  sizhuDetailsItem,
 } from '../../../util/wuxing';
 import WuxingText from '../components/WuxingText';
 import {
@@ -43,10 +46,11 @@ const BaseInfo: FC<{
     dzcg: number[][];
     dzcg_text: string[][];
     rizhuWuxing: WX;
-    wuxingNumber: {name: WX; number: number}[];
-    wuxingCgNumber: {name: WX; number: number}[];
+    wuxingNumber: {name: WX; number: number; ten2: string}[];
+    wuxingCgNumber: {name: WX; number: number; ten2: string}[];
     yueling: WX;
     isDeLing: boolean;
+    bazi: sizhuDetailsItem[];
   }>({
     dzcg: [],
     dzcg_text: [],
@@ -55,6 +59,7 @@ const BaseInfo: FC<{
     wuxingCgNumber: [],
     yueling: WX.土,
     isDeLing: false,
+    bazi: [],
   });
   const [ytgcgData, setYtgcgData] = useState({
     weight_text: '',
@@ -68,9 +73,10 @@ const BaseInfo: FC<{
   const [isShowTgdz, setIsShowTgdz] = useState(false);
 
   useEffect(() => {
+    const infoBazi = paipanInfo.bazi;
     // 称骨数据
     const newYtgcgData = Ytgcg.getData(
-      paipanInfo.bazi,
+      infoBazi,
       paipanInfo.yinli[1],
       paipanInfo.yinli[2],
     );
@@ -78,38 +84,61 @@ const BaseInfo: FC<{
     setYtgcgData(newYtgcgData);
 
     // 页面数据
-    const bazi = paipanInfo.bazi;
     const {dzcg, dzcg_text} = paipan.getDzcgText(
       [11].concat(new Array(11).fill(0).map((_, i) => i)),
     );
     // console.log('dzcg, dzcg_text', dzcg, dzcg_text);
-    const yueling = getWuxing(bazi[1][1]) as WX;
-    const rizhuWuxing = getWuxing(bazi[2][0]) as WX;
+    const yueling = getWuxing(infoBazi[1][1]) as WX;
+    const rizhuWuxing = getWuxing(infoBazi[2][0]) as WX;
     const yuelingIndex = YueLinByWuxing[yueling].findIndex(
       i => i === rizhuWuxing,
     );
 
     // console.log(JSON.stringify(paipanInfo, null, 4));
+    // 各五行对应十神关系
+    const wxTenMap = paipanInfo.tenMap.reduce((r, i, index) => {
+      const tg10Wuxing = [WX.木, WX.火, WX.土, WX.金, WX.水];
+      const halfIndex = Math.floor(index / 2);
+
+      const map = {
+        [Ten.正官]: '官杀',
+        [Ten.七杀]: '官杀',
+        [Ten.正印]: '印绶',
+        [Ten.偏印]: '印绶',
+        [Ten.正财]: '财才',
+        [Ten.偏财]: '财才',
+        [Ten.食神]: '食伤',
+        [Ten.伤官]: '食伤',
+        [Ten.比肩]: '比劫',
+        [Ten.劫财]: '比劫',
+        [Ten.元男]: '日元',
+        [Ten.元女]: '日元',
+      };
+
+      r[tg10Wuxing[halfIndex]] = map[i];
+      return r;
+    }, {} as Record<WX, string>);
     // 五行数量
-    const wuxingNumber = bazi.reduce(
+    const wuxingNumber = infoBazi.reduce(
       (r, i) => {
         r.forEach(j => {
           if (j.name === getWuxing(i[0]) || j.name === getWuxing(i[1])) {
             j.number++;
+            j.ten2 = wxTenMap[j.name];
           }
         });
 
         return r;
       },
-      WuXing5.map(i => ({name: i, number: 0})),
+      WuXing5.map(i => ({name: i, number: 0, ten2: ''})),
     );
 
     // 藏干数量
-    const wuxingCgNumber = paipanInfo.bazi
+    const wuxingCgNumber = infoBazi
       .map(i => i[0])
       .concat(
         paipanInfo.dzcg_text.reduce((r, i) => {
-          i.forEach(i => r.push(i[0]));
+          i.forEach(j => r.push(j[0]));
           return r;
         }, []),
       )
@@ -118,12 +147,13 @@ const BaseInfo: FC<{
           r.forEach(j => {
             if (j.name === getWuxing(i)) {
               j.number++;
+              j.ten2 = wxTenMap[j.name];
             }
           });
 
           return r;
         },
-        WuXing5.map(i => ({name: i, number: 0})),
+        WuXing5.map(i => ({name: i, number: 0, ten2: ''})),
       );
 
     setPageData({
@@ -134,6 +164,7 @@ const BaseInfo: FC<{
       wuxingCgNumber,
       yueling,
       isDeLing: yuelingIndex === 0 || yuelingIndex === 1,
+      bazi: WuXing.getSiZhuDetails(infoBazi),
     });
   }, [paipanInfo]);
 
@@ -146,7 +177,7 @@ const BaseInfo: FC<{
     let res = `${isYang ? '阳历' : '阴历'}：${arr[0]}年${arr[1]}月${arr[2]}日 `;
     res += isYang
       ? `${paipanInfo.hh}:${paipanInfo.mt}`
-      : `${paipanInfo.bazi?.[3]?.[1]}时`;
+      : `${pageData.bazi[3]?.tg}时`;
     return (
       <Row>
         <Text style={styles.commonText}>{res}</Text>
@@ -156,7 +187,8 @@ const BaseInfo: FC<{
 
   // 天干地支关系表
   const renderTgDzModlue = () => {
-    const color_rizhu = getColorByWuxing(paipanInfo.bazi[2][0]);
+    const rizhu_tg = pageData.bazi[2]?.tg;
+    const color_rizhu = getColorByWuxing(rizhu_tg);
     return (
       <View style={styles.topInfo}>
         <Row alignItems="center">
@@ -171,11 +203,11 @@ const BaseInfo: FC<{
           />
         </Row>
 
-        {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
+        {/* <Text>{JSON.stringify(paipanInfo.tenMap, null, 4)}</Text> */}
         <Row style={[styles.tgdzList, {display: isShowTgdz ? 'flex' : 'none'}]}>
           <Text style={styles.tgdzTitle}>十天干对应日主</Text>
           {TG_10.map((item, index) => {
-            const isRizhu = item === paipanInfo.bazi[2][0];
+            const isRizhu = item === rizhu_tg;
             return (
               <View key={item} style={styles.tgItem}>
                 <Text style={styles.tenText}>{paipanInfo.tenMap[index]}</Text>
@@ -209,7 +241,7 @@ const BaseInfo: FC<{
                     {pageData.dzcg_text &&
                       Array.isArray(pageData.dzcg_text[index]) &&
                       pageData.dzcg_text[index].map((j, k) => {
-                        const isRizhu = j[0] === paipanInfo.bazi[2][0];
+                        const isRizhu = j[0] === pageData.bazi[2]?.tg;
 
                         return (
                           <View key={item + j} style={styles.dzcgItem}>
@@ -306,7 +338,7 @@ const BaseInfo: FC<{
         {/* 五行数量，整体阴阳 */}
         <View style={styles.wuxingView}>
           <Row alignItems="center">
-            <Text style={styles.commonText}>是否展示藏干</Text>
+            <Text style={styles.commonText}>是否计算藏干</Text>
             <Switch
               style={{marginLeft: 8}}
               trackColor={{false: '#474749', true: COLOR_THEME_COMMON}}
@@ -325,43 +357,29 @@ const BaseInfo: FC<{
                     <Progress.Bar
                       progress={i.number / 8}
                       width={viewportWidth - 100} // todo 100
+                      height={8}
                       color={nowWuxingColor}
                       borderColor="#fff"
                     />
                   </Col>
                   <Text style={[styles.commonText, {color: nowWuxingColor}]}>
-                    {i.number}个
+                    {i.number}个 {i.ten2}
                   </Text>
                 </Row>
               );
             },
           )}
           <Text style={styles.hint}>
-            五行数量（不加藏干）3个及以上为多，1个及以下为少。
+            五行数量总数为8（8字4天干4地支本气，不加藏干）3个及以上为多，1个及以下为少。
           </Text>
         </View>
 
         {/* 月令 */}
         <View style={styles.wuxingView}>
           <Row>
-            {YueClass5.map((item, index) => {
-              const map = YueLinByWuxing[pageData.yueling];
-              return (
-                <Col
-                  key={item}
-                  style={{backgroundColor: getColorByWuxing(map[index])}}>
-                  <Text style={styles.wuxingYueline}>
-                    {map[index]}
-                    {item}
-                  </Text>
-                </Col>
-              );
-            })}
-          </Row>
-          <Row>
             <Col>
               <Row alignItems="center" margin={0}>
-                <Text style={[styles.commonText]}>日主五行：</Text>
+                <Text style={[styles.commonText]}>日主：</Text>
                 <WuxingText
                   style={{marginLeft: 4}}
                   size="mini"
@@ -380,6 +398,21 @@ const BaseInfo: FC<{
               </Row>
             </Col>
           </Row>
+          <Row>
+            {YueClass5.map((item, index) => {
+              const map = YueLinByWuxing[pageData.yueling];
+              return (
+                <Col
+                  key={item}
+                  style={{backgroundColor: getColorByWuxing(map[index])}}>
+                  <Text style={styles.wuxingYueline}>
+                    {map[index]}
+                    {item}
+                  </Text>
+                </Col>
+              );
+            })}
+          </Row>
           <Text style={styles.commonText}>
             月令情况：{pageData.isDeLing ? '得令（得时）' : '失令（失时）'}
           </Text>
@@ -390,6 +423,20 @@ const BaseInfo: FC<{
         </View>
 
         {/* 得地 各五行通根 天干虚浮 地支无透 */}
+        <View style={styles.wuxingView}>
+          <Row style={{width: '80%', alignSelf: 'center'}}>
+            {pageData.bazi.map((i, index) => {
+              return (
+                <Col key={'dedi_' + i.tgdz + index} alignItems="center">
+                  <Text>{i.tg_level}</Text>
+                  <WuxingText margin={2} text={i.tg} />
+                  <WuxingText margin={2} text={i.dz} />
+                  <Text>{i.dz_level}</Text>
+                </Col>
+              );
+            })}
+          </Row>
+        </View>
         {/* 得势 三合三会 */}
       </View>
 

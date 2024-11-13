@@ -165,16 +165,16 @@ export type fetchToCheckVersionRes = {
     updated_at: string;
   };
 };
+// fetch(
+//   'https://github.com/zhangbo819/zwd-app/releases/download/v0.2.0/zwd_v0.2.22.apk',
+//   {
+//     method: 'HEAD',
+//   },
+// ).then((data: any) => {
+//   console.log('data', JSON.stringify(data, null, 4));
+// });
 export async function fetchToCheckVersion(): Promise<fetchToCheckVersionRes> {
   return new Promise((resolve, reject) => {
-    // fetch(
-    //   'https://github.com/zhangbo819/zwd-app/releases/download/v0.2.0/zwd_v0.2.20.apk',
-    //   {
-    //     method: 'HEAD',
-    //   },
-    // ).then((data: any) => {
-    //   console.log('data', JSON.stringify(data, null, 4));
-    // });
     RNFetchBlob.fetch(
       'GET',
       'https://api.github.com/repos/zhangbo819/zwd-app/releases/latest',

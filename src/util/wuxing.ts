@@ -285,6 +285,40 @@ enum DZ_GX {
   三会 = '三会',
 }
 
+enum TG_LEVEL {
+  '无根气',
+  '余气根',
+  '中气根',
+  '本气根',
+  '刃',
+  '禄',
+}
+enum DZ_LEVEL {
+  '透干',
+  '未透干',
+}
+export type sizhuDetailsItem = {
+  tgdz: JZ_60;
+  tg: TG;
+  dz: DZ;
+  tg_level: string;
+  dz_level: string;
+};
+
+function _exchangeGenqi(map: {
+  [TG_LEVEL.禄]: DZ[];
+  [TG_LEVEL.刃]: DZ[];
+  [TG_LEVEL.中气根]: DZ[];
+  [TG_LEVEL.余气根]: DZ[];
+}) {
+  const temp = map[TG_LEVEL.刃];
+  return {
+    ...map,
+    [TG_LEVEL.禄]: temp,
+    [TG_LEVEL.刃]: map[TG_LEVEL.禄],
+  };
+}
+
 class WuXingClass {
   map_dzgx = {
     [DZ_GX.合]: [
@@ -349,6 +383,51 @@ class WuXingClass {
       [DZ.丑, DZ.未, DZ.戌], //（土力量增加，藏干互毁）
       [DZ.寅, DZ.巳, DZ.申], //（本气互毁）
     ],
+  };
+
+  map_tg_genqi = {
+    [TG.甲]: {
+      [TG_LEVEL.禄]: [DZ.寅],
+      [TG_LEVEL.刃]: [DZ.卯],
+      [TG_LEVEL.中气根]: [DZ.亥, DZ.辰],
+      [TG_LEVEL.余气根]: [DZ.未],
+    },
+    get [TG.乙]() {
+      return _exchangeGenqi(this[TG.甲]);
+    },
+    [TG.丙]: {
+      [TG_LEVEL.禄]: [DZ.巳],
+      [TG_LEVEL.刃]: [DZ.午],
+      [TG_LEVEL.中气根]: [DZ.寅, DZ.未],
+      [TG_LEVEL.余气根]: [DZ.戌],
+    },
+    get [TG.丁]() {
+      return _exchangeGenqi(this[TG.丙]);
+    },
+    get [TG.戊]() {
+      return this[TG.丙];
+    },
+    get [TG.己]() {
+      return this[TG.丁];
+    },
+    [TG.庚]: {
+      [TG_LEVEL.禄]: [DZ.申],
+      [TG_LEVEL.刃]: [DZ.酉],
+      [TG_LEVEL.中气根]: [DZ.戌],
+      [TG_LEVEL.余气根]: [DZ.丑, DZ.巳],
+    },
+    get [TG.辛]() {
+      return _exchangeGenqi(this[TG.庚]);
+    },
+    [TG.壬]: {
+      [TG_LEVEL.禄]: [DZ.亥],
+      [TG_LEVEL.刃]: [DZ.子],
+      [TG_LEVEL.中气根]: [DZ.丑, DZ.申],
+      [TG_LEVEL.余气根]: [DZ.辰],
+    },
+    get [TG.癸]() {
+      return _exchangeGenqi(this[TG.壬]);
+    },
   };
 
   // 根据JZ_60得到对应的旬
@@ -584,6 +663,55 @@ class WuXingClass {
         }
       });
     }
+    return res;
+  }
+
+  // 根据原始四柱拿到更全的四柱数据
+  public getSiZhuDetails(bazi: JZ_60[]) {
+    // console.log('bazi', bazi);
+    const {tgs, dzs} = bazi.reduce(
+      (r, i) => {
+        r.tgs.push(i[0] as TG);
+        r.dzs.push(i[1] as DZ);
+        return r;
+      },
+      {tgs: [] as TG[], dzs: [] as DZ[]},
+    );
+
+    // console.log('tgs, dzs', tgs, dzs);
+
+    const res: sizhuDetailsItem[] = bazi.map(i => {
+      const tg = i[0] as TG;
+      const dz = i[1] as DZ;
+
+      let tg_level = TG_LEVEL[TG_LEVEL.无根气];
+      const tg_genqi = this.map_tg_genqi[tg];
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      for (let key in tg_genqi) {
+        if (dzs.find(d => tg_genqi[TG_LEVEL.禄].includes(d))) {
+          tg_level = `${TG_LEVEL[TG_LEVEL.本气根]} (${TG_LEVEL[TG_LEVEL.禄]})`;
+        } else if (dzs.find(d => tg_genqi[TG_LEVEL.刃].includes(d))) {
+          tg_level = `${TG_LEVEL[TG_LEVEL.本气根]} (${TG_LEVEL[TG_LEVEL.刃]})`;
+        } else if (dzs.find(d => tg_genqi[TG_LEVEL.中气根].includes(d))) {
+          tg_level = TG_LEVEL[TG_LEVEL.中气根];
+        } else if (dzs.find(d => tg_genqi[TG_LEVEL.余气根].includes(d))) {
+          tg_level = TG_LEVEL[TG_LEVEL.余气根];
+        }
+      }
+
+      const dz_level = tgs.find(t => getWuxing(t) === getWuxing(dz))
+        ? DZ_LEVEL[DZ_LEVEL.透干]
+        : DZ_LEVEL[DZ_LEVEL.未透干];
+
+      return {
+        tgdz: i,
+        tg,
+        dz,
+        tg_level,
+        dz_level,
+      };
+    });
+
     return res;
   }
 }

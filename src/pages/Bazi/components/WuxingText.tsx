@@ -1,6 +1,7 @@
 import React, {FC, ReactNode} from 'react';
 import {DZ, getColorByWuxing, TG} from '../../../util/wuxing';
 import {
+  FlexStyle,
   StyleProp,
   StyleSheet,
   Text,
@@ -13,14 +14,15 @@ const WuxingText: FC<{
   text: TG | DZ | string;
   children?: ReactNode;
   size?: 'default' | 'mid' | 'mini';
-  fontWeight?: TextStyle['fontWeight'];
   style?: StyleProp<ViewStyle>;
-}> = ({text = '', children, size = 'default', fontWeight, style}) => {
+  margin?: FlexStyle['margin'];
+  fontWeight?: TextStyle['fontWeight'];
+}> = ({text = '', children, size = 'default', fontWeight, margin, style}) => {
   // 五行颜色
   const color_text = text.length > 1 ? text[0] : text;
 
   return (
-    <View style={[styles.col, style]}>
+    <View style={[styles.col, {margin}, style]}>
       <Text
         style={[
           styles.wuxing,
