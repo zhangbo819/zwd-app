@@ -1,5 +1,5 @@
-import React, {FC, ReactNode, useEffect, useState} from 'react';
-import {FlexStyle, StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
+import React, {FC, useEffect, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 
@@ -106,38 +106,6 @@ const BaziInfo: FC<
   );
 };
 
-export const Row: FC<{
-  children?: ReactNode;
-  style?: StyleProp<ViewStyle>;
-  margin?: FlexStyle['margin'];
-  justifyContent?: FlexStyle['justifyContent'];
-  alignItems?: FlexStyle['alignItems'];
-}> = ({style, children, margin, justifyContent, alignItems}) => {
-  return (
-    <View
-      style={[
-        styles.row,
-        {alignItems, justifyContent},
-        typeof margin !== 'undefined' && {margin},
-        style,
-      ]}>
-      {children}
-    </View>
-  );
-};
-export const Col: FC<{
-  children?: ReactNode;
-  style?: StyleProp<ViewStyle>;
-  justifyContent?: FlexStyle['justifyContent'];
-  alignItems?: FlexStyle['alignItems'];
-}> = ({children, style, justifyContent, alignItems}) => {
-  return (
-    <View style={[styles.col, {justifyContent, alignItems}, style]}>
-      {children}
-    </View>
-  );
-};
-
 const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
@@ -159,16 +127,7 @@ const styles = StyleSheet.create({
   yinyangText: {
     fontSize: 16,
   },
-  row: {
-    margin: 4,
-    marginHorizontal: 0,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-  },
-  col: {
-    flex: 1,
-    // backgroundColor: '#ff0',
-  },
+  
   pillarGrid: {
     marginTop: 12,
     paddingVertical: 8,

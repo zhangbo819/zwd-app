@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import MyModal from '../../../components/MyModal';
+import {Col, Row} from '../../../components/Layout';
 import {COLOR_THEME_COMMON} from '../../../constant/UI';
 import {DZ, Ten, TG, WuXing} from '../../../util/wuxing';
 import {PaipanInfo} from '../../../util/paipan';
@@ -16,7 +17,7 @@ import NaYin from '../../../util/Nayin';
 import textJSON from '../../../util/text';
 import WuxingText from '../components/WuxingText';
 import DaYunLiuNian from './components/DaYunLiuNian';
-import {Col, PillarItem, PillarTitle, Row} from '.';
+import {PillarItem, PillarTitle} from '.';
 
 const CareerList: FC<{
   name: string;

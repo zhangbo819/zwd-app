@@ -11,6 +11,7 @@ import {
 import * as Progress from 'react-native-progress';
 
 import ShowColors from '../../../components/ShowColors';
+import {Col, Row} from '../../../components/Layout';
 import paipan, {PaipanInfo} from '../../../util/paipan';
 import Ytgcg from '../../../util/ytgcg';
 import {
@@ -32,7 +33,6 @@ import {
   COLOR_THEME_COMMON,
   viewportWidth,
 } from '../../../constant/UI';
-import {Col, Row} from '.';
 
 const SHOW_DZ_12 = [DZ_12[11], ...DZ_12.slice(0, 11)];
 
