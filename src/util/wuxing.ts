@@ -404,11 +404,14 @@ class WuXingClass {
     get [TG.丁]() {
       return _exchangeGenqi(this[TG.丙]);
     },
-    get [TG.戊]() {
-      return this[TG.丙];
+    [TG.戊]: {
+      [TG_LEVEL.禄]: [DZ.戌, DZ.辰],
+      [TG_LEVEL.刃]: [DZ.丑, DZ.未],
+      [TG_LEVEL.中气根]: [DZ.巳],
+      [TG_LEVEL.余气根]: [DZ.寅, DZ.申],
     },
     get [TG.己]() {
-      return this[TG.丁];
+      return _exchangeGenqi(this[TG.戊]);
     },
     [TG.庚]: {
       [TG_LEVEL.禄]: [DZ.申],
@@ -689,9 +692,9 @@ class WuXingClass {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for (let key in tg_genqi) {
         if (dzs.find(d => tg_genqi[TG_LEVEL.禄].includes(d))) {
-          tg_level = `${TG_LEVEL[TG_LEVEL.本气根]} (${TG_LEVEL[TG_LEVEL.禄]})`;
+          tg_level = `${TG_LEVEL[TG_LEVEL.本气根]}-${TG_LEVEL[TG_LEVEL.禄]}`;
         } else if (dzs.find(d => tg_genqi[TG_LEVEL.刃].includes(d))) {
-          tg_level = `${TG_LEVEL[TG_LEVEL.本气根]} (${TG_LEVEL[TG_LEVEL.刃]})`;
+          tg_level = `${TG_LEVEL[TG_LEVEL.本气根]}-${TG_LEVEL[TG_LEVEL.刃]}`;
         } else if (dzs.find(d => tg_genqi[TG_LEVEL.中气根].includes(d))) {
           tg_level = TG_LEVEL[TG_LEVEL.中气根];
         } else if (dzs.find(d => tg_genqi[TG_LEVEL.余气根].includes(d))) {

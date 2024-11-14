@@ -838,6 +838,7 @@ export default class Shensha {
         天医是掌管疾病之事的星神。四柱逢天医,如不旺,又无贵人吉神相扶,不利于身体健康，容易身弱无力。若生旺又有贵人相生助,不仅身体健壮,而且特别适合从事医学、心理学、哲学等。学习力、理解力、观察力、模仿力、好奇心、研究心、直觉观等能力皆强。
         宗教、医药、哲学、人文等学说之星。`,
       rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60, yinli: number[]) {
+        const [nianzhu, , rizhu, shizhu] = bazi;
         const [, mm] = yinli;
         let res: false | ShenshaItem.天医 = false;
 
@@ -858,7 +859,10 @@ export default class Shensha {
 
         // console.log('yinli', yinli, map[mm]);
 
-        if (target[1] === map[mm]) {
+        if (
+          [nianzhu, rizhu, shizhu].includes(target) &&
+          target[1] === map[mm]
+        ) {
           res = ShenshaItem.天医;
         }
 
