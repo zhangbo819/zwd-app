@@ -16,8 +16,6 @@ import paipan, {PaipanInfo} from '../../../util/paipan';
 import Ytgcg from '../../../util/ytgcg';
 import {
   DZ_12,
-  getColorByWuxing,
-  getWuxing,
   Ten,
   TG_10,
   WuXing5,
@@ -88,8 +86,8 @@ const BaseInfo: FC<{
       [11].concat(new Array(11).fill(0).map((_, i) => i)),
     );
     // console.log('dzcg, dzcg_text', dzcg, dzcg_text);
-    const yueling = getWuxing(infoBazi[1][1]) as WX;
-    const rizhuWuxing = getWuxing(infoBazi[2][0]) as WX;
+    const yueling = WuXing.getWuxing(infoBazi[1][1]) as WX;
+    const rizhuWuxing = WuXing.getWuxing(infoBazi[2][0]) as WX;
     const yuelingIndex = YueLinByWuxing[yueling].findIndex(
       i => i === rizhuWuxing,
     );
@@ -122,7 +120,7 @@ const BaseInfo: FC<{
     const wuxingNumber = infoBazi.reduce(
       (r, i) => {
         r.forEach(j => {
-          if (j.name === getWuxing(i[0]) || j.name === getWuxing(i[1])) {
+          if (j.name === WuXing.getWuxing(i[0]) || j.name === WuXing.getWuxing(i[1])) {
             j.number++;
             j.ten2 = wxTenMap[j.name];
           }
@@ -145,7 +143,7 @@ const BaseInfo: FC<{
       .reduce(
         (r, i) => {
           r.forEach(j => {
-            if (j.name === getWuxing(i)) {
+            if (j.name === WuXing.getWuxing(i)) {
               j.number++;
               j.ten2 = wxTenMap[j.name];
             }
@@ -188,7 +186,7 @@ const BaseInfo: FC<{
   // 天干地支关系表
   const renderTgDzModlue = () => {
     const rizhu_tg = pageData.bazi[2]?.tg;
-    const color_rizhu = getColorByWuxing(rizhu_tg);
+    const color_rizhu = WuXing.getColorByWuxing(rizhu_tg);
     return (
       <View style={styles.topInfo}>
         <Row alignItems="center">
@@ -349,7 +347,7 @@ const BaseInfo: FC<{
           </Row>
           {(isShowDzcg ? pageData.wuxingCgNumber : pageData.wuxingNumber).map(
             i => {
-              const nowWuxingColor = getColorByWuxing(i.name);
+              const nowWuxingColor = WuXing.getColorByWuxing(i.name);
               return (
                 <Row key={'wuxingNumber_' + i.name} alignItems="center">
                   <WuxingText size="mid" fontWeight="bold" text={i.name} />
@@ -404,7 +402,7 @@ const BaseInfo: FC<{
               return (
                 <Col
                   key={item}
-                  style={{backgroundColor: getColorByWuxing(map[index])}}>
+                  style={{backgroundColor: WuXing.getColorByWuxing(map[index])}}>
                   <Text style={styles.wuxingYueline}>
                     {map[index]}
                     {item}

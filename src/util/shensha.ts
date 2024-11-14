@@ -1,6 +1,6 @@
-import {DZ, DZ_12, JZ_60, TG, WuXing} from './wuxing';
+import NaYin from './Nayin';
+import {DZ, DZ_12, JZ_60, TG, WuXing, WX} from './wuxing';
 
-// TODO add more
 export enum ShenshaItem {
   天乙贵人 = '天乙贵人',
   天德贵人 = '天德贵人',
@@ -12,10 +12,15 @@ export enum ShenshaItem {
   驿马 = '驿马',
   太极贵人 = '太极贵人',
   将星 = '将星',
-  //   学堂 = '学堂',
-  //   词馆 = '词馆',
+  学堂 = '学堂',
+  正学堂 = '正学堂',
+  词馆 = '词馆',
+  正词馆 = '正词馆',
   国印 = '国印',
   三奇贵人 = '三奇贵人',
+  三奇贵人天奇 = '三奇贵人-天奇',
+  三奇贵人地奇 = '三奇贵人-地奇',
+  三奇贵人人奇 = '三奇贵人-人奇',
   文昌贵人 = '文昌贵人',
   华盖 = '华盖',
   天医 = '天医',
@@ -29,7 +34,9 @@ export enum ShenshaItem {
   血刃 = '血刃',
   流霞 = '流霞',
   四废 = '四废',
-  //   天罗地网 = '天罗地网',
+  天罗地网 = '天罗地网',
+  天罗 = '天罗',
+  地网 = '地网',
   桃花 = '桃花',
   孤辰 = '孤辰',
   寡宿 = '寡宿',
@@ -52,10 +59,10 @@ export enum ShenshaItem {
   六秀日 = '六秀日',
   八专 = '八专',
   九丑 = '九丑',
-  //   童子煞 = '童子煞',
+  童子煞 = '童子煞',
   天厨贵人 = '天厨贵人',
   福星贵人 = '福星贵人',
-  德秀贵人 = '德秀贵人',
+  德秀贵人 = '德秀贵人', // TODO 德秀拆开
   拱禄 = '拱禄',
 }
 
@@ -595,6 +602,151 @@ export default class Shensha {
         return res;
       },
     },
+    [ShenshaItem.学堂]: {
+      text: `
+        精评：模仿力、创作力、想象力、理解力。学业出类拔萃，文章声名远播
+        古诀：纳音之长生
+        金命见巳，辛巳为正；木命见亥，己亥为正；水命见申，甲申为正；土命见申，戊申为正；火命见寅，丙寅为正。
+        查法一：以年纳音查月日时支（禄命法）
+        年柱纳音为金命见其他三支有“巳”为学堂，见“辛巳”为正学堂（海中金、剑锋金、沙中金都为纳音金命）；
+        年柱纳音为木命见其他三支有“亥”为学堂，见“己亥”为正学堂；
+        年柱纳音为水命见其他三支有“申”为学堂，见“甲申”为正学堂；
+        年柱纳音为火命见其他三支有“寅”为学堂，见“丙寅”为正学堂。
+        年柱纳音为土命见其他三支有“申”为学堂，见“戊申”为正学堂；
+        查法二：以日干查四柱（子平法）
+        甲见己亥, 乙见壬午, 丙见丙寅, 丁见丁酉, 戊见戊寅, 己见己酉, 庚见辛巳, 辛见甲子, 壬见甲申, 癸见乙卯. 以年日干, 查四柱干支.
+        本软件使用第一种纳音查法
+        学堂为纳音之长生，命中带之，主人聪明，可得考职功名，文才出众，功名显达。
+        学堂又称官贵学堂，八字带学堂的命格，大都饱读诗书，记忆力很好，行为举止无形间给人一种高贵气质的感觉，很多高学历甚至达官显贵之人，八字都有学堂贵星的加临。
+        八字如果见到文昌又有学堂，可以说是一个贵气十足的命格；只要见到其中一位，都很擅长读书，一生当中也都能够化险为夷。`,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu, yuezhu, rizhu, shizhu] = bazi;
+        const nayin_nian_wuxing = NaYin.getNayinWuxing(nianzhu);
+        let res: false | ShenshaItem.学堂 | ShenshaItem.正学堂 = false;
+
+        if (![yuezhu, rizhu, shizhu].includes(target)) {
+          return res;
+        }
+
+        switch (nayin_nian_wuxing) {
+          case WX.金:
+            if (target === JZ_60.辛巳) {
+              res = ShenshaItem.正学堂;
+            } else if (target[1] === DZ.巳) {
+              res = ShenshaItem.学堂;
+            }
+            break;
+          case WX.木:
+            if (target === JZ_60.己亥) {
+              res = ShenshaItem.正学堂;
+            } else if (target[1] === DZ.亥) {
+              res = ShenshaItem.学堂;
+            }
+            break;
+          case WX.水:
+            if (target === JZ_60.甲申) {
+              res = ShenshaItem.正学堂;
+            } else if (target[1] === DZ.申) {
+              res = ShenshaItem.学堂;
+            }
+            break;
+          case WX.火:
+            if (target === JZ_60.丙寅) {
+              res = ShenshaItem.正学堂;
+            } else if (target[1] === DZ.寅) {
+              res = ShenshaItem.学堂;
+            }
+            break;
+          case WX.土:
+            if (target === JZ_60.戊申) {
+              res = ShenshaItem.正学堂;
+            } else if (target[1] === DZ.申) {
+              res = ShenshaItem.学堂;
+            }
+            break;
+        }
+
+        return res;
+      },
+    },
+    get [ShenshaItem.正学堂]() {
+      return {
+        text: this[ShenshaItem.学堂].text,
+        rule: () => false,
+      };
+    },
+    [ShenshaItem.词馆]: {
+      text: `
+        精评：学业出类拔萃，文章声名远播。
+        古诀：纳音之临官。
+        金命见巳，辛巳为正；木命见亥，己亥为正；水命见申，甲申为正；土命见申，戊申为正；火命见寅，丙寅为正。
+        查法一：
+        以年纳音查月日时支（禄命法）
+        年柱纳音为金命见其他三支有“申”为词馆，见“壬申”为正词馆（海中金、剑锋金、沙中金都为纳音金命）；
+        年柱纳音为木命见其他三支有“寅”为词馆，见“庚寅”为正词馆；
+        年柱纳音为水命见其他三支有“亥”为词馆，见“癸亥”为正词馆；
+        年柱纳音为火命见其他三支有“巳”为词馆，见“乙巳”为正词馆。
+        年柱纳音为土命见其他三支有“亥”为词馆，见“丁亥”为正词馆；
+        查法二：
+        甲干见庚寅，乙干见辛卯；丙干见乙巳，丁干见戊午；戊干见丁巳，己干见庚午；庚干见壬申，辛干见癸酉；壬干见癸亥，癸干见壬戌。
+        本软件使用第一种纳音查法。
+      `,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu, yuezhu, rizhu, shizhu] = bazi;
+        const nayin_nian_wuxing = NaYin.getNayinWuxing(nianzhu);
+        let res: false | ShenshaItem.词馆 | ShenshaItem.正词馆 = false;
+
+        if (![yuezhu, rizhu, shizhu].includes(target)) {
+          return res;
+        }
+
+        switch (nayin_nian_wuxing) {
+          case WX.金:
+            if (target === JZ_60.壬申) {
+              res = ShenshaItem.正词馆;
+            } else if (target[1] === DZ.申) {
+              res = ShenshaItem.词馆;
+            }
+            break;
+          case WX.木:
+            if (target === JZ_60.庚寅) {
+              res = ShenshaItem.正词馆;
+            } else if (target[1] === DZ.寅) {
+              res = ShenshaItem.词馆;
+            }
+            break;
+          case WX.水:
+            if (target === JZ_60.癸亥) {
+              res = ShenshaItem.正词馆;
+            } else if (target[1] === DZ.亥) {
+              res = ShenshaItem.词馆;
+            }
+            break;
+          case WX.火:
+            if (target === JZ_60.乙巳) {
+              res = ShenshaItem.正词馆;
+            } else if (target[1] === DZ.巳) {
+              res = ShenshaItem.词馆;
+            }
+            break;
+          case WX.土:
+            if (target === JZ_60.丁亥) {
+              res = ShenshaItem.正词馆;
+            } else if (target[1] === DZ.亥) {
+              res = ShenshaItem.词馆;
+            }
+            break;
+        }
+
+        return res;
+      },
+    },
+    get [ShenshaItem.正词馆]() {
+      return {
+        text: this[ShenshaItem.词馆].text,
+        rule: () => false,
+      };
+    },
     [ShenshaItem.国印]: {
       text: `
         精评：正直忠信，若生旺得其他吉神辅助，可得掌印之权。
@@ -685,29 +837,59 @@ export default class Shensha {
         三奇必须命局配合得体, 并有其它贵人吉星扶持才有荣华福寿,如果只有三奇无贵地, 命局组合不好, 势必钱财不丰，容易受欺负。即使命局较清粹,若三奇不落贵地而落空亡, 较为孤独, 即是蓬莱三岛客,万里走江山了。`,
       rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
         const [nianzhu, yuezhi, rizhu, shizhu] = bazi;
-        let res: false | ShenshaItem.三奇贵人 = false;
+        let res:
+          | false
+          | ShenshaItem.三奇贵人天奇
+          | ShenshaItem.三奇贵人地奇
+          | ShenshaItem.三奇贵人人奇 = false;
 
-        if (target !== rizhu) return false;
+        if (target !== rizhu) {
+          return false;
+        }
 
         if (
           [
             nianzhu[0] + yuezhi[0] + rizhu[0],
             yuezhi[0] + rizhu[0] + shizhu[0],
-          ].includes(TG.甲 + TG.戊 + TG.庚) ||
+          ].includes(TG.甲 + TG.戊 + TG.庚)
+        ) {
+          res = ShenshaItem.三奇贵人天奇;
+        } else if (
           [
             nianzhu[0] + yuezhi[0] + rizhu[0],
             yuezhi[0] + rizhu[0] + shizhu[0],
-          ].includes(TG.乙 + TG.丙 + TG.丁) ||
+          ].includes(TG.乙 + TG.丙 + TG.丁)
+        ) {
+          res = ShenshaItem.三奇贵人地奇;
+        } else if (
           [
             nianzhu[0] + yuezhi[0] + rizhu[0],
             yuezhi[0] + rizhu[0] + shizhu[0],
           ].includes(TG.壬 + TG.癸 + TG.辛)
         ) {
-          res = ShenshaItem.三奇贵人;
+          res = ShenshaItem.三奇贵人人奇;
         }
 
         return res;
       },
+    },
+    get [ShenshaItem.三奇贵人天奇]() {
+      return {
+        text: this[ShenshaItem.三奇贵人].text,
+        rule: () => false,
+      };
+    },
+    get [ShenshaItem.三奇贵人地奇]() {
+      return {
+        text: this[ShenshaItem.三奇贵人].text,
+        rule: () => false,
+      };
+    },
+    get [ShenshaItem.三奇贵人人奇]() {
+      return {
+        text: this[ShenshaItem.三奇贵人].text,
+        rule: () => false,
+      };
     },
     [ShenshaItem.文昌贵人]: {
       text: `
@@ -1446,6 +1628,64 @@ export default class Shensha {
 
         return res;
       },
+    },
+    [ShenshaItem.天罗地网]: {
+      text: `
+        精评：注意健康问题、容易惹上法律纠纷。
+        古诀：凡纳音火命，见戌亥日为天罗；水土命，见辰巳日为地网，金木二命无之。
+        查法一：以年、日支查余三支
+        戌亥为天罗，辰巳为地网；
+        戌见亥, 亥见戌为天罗；辰见巳, 巳见辰为地网。
+        男忌天罗, 女忌地网。
+        查法二：以年纳音查日支
+        凡纳音火命，见戌亥日为天罗；水土命，见辰巳日为地网，金木二命无之。
+        本软件使用第二种纳音查法。
+        男忌天罗, 女忌地网.
+        天罗地网, 容易惹上法律纠纷, 大运流年遇之,于人不利，若天月二德解救则无忧
+        大多命带罗网的人，在人生旅途上所接受的考验、打击较重大，须奋斗挣扎才能出人头地，若命格不高，意志不足就被命运之神俘虏，庸庸碌碌过其一生；有的则甘心落后，误入歧途。
+        天罗地网逢三刑六害之神，再见魁罡、身强杀重、官杀混杂，伤官见官、财星在偏印皆主会触犯刑律，验率颇高。
+      `,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu, , rizhu] = bazi;
+        const nayin_nian_wuxing = NaYin.getNayinWuxing(nianzhu);
+        let res:
+          | false
+          | ShenshaItem.天罗地网
+          | ShenshaItem.天罗
+          | ShenshaItem.地网 = false;
+
+        if (target !== rizhu) {
+          return res;
+        }
+
+        switch (nayin_nian_wuxing) {
+          case WX.水:
+          case WX.土:
+            if ([DZ.辰, DZ.巳].includes(target[1] as DZ)) {
+              res = ShenshaItem.地网;
+            }
+            break;
+          case WX.火:
+            if ([DZ.戌, DZ.亥].includes(target[1] as DZ)) {
+              res = ShenshaItem.天罗;
+            }
+            break;
+        }
+
+        return res;
+      },
+    },
+    get [ShenshaItem.天罗]() {
+      return {
+        text: this[ShenshaItem.天罗地网].text,
+        rule: () => false,
+      };
+    },
+    get [ShenshaItem.地网]() {
+      return {
+        text: this[ShenshaItem.天罗地网].text,
+        rule: () => false,
+      };
     },
     [ShenshaItem.桃花]: {
       text: `
@@ -2600,6 +2840,66 @@ export default class Shensha {
         return res;
       },
     },
+    [ShenshaItem.童子煞]: {
+      text: `
+        精评：时运不济
+        古诀：
+          春秋寅子贵，冬夏卯未辰；
+          金木马卯合，水火鸡犬多；
+          土命逢辰巳，童子定不错。
+        查法：
+          1、命造生在春季或秋季的（以月令算），日支或时支见寅或子的。
+          2、命造生在冬季或夏季的（以月令算），日支或时支见卯、未或辰的。
+          3、年柱纳音为金或木的，日支或时支见午或卯的。
+          4、年柱纳音为水或火的，日支或时支见酉或戌的。
+          5、年柱纳音为土命的，日支或时支见辰或巳的。
+        犯童子煞的人一般时运不好事业受阻，容易遇到人格有问题的人，遭到嫉妒和排斥，自己有时已经很努力了，但是结果没有意义。前途一片光明有时自己找不到出路，就像被困在陷阱的动物渴望寻找到出路一样。
+        尤其是婚姻感情方面不顺利，晚婚居多。
+      `,
+      rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
+        const [nianzhu, yuezhu, rizhu, shizhu] = bazi;
+        const nayin_nian_wuxing = NaYin.getNayinWuxing(nianzhu);
+        let res: false | ShenshaItem.童子煞 = false;
+
+        if (target !== rizhu && target !== shizhu) {
+          return res;
+        }
+
+        if (
+          [DZ.寅, DZ.卯, DZ.辰, DZ.申, DZ.酉, DZ.戌].includes(yuezhu[1] as DZ)
+        ) {
+          if ([DZ.寅, DZ.子].includes(target[1] as DZ)) {
+            return ShenshaItem.童子煞;
+          }
+        } else {
+          if ([DZ.卯, DZ.未, DZ.辰].includes(target[1] as DZ)) {
+            return ShenshaItem.童子煞;
+          }
+        }
+
+        switch (nayin_nian_wuxing) {
+          case WX.金:
+          case WX.木:
+            if ([DZ.午, DZ.卯].includes(target[1] as DZ)) {
+              res = ShenshaItem.童子煞;
+            }
+            break;
+          case WX.火:
+          case WX.水:
+            if ([DZ.酉, DZ.戌].includes(target[1] as DZ)) {
+              res = ShenshaItem.童子煞;
+            }
+            break;
+          case WX.土:
+            if ([DZ.辰, DZ.巳].includes(target[1] as DZ)) {
+              res = ShenshaItem.童子煞;
+            }
+            break;
+        }
+
+        return res;
+      },
+    },
     [ShenshaItem.天厨贵人]: {
       text: `
         精评：1、有口福 2、厨艺一流、女命旺夫，但忌刑冲克破空亡
@@ -2751,7 +3051,8 @@ export default class Shensha {
         寅午戌月, 丙丁为德, 戊癸为秀, 申子辰月, 壬癸戊己为德, 丙辛甲己为秀。
         巳酉丑月, 庚辛为德, 乙庚为秀, 亥卯未月, 甲乙为德, 丁壬为秀。
         查法以月令查天干
-        夫德者，本月生旺之德；秀者，合天地中和之气、五行变化而成者也。又曰；德者，阴阳解凶之神；秀者，天地清秀之气，四时当旺之神。故寅午戌月，丙丁为德，戊癸为秀。申子辰月，壬癸戊己为德，丙辛甲己为秀。巳酉丑月，庚辛为德，乙庚为秀。亥卯未月，甲乙为德，丁壬为秀。凡人命中得此德秀，无破冲克压者，赋性聪明，温厚和气。若遇学堂，更带财官，主贵。冲克减力。
+        夫德者，本月生旺之德；秀者，合天地中和之气、五行变化而成者也。
+        又曰；德者，阴阳解凶之神；秀者，天地清秀之气，四时当旺之神。故寅午戌月，丙丁为德，戊癸为秀。申子辰月，壬癸戊己为德，丙辛甲己为秀。巳酉丑月，庚辛为德，乙庚为秀。亥卯未月，甲乙为德，丁壬为秀。凡人命中得此德秀，无破冲克压者，赋性聪明，温厚和气。若遇学堂，更带财官，主贵。冲克减力。
         德秀贵人是八字里的一种神煞，古人对德秀贵人的解释是：“德者，本月生旺之德，秀者，合天地中和之气、五行变化而成者也。又曰：德者，阴阳解凶之神；秀者，天地淸秀之气，四时当旺之神”。此种说法表示德秀贵人不仅仅是贵人，还包含了一股文学的淸秀之意。
         德秀贵人的女命：
         为人仁慈、敏慧、慈善、温顺、修养高，一生有贵人相助，无险无虑，较为神佛帮助。“德”，就是利物救人、改过迁善。性格温和有相夫教子之美，主人仪容娟秀，对工作和家庭都是和和美美。

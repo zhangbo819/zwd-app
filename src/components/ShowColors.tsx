@@ -1,6 +1,6 @@
 import React, {FC} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {getColorByWuxing, JZ_60} from '../util/wuxing';
+import {JZ_60, WuXing} from '../util/wuxing';
 import {mixHexColors} from '../util';
 import {COLOR_THEME_COMMON} from '../constant/UI';
 
@@ -16,7 +16,10 @@ const ShowColors: FC<{}> = () => {
       <Text style={styles.title}>六十甲子</Text>
       <View style={styles.contentContainer}>
         {data.map(([t, d]) => {
-          const [c1, c2] = [getColorByWuxing(t), getColorByWuxing(d)];
+          const [c1, c2] = [
+            WuXing.getColorByWuxing(t),
+            WuXing.getColorByWuxing(d),
+          ];
           const color = mixHexColors(c1, c2, 0.4);
           return (
             <View

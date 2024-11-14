@@ -232,34 +232,6 @@ export const YueLinByWuxing = {
   [WX.土]: [WX.土, WX.金, WX.木, WX.火, WX.水],
 };
 
-// 根据天干或地支得到对应的五行
-export function getWuxing(text: TG | DZ | WX | string) {
-  const wuxingArr = WuXing5;
-  if (text in WX) {
-    return text;
-  } else if (text in TG) {
-    const index = TG_10.findIndex(i => i === text);
-    const wuxingIndex = [1, 1, 3, 3, 4, 4, 0, 0, 2, 2][index];
-    return wuxingArr[wuxingIndex];
-  } else if (text in DZ) {
-    const index = DZ_12.findIndex(i => i === text);
-    const wuxingIndex = [2, 4, 1, 1, 4, 3, 3, 4, 0, 0, 4, 2][index];
-    return wuxingArr[wuxingIndex];
-  }
-  return '';
-}
-
-export function getColorByWuxing(text: TG | DZ | string | WX) {
-  const ColorsMap: Record<WX | string, any> = {
-    [WX.木]: '#4CAF50',
-    [WX.火]: '#F44336',
-    [WX.土]: '#795548',
-    [WX.金]: '#FDD835',
-    [WX.水]: '#2196F3',
-  };
-  return ColorsMap[getWuxing(text)];
-}
-
 type Xun =
   | JZ_60.甲子
   | JZ_60.甲午
@@ -432,6 +404,34 @@ class WuXingClass {
       return _exchangeGenqi(this[TG.壬]);
     },
   };
+
+  // 根据天干或地支得到对应的五行
+  public getWuxing(text: TG | DZ | WX | string) {
+    const wuxingArr = WuXing5;
+    if (text in WX) {
+      return text;
+    } else if (text in TG) {
+      const index = TG_10.findIndex(i => i === text);
+      const wuxingIndex = [1, 1, 3, 3, 4, 4, 0, 0, 2, 2][index];
+      return wuxingArr[wuxingIndex];
+    } else if (text in DZ) {
+      const index = DZ_12.findIndex(i => i === text);
+      const wuxingIndex = [2, 4, 1, 1, 4, 3, 3, 4, 0, 0, 4, 2][index];
+      return wuxingArr[wuxingIndex];
+    }
+    return '';
+  }
+
+  getColorByWuxing(text: TG | DZ | string | WX) {
+    const ColorsMap: Record<WX | string, any> = {
+      [WX.木]: '#4CAF50',
+      [WX.火]: '#F44336',
+      [WX.土]: '#795548',
+      [WX.金]: '#FDD835',
+      [WX.水]: '#2196F3',
+    };
+    return ColorsMap[this.getWuxing(text)];
+  }
 
   // 根据JZ_60得到对应的旬
   public getXun(target: JZ_60): Xun {
@@ -702,7 +702,7 @@ class WuXingClass {
         }
       }
 
-      const dz_level = tgs.find(t => getWuxing(t) === getWuxing(dz))
+      const dz_level = tgs.find(t => this.getWuxing(t) === this.getWuxing(dz))
         ? DZ_LEVEL[DZ_LEVEL.透干]
         : DZ_LEVEL[DZ_LEVEL.未透干];
 

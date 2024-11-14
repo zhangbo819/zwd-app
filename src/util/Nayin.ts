@@ -1,4 +1,4 @@
-import {DZ, JZ_60, TG, ZhangSheng12} from './wuxing';
+import {DZ, JZ_60, TG, WuXing, ZhangSheng12} from './wuxing';
 
 export default class NaYin {
   static map_nayin: Record<string, JZ_60[]> = {
@@ -177,6 +177,7 @@ export default class NaYin {
     ],
   };
 
+  // 纳音
   static getNayin(target: JZ_60) {
     let res = '';
     for (let name in this.map_nayin) {
@@ -188,6 +189,13 @@ export default class NaYin {
     return res;
   }
 
+  // 纳音五行
+  static getNayinWuxing(target: JZ_60) {
+    const nayin = this.getNayin(target);
+    return WuXing.getWuxing(nayin[2]);
+  }
+
+  // 12长生
   static getXingYun(target: JZ_60, zhizhu: TG) {
     const arr = this.map_zs12[zhizhu];
     const index = arr.findIndex(i => i === target[1]);

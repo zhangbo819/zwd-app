@@ -1,5 +1,5 @@
 import React, {FC, ReactNode} from 'react';
-import {DZ, getColorByWuxing, TG} from '../../../util/wuxing';
+import {DZ, TG, WuXing} from '../../../util/wuxing';
 import {
   FlexStyle,
   StyleProp,
@@ -29,7 +29,7 @@ const WuxingText: FC<{
           size === 'mid' && styles.wuxing_mid,
           size === 'mini' && styles.wuxing_mini,
           {fontWeight},
-          {color: getColorByWuxing(color_text)},
+          {color: WuXing.getColorByWuxing(color_text)},
         ]}>
         {text || ' '}
         {children}

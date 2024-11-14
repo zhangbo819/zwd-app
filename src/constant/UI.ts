@@ -2,7 +2,7 @@ import {Dimensions, StatusBar, PixelRatio, Platform} from 'react-native';
 
 import {isiOS} from './config';
 import paipan from '../util/paipan';
-import {getColorByWuxing} from '../util/wuxing';
+import {WuXing} from '../util/wuxing';
 import {mixHexColors} from '../util';
 // import { getRandomColor } from './Util';
 
@@ -41,9 +41,9 @@ const [, , rizhu] = paipan.GetInfo(1, Date.now()).bazi;
 //   getColorByWuxing(yuezhu[1]),
 // );
 const riColor = mixHexColors(
-  getColorByWuxing(rizhu[0]),
-  getColorByWuxing(rizhu[1]),
-  0.4
+  WuXing.getColorByWuxing(rizhu[0]),
+  WuXing.getColorByWuxing(rizhu[1]),
+  0.4,
 );
 // const nianyueColor = mixHexColors(nianColor, yueColor);
 // const nyrColor = mixHexColors(nianyueColor, riColor);
