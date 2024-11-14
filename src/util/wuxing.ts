@@ -273,8 +273,11 @@ export type sizhuDetailsItem = {
   tgdz: JZ_60;
   tg: TG;
   dz: DZ;
-  tg_level: string;
-  dz_level: string;
+  tg_is_qg: boolean;
+  tg_level_text: string;
+  tg_opacity: number;
+  dz_level_text: string;
+  tg_is_tougan: boolean;
 };
 
 function _exchangeGenqi(map: {
@@ -687,31 +690,50 @@ class WuXingClass {
       const tg = i[0] as TG;
       const dz = i[1] as DZ;
 
-      let tg_level = TG_LEVEL[TG_LEVEL.无根气];
+      let tg_level_text = TG_LEVEL[TG_LEVEL.无根气];
+      let tg_opacity = 0.3;
+      let tg_is_qg = false;
       const tg_genqi = this.map_tg_genqi[tg];
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for (let key in tg_genqi) {
         if (dzs.find(d => tg_genqi[TG_LEVEL.禄].includes(d))) {
-          tg_level = `${TG_LEVEL[TG_LEVEL.本气根]}-${TG_LEVEL[TG_LEVEL.禄]}`;
+          tg_level_text = `${TG_LEVEL[TG_LEVEL.本气根]}-${
+            TG_LEVEL[TG_LEVEL.禄]
+          }`;
+          tg_opacity = 1;
+          tg_is_qg = true;
         } else if (dzs.find(d => tg_genqi[TG_LEVEL.刃].includes(d))) {
-          tg_level = `${TG_LEVEL[TG_LEVEL.本气根]}-${TG_LEVEL[TG_LEVEL.刃]}`;
+          tg_level_text = `${TG_LEVEL[TG_LEVEL.本气根]}-${
+            TG_LEVEL[TG_LEVEL.刃]
+          }`;
+          tg_opacity = 1;
+          tg_is_qg = true;
         } else if (dzs.find(d => tg_genqi[TG_LEVEL.中气根].includes(d))) {
-          tg_level = TG_LEVEL[TG_LEVEL.中气根];
+          tg_level_text = TG_LEVEL[TG_LEVEL.中气根];
+          tg_opacity = 7;
         } else if (dzs.find(d => tg_genqi[TG_LEVEL.余气根].includes(d))) {
-          tg_level = TG_LEVEL[TG_LEVEL.余气根];
+          tg_level_text = TG_LEVEL[TG_LEVEL.余气根];
+          tg_opacity = 0.5;
         }
       }
 
-      const dz_level = tgs.find(t => this.getWuxing(t) === this.getWuxing(dz))
-        ? DZ_LEVEL[DZ_LEVEL.透干]
-        : DZ_LEVEL[DZ_LEVEL.未透干];
+      let dz_level_text = DZ_LEVEL[DZ_LEVEL.未透干];
+      let tg_is_tougan = false;
+
+      if (tgs.find(t => this.getWuxing(t) === this.getWuxing(dz))) {
+        dz_level_text = DZ_LEVEL[DZ_LEVEL.透干];
+        tg_is_tougan = true;
+      }
 
       return {
         tgdz: i,
         tg,
         dz,
-        tg_level,
-        dz_level,
+        tg_level_text,
+        tg_opacity,
+        tg_is_qg,
+        dz_level_text,
+        tg_is_tougan,
       };
     });
 

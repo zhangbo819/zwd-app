@@ -48,6 +48,7 @@ const BaseInfo: FC<{
     wuxingCgNumber: {name: WX; number: number; ten2: string}[];
     yueling: WX;
     isDeLing: boolean;
+    isDedi: boolean;
     bazi: sizhuDetailsItem[];
   }>({
     dzcg: [],
@@ -57,6 +58,7 @@ const BaseInfo: FC<{
     wuxingCgNumber: [],
     yueling: WX.土,
     isDeLing: false,
+    isDedi: false,
     bazi: [],
   });
   const [ytgcgData, setYtgcgData] = useState({
@@ -120,7 +122,10 @@ const BaseInfo: FC<{
     const wuxingNumber = infoBazi.reduce(
       (r, i) => {
         r.forEach(j => {
-          if (j.name === WuXing.getWuxing(i[0]) || j.name === WuXing.getWuxing(i[1])) {
+          if (
+            j.name === WuXing.getWuxing(i[0]) ||
+            j.name === WuXing.getWuxing(i[1])
+          ) {
             j.number++;
             j.ten2 = wxTenMap[j.name];
           }
@@ -154,6 +159,8 @@ const BaseInfo: FC<{
         WuXing5.map(i => ({name: i, number: 0, ten2: ''})),
       );
 
+    const pageBazi = WuXing.getSiZhuDetails(infoBazi);
+
     setPageData({
       dzcg,
       dzcg_text,
@@ -162,7 +169,8 @@ const BaseInfo: FC<{
       wuxingCgNumber,
       yueling,
       isDeLing: yuelingIndex === 0 || yuelingIndex === 1,
-      bazi: WuXing.getSiZhuDetails(infoBazi),
+      isDedi: pageBazi[2].tg_is_qg,
+      bazi: pageBazi,
     });
   }, [paipanInfo]);
 
@@ -402,7 +410,9 @@ const BaseInfo: FC<{
               return (
                 <Col
                   key={item}
-                  style={{backgroundColor: WuXing.getColorByWuxing(map[index])}}>
+                  style={{
+                    backgroundColor: WuXing.getColorByWuxing(map[index]),
+                  }}>
                   <Text style={styles.wuxingYueline}>
                     {map[index]}
                     {item}
@@ -422,18 +432,63 @@ const BaseInfo: FC<{
 
         {/* 得地 各五行通根 天干虚浮 地支无透 */}
         <View style={styles.wuxingView}>
-          <Row style={{width: '80%', alignSelf: 'center'}}>
+          <Row style={{alignSelf: 'center'}}>
             {pageData.bazi.map((i, index) => {
               return (
                 <Col key={'dedi_' + i.tgdz + index} alignItems="center">
-                  <Text>{i.tg_level}</Text>
+                  <Text
+                    style={[
+                      styles.bold,
+                      {
+                        color: WuXing.getColorByWuxing(i.tg),
+                        opacity: i.tg_opacity,
+                      },
+                    ]}>
+                    {i.tg_level_text}
+                  </Text>
                   <WuxingText margin={2} text={i.tg} />
                   <WuxingText margin={2} text={i.dz} />
-                  <Text>{i.dz_level}</Text>
+                  <Text
+                    style={[
+                      styles.bold,
+                      {
+                        color: WuXing.getColorByWuxing(i.dz),
+                      },
+                    ]}>
+                    {i.dz_level_text}
+                  </Text>
                 </Col>
               );
             })}
           </Row>
+          {pageData.bazi.length ? (
+            <>
+              <Text style={styles.commonText}>
+                日主通根情况: {pageData.isDedi ? '有强根' : '无强根'}
+              </Text>
+              <Text style={styles.commonText}>
+                其余有强根天干:{' '}
+                {pageData.bazi
+                  .filter((i, index) => i.tg_is_qg && index !== 2)
+                  .map(i => {
+                    const index = TG_10.findIndex(j => j === i.tg);
+                    return `${i.tg}(${paipanInfo.tenMap[index]})`;
+                  })}
+              </Text>
+            </>
+          ) : null}
+          <Text style={styles.hint}>
+            天干：有本气根代表天干有力，有强根，其余皆为无强根
+          </Text>
+          {/* <Text style={styles.commonText}>
+            透干地支: {pageData.bazi.filter(i => i.tg_is_tougan).map(i => i.dz)}
+          </Text>
+          <Text style={styles.hint}>
+            地支：透出天干代表可以成格成像，但不透干也不影响其在地支的强度
+          </Text>
+          <Text style={styles.hint}>
+            天干为表，地支为里。天干为气，地支为质。天干决定上限，地支决定下限。
+          </Text> */}
         </View>
         {/* 得势 三合三会 */}
       </View>
@@ -465,6 +520,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
     color: '#888',
     fontSize: 16,
+  },
+  bold: {
+    fontWeight: 'bold',
   },
 
   wuxingTitle: {

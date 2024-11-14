@@ -16,11 +16,11 @@ export enum ShenshaItem {
   正学堂 = '正学堂',
   词馆 = '词馆',
   正词馆 = '正词馆',
-  国印 = '国印',
+  国印贵人 = '国印贵人',
   三奇贵人 = '三奇贵人',
-  三奇贵人天奇 = '三奇贵人-天奇',
-  三奇贵人地奇 = '三奇贵人-地奇',
-  三奇贵人人奇 = '三奇贵人-人奇',
+  三奇贵人天奇 = '三奇贵人\n(天奇)',
+  三奇贵人地奇 = '三奇贵人\n(地奇)',
+  三奇贵人人奇 = '三奇贵人\n(人奇)',
   文昌贵人 = '文昌贵人',
   华盖 = '华盖',
   天医 = '天医',
@@ -747,7 +747,7 @@ export default class Shensha {
         rule: () => false,
       };
     },
-    [ShenshaItem.国印]: {
+    [ShenshaItem.国印贵人]: {
       text: `
         精评：正直忠信，若生旺得其他吉神辅助，可得掌印之权。
         甲见戌, 乙见亥, 丙见丑,丁见寅,戊见丑, 己见寅, 庚见辰, 辛见巳。壬见未, 癸见申。
@@ -758,58 +758,58 @@ export default class Shensha {
         const [nianzhu, , rizhu] = bazi;
         const [niangan] = nianzhu;
         const [rigan] = rizhu;
-        let res: false | ShenshaItem.国印 = false;
+        let res: false | ShenshaItem.国印贵人 = false;
 
         function verify(t: TG) {
           switch (t) {
             case TG.甲:
               if (target[1] === DZ.戌) {
-                res = ShenshaItem.国印;
+                res = ShenshaItem.国印贵人;
               }
               break;
             case TG.乙:
               if (target[1] === DZ.亥) {
-                res = ShenshaItem.国印;
+                res = ShenshaItem.国印贵人;
               }
               break;
             case TG.丙:
               if (target[1] === DZ.丑) {
-                res = ShenshaItem.国印;
+                res = ShenshaItem.国印贵人;
               }
               break;
             case TG.丁:
               if (target[1] === DZ.寅) {
-                res = ShenshaItem.国印;
+                res = ShenshaItem.国印贵人;
               }
               break;
             case TG.戊:
               if (target[1] === DZ.丑) {
-                res = ShenshaItem.国印;
+                res = ShenshaItem.国印贵人;
               }
               break;
             case TG.己:
               if (target[1] === DZ.寅) {
-                res = ShenshaItem.国印;
+                res = ShenshaItem.国印贵人;
               }
               break;
             case TG.庚:
               if (target[1] === DZ.辰) {
-                res = ShenshaItem.国印;
+                res = ShenshaItem.国印贵人;
               }
               break;
             case TG.辛:
               if (target[1] === DZ.巳) {
-                res = ShenshaItem.国印;
+                res = ShenshaItem.国印贵人;
               }
               break;
             case TG.壬:
               if (target[1] === DZ.未) {
-                res = ShenshaItem.国印;
+                res = ShenshaItem.国印贵人;
               }
               break;
             case TG.癸:
               if (target[1] === DZ.申) {
-                res = ShenshaItem.国印;
+                res = ShenshaItem.国印贵人;
               }
               break;
           }
@@ -2488,8 +2488,7 @@ export default class Shensha {
           [JZ_60.乙丑, JZ_60.己巳, JZ_60.癸酉].includes(rizhu)
         ) {
           res = ShenshaItem.金神;
-        }
-        if (
+        } else if (
           shizhu === target &&
           [JZ_60.乙丑, JZ_60.己巳, JZ_60.癸酉].includes(shizhu)
         ) {
@@ -2514,7 +2513,9 @@ export default class Shensha {
         const [, yuezhi] = yuezhu;
         let res: false | ShenshaItem.天转 = false;
 
-        if (rizhu !== target) return false;
+        if (rizhu !== target) {
+          return false;
+        }
 
         switch (yuezhi) {
           case DZ.寅:
@@ -2566,7 +2567,9 @@ export default class Shensha {
         const [, yuezhi] = yuezhu;
         let res: false | ShenshaItem.地转 = false;
 
-        if (rizhu !== target) return false;
+        if (rizhu !== target) {
+          return false;
+        }
 
         switch (yuezhi) {
           case DZ.寅:
