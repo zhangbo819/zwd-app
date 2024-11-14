@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
@@ -57,6 +57,27 @@ const BaziInfo: FC<
     });
   }, [props.route.params]);
 
+  const renderScene = useMemo(() => {
+    const first = () => (
+      <>
+        {paipanInfo !== null && (
+          <BaseInfo name={props.route.params.name} paipanInfo={paipanInfo} />
+        )}
+      </>
+    );
+    const second = () => (
+      <>
+        {paipanInfo !== null && (
+          <CareerList name={props.route.params.name} paipanInfo={paipanInfo} />
+        )}
+      </>
+    );
+    return SceneMap({
+      first: first,
+      second: second,
+    });
+  }, [paipanInfo, props.route.params.name]);
+
   return (
     <View style={[styles.container, isiOS && {paddingTop: NAV_COMMON_HEIGHT}]}>
       <Spin spinning={loading}>
@@ -68,28 +89,7 @@ const BaziInfo: FC<
               {key: 'second', title: '专业细盘'},
             ],
           }}
-          renderScene={SceneMap({
-            first: () => (
-              <>
-                {paipanInfo !== null && (
-                  <BaseInfo
-                    name={props.route.params.name}
-                    paipanInfo={paipanInfo}
-                  />
-                )}
-              </>
-            ),
-            second: () => (
-              <>
-                {paipanInfo !== null && (
-                  <CareerList
-                    name={props.route.params.name}
-                    paipanInfo={paipanInfo}
-                  />
-                )}
-              </>
-            ),
-          })}
+          renderScene={renderScene}
           renderTabBar={p => {
             return (
               <TabBar
