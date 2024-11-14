@@ -39,10 +39,17 @@ export type PillarItem = {
   ss: ShenshaItem[];
 };
 
+export const Sizhu = [
+  PillarTitle.年柱,
+  PillarTitle.月柱,
+  PillarTitle.日柱,
+  PillarTitle.时柱,
+];
+
 const BaziInfo: FC<
   NativeStackScreenProps<RootStackParamList, StackPages.BaziInfo>
 > = props => {
-  const [index, setIndex] = useState(1);
+  const [index, setIndex] = useState(0);
   const [paipanInfo, setPaipanInfo] = useState<PaipanInfo | null>(null);
   const [loading, setLoading] = useState(false);
 

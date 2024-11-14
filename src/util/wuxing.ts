@@ -273,9 +273,11 @@ export type sizhuDetailsItem = {
   tgdz: JZ_60;
   tg: TG;
   dz: DZ;
+  isDeLing: boolean;
   tg_is_qg: boolean;
   tg_level_text: string;
   tg_opacity: number;
+  tg_color: string;
   dz_level_text: string;
   tg_is_tougan: boolean;
 };
@@ -686,10 +688,17 @@ class WuXingClass {
 
     // console.log('tgs, dzs', tgs, dzs);
 
-    const res: sizhuDetailsItem[] = bazi.map(i => {
+    const res: sizhuDetailsItem[] = bazi.map((i, index) => {
       const tg = i[0] as TG;
       const dz = i[1] as DZ;
 
+      const yueling = WuXing.getWuxing(bazi[1][1]) as WX;
+      const nowTgWuxing = WuXing.getWuxing(bazi[index][0]) as WX;
+      const yuelingIndex = YueLinByWuxing[yueling].findIndex(
+        j => j === nowTgWuxing,
+      );
+
+      // 根气情况
       let tg_level_text = TG_LEVEL[TG_LEVEL.无根气];
       let tg_opacity = 0.3;
       let tg_is_qg = false;
@@ -729,9 +738,11 @@ class WuXingClass {
         tgdz: i,
         tg,
         dz,
+        isDeLing: yuelingIndex === 0 || yuelingIndex === 1,
         tg_level_text,
         tg_opacity,
         tg_is_qg,
+        tg_color: WuXing.getColorByWuxing(tg),
         dz_level_text,
         tg_is_tougan,
       };

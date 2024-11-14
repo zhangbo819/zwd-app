@@ -17,7 +17,7 @@ import NaYin from '../../../util/Nayin';
 import textJSON from '../../../util/text';
 import WuxingText from '../components/WuxingText';
 import DaYunLiuNian from './components/DaYunLiuNian';
-import {PillarItem, PillarTitle} from '.';
+import {PillarItem, PillarTitle, Sizhu} from '.';
 
 const CareerList: FC<{
   name: string;
@@ -37,12 +37,7 @@ const CareerList: FC<{
 
   useEffect(() => {
     setPillarData(
-      [
-        PillarTitle.年柱,
-        PillarTitle.月柱,
-        PillarTitle.日柱,
-        PillarTitle.时柱,
-      ].map((title, i) => {
+      Sizhu.map((title, i) => {
         let zhuxing = paipanInfo.tenMap[paipanInfo.tg[i]];
         if (title === PillarTitle.日柱) {
           zhuxing = paipanInfo.gender === 0 ? Ten.元男 : Ten.元女;

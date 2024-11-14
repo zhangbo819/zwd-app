@@ -21,8 +21,6 @@ import {
   WuXing5,
   WuXing,
   WX,
-  YueClass5,
-  YueLinByWuxing,
   sizhuDetailsItem,
 } from '../../../util/wuxing';
 import WuxingText from '../components/WuxingText';
@@ -31,8 +29,21 @@ import {
   COLOR_THEME_COMMON,
   viewportWidth,
 } from '../../../constant/UI';
+import TabWuXingLi from './components/TabWuXingLi';
 
 const SHOW_DZ_12 = [DZ_12[11], ...DZ_12.slice(0, 11)];
+
+export type PageDataType = {
+  dzcg: number[][];
+  dzcg_text: string[][];
+  rizhuWuxing: WX;
+  wuxingNumber: {name: WX; number: number; ten2: string}[];
+  wuxingCgNumber: {name: WX; number: number; ten2: string}[];
+  yueling: WX;
+  // isDeLing: boolean;
+  // isDedi: boolean;
+  bazi: sizhuDetailsItem[];
+};
 
 const BaseInfo: FC<{
   name: string;
@@ -40,25 +51,15 @@ const BaseInfo: FC<{
 }> = props => {
   const {paipanInfo} = props;
 
-  const [pageData, setPageData] = useState<{
-    dzcg: number[][];
-    dzcg_text: string[][];
-    rizhuWuxing: WX;
-    wuxingNumber: {name: WX; number: number; ten2: string}[];
-    wuxingCgNumber: {name: WX; number: number; ten2: string}[];
-    yueling: WX;
-    isDeLing: boolean;
-    isDedi: boolean;
-    bazi: sizhuDetailsItem[];
-  }>({
+  const [pageData, setPageData] = useState<PageDataType>({
     dzcg: [],
     dzcg_text: [],
     rizhuWuxing: WX.土,
     wuxingNumber: [],
     wuxingCgNumber: [],
     yueling: WX.土,
-    isDeLing: false,
-    isDedi: false,
+    // isDeLing: false,
+    // isDedi: false,
     bazi: [],
   });
   const [ytgcgData, setYtgcgData] = useState({
@@ -90,9 +91,9 @@ const BaseInfo: FC<{
     // console.log('dzcg, dzcg_text', dzcg, dzcg_text);
     const yueling = WuXing.getWuxing(infoBazi[1][1]) as WX;
     const rizhuWuxing = WuXing.getWuxing(infoBazi[2][0]) as WX;
-    const yuelingIndex = YueLinByWuxing[yueling].findIndex(
-      i => i === rizhuWuxing,
-    );
+    // const yuelingIndex = YueLinByWuxing[yueling].findIndex(
+    //   i => i === rizhuWuxing,
+    // );
 
     // console.log(JSON.stringify(paipanInfo, null, 4));
     // 各五行对应十神关系
@@ -168,8 +169,8 @@ const BaseInfo: FC<{
       wuxingNumber,
       wuxingCgNumber,
       yueling,
-      isDeLing: yuelingIndex === 0 || yuelingIndex === 1,
-      isDedi: pageBazi[2].tg_is_qg,
+      // isDeLing: yuelingIndex === 0 || yuelingIndex === 1,
+      // isDedi: pageBazi[2].tg_is_qg,
       bazi: pageBazi,
     });
   }, [paipanInfo]);
@@ -247,17 +248,17 @@ const BaseInfo: FC<{
                     {pageData.dzcg_text &&
                       Array.isArray(pageData.dzcg_text[index]) &&
                       pageData.dzcg_text[index].map((j, k) => {
-                        const isRizhu = j[0] === pageData.bazi[2]?.tg;
+                        // const isRizhu = j[0] === pageData.bazi[2]?.tg;
 
                         return (
                           <View key={item + j} style={styles.dzcgItem}>
                             <WuxingText
                               style={[
                                 styles.notRizhu,
-                                isRizhu && [
-                                  styles.isRizhu,
-                                  {borderColor: color_rizhu},
-                                ],
+                                // isRizhu && [
+                                //   styles.isRizhu,
+                                //   {borderColor: color_rizhu},
+                                // ],
                               ]}
                               size="mid"
                               text={j}
@@ -340,8 +341,9 @@ const BaseInfo: FC<{
       </View>
 
       <View style={styles.topInfo}>
-        <Text style={styles.wuxingTitle}>五行力量分析</Text>
+        <Text style={styles.wuxingTitle1}>五行力量分析</Text>
         {/* 五行数量，整体阴阳 */}
+        <Text style={styles.wuxingTitle2}>一、五行数量</Text>
         <View style={styles.wuxingView}>
           <Row alignItems="center">
             <Text style={styles.commonText}>是否计算藏干</Text>
@@ -380,117 +382,8 @@ const BaseInfo: FC<{
           </Text>
         </View>
 
-        {/* 月令 */}
-        <View style={styles.wuxingView}>
-          <Row>
-            <Col>
-              <Row alignItems="center" margin={0}>
-                <Text style={[styles.commonText]}>日主：</Text>
-                <WuxingText
-                  style={{marginLeft: 4}}
-                  size="mini"
-                  text={pageData.rizhuWuxing}
-                />
-              </Row>
-            </Col>
-            <Col>
-              <Row alignItems="center" margin={0}>
-                <Text style={[styles.commonText]}>月令：</Text>
-                <WuxingText
-                  style={{marginLeft: 4}}
-                  size="mini"
-                  text={pageData.yueling}
-                />
-              </Row>
-            </Col>
-          </Row>
-          <Row>
-            {YueClass5.map((item, index) => {
-              const map = YueLinByWuxing[pageData.yueling];
-              return (
-                <Col
-                  key={item}
-                  style={{
-                    backgroundColor: WuXing.getColorByWuxing(map[index]),
-                  }}>
-                  <Text style={styles.wuxingYueline}>
-                    {map[index]}
-                    {item}
-                  </Text>
-                </Col>
-              );
-            })}
-          </Row>
-          <Text style={styles.commonText}>
-            月令情况：{pageData.isDeLing ? '得令（得时）' : '失令（失时）'}
-          </Text>
-          <Text style={styles.hint}>旺相为得令，休囚死为失令</Text>
-          <Text style={styles.hint}>
-            月令是判断五行力量的首要条件，但不是唯一条件，还要结合天干地支情况
-          </Text>
-        </View>
-
-        {/* 得地 各五行通根 天干虚浮 地支无透 */}
-        <View style={styles.wuxingView}>
-          <Row style={{alignSelf: 'center'}}>
-            {pageData.bazi.map((i, index) => {
-              return (
-                <Col key={'dedi_' + i.tgdz + index} alignItems="center">
-                  <Text
-                    style={[
-                      styles.bold,
-                      {
-                        color: WuXing.getColorByWuxing(i.tg),
-                        opacity: i.tg_opacity,
-                      },
-                    ]}>
-                    {i.tg_level_text}
-                  </Text>
-                  <WuxingText margin={2} text={i.tg} />
-                  <WuxingText margin={2} text={i.dz} />
-                  <Text
-                    style={[
-                      styles.bold,
-                      {
-                        color: WuXing.getColorByWuxing(i.dz),
-                      },
-                    ]}>
-                    {i.dz_level_text}
-                  </Text>
-                </Col>
-              );
-            })}
-          </Row>
-          {pageData.bazi.length ? (
-            <>
-              <Text style={styles.commonText}>
-                日主通根情况: {pageData.isDedi ? '有强根' : '无强根'}
-              </Text>
-              <Text style={styles.commonText}>
-                其余有强根天干:{' '}
-                {pageData.bazi
-                  .filter((i, index) => i.tg_is_qg && index !== 2)
-                  .map(i => {
-                    const index = TG_10.findIndex(j => j === i.tg);
-                    return `${i.tg}(${paipanInfo.tenMap[index]})`;
-                  })}
-              </Text>
-            </>
-          ) : null}
-          <Text style={styles.hint}>
-            天干：有本气根代表天干有力，有强根，其余皆为无强根
-          </Text>
-          {/* <Text style={styles.commonText}>
-            透干地支: {pageData.bazi.filter(i => i.tg_is_tougan).map(i => i.dz)}
-          </Text>
-          <Text style={styles.hint}>
-            地支：透出天干代表可以成格成像，但不透干也不影响其在地支的强度
-          </Text>
-          <Text style={styles.hint}>
-            天干为表，地支为里。天干为气，地支为质。天干决定上限，地支决定下限。
-          </Text> */}
-        </View>
-        {/* 得势 三合三会 */}
+        <Text style={styles.wuxingTitle2}>二、各柱力量</Text>
+        <TabWuXingLi pageData={pageData} />
       </View>
 
       {/* 天干地支关系表 */}
@@ -521,19 +414,22 @@ const styles = StyleSheet.create({
     color: '#888',
     fontSize: 16,
   },
-  bold: {
-    fontWeight: 'bold',
-  },
 
-  wuxingTitle: {
+  wuxingTitle1: {
     marginBottom: 4,
     fontSize: 20,
     fontWeight: 'bold',
     color: '#000',
     textAlign: 'center',
   },
+  wuxingTitle2: {
+    marginBottom: 6,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+  },
   wuxingView: {
-    marginVertical: 4,
+    marginVertical: 6,
     paddingBottom: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: COLOR_LINEGRAY,
