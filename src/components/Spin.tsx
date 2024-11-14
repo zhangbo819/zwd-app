@@ -5,6 +5,7 @@ import {
   StyleProp,
   StyleSheet,
   Text,
+  View,
   ViewStyle,
 } from 'react-native';
 import {COLOR_THEME_COMMON} from '../constant/UI';
@@ -51,8 +52,7 @@ const Spin: FC<{
   }, [spinning]);
 
   return (
-    <Animated.View
-      style={[styles.container, {opacity: content_opacity}, style]}>
+    <View style={[styles.container, style]}>
       <Animated.View
         style={[
           styles.loadingContainer,
@@ -65,14 +65,19 @@ const Spin: FC<{
           </Text>
         )}
       </Animated.View>
-      {children}
-    </Animated.View>
+      <Animated.View style={[styles.content, {opacity: content_opacity}]}>
+        {children}
+      </Animated.View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
+    flex: 1,
+  },
+  content: {
     flex: 1,
   },
   loadingContainer: {

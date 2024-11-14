@@ -44,17 +44,22 @@ const BaziInfo: FC<
 > = props => {
   const [index, setIndex] = useState(1);
   const [paipanInfo, setPaipanInfo] = useState<PaipanInfo | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const {gender, date} = props.route.params;
 
     const newPaiInfo = paipan.GetInfo(gender, date);
     setPaipanInfo(newPaiInfo);
+    setTimeout(() => {
+      setLoading(false);
+    });
   }, [props.route.params]);
 
   return (
     <View style={[styles.container, isiOS && {paddingTop: NAV_COMMON_HEIGHT}]}>
-      <Spin spinning={paipanInfo === null}>
+      <Spin spinning={loading}>
         <TabView
           navigationState={{
             index,
@@ -127,7 +132,7 @@ const styles = StyleSheet.create({
   yinyangText: {
     fontSize: 16,
   },
-  
+
   pillarGrid: {
     marginTop: 12,
     paddingVertical: 8,
