@@ -8,7 +8,7 @@ import {
   StyleProp,
   ViewStyle,
   ImageStyle,
-  PermissionsAndroid,
+  // PermissionsAndroid,
   NativeModules,
   Alert,
   TouchableOpacity,
@@ -69,30 +69,31 @@ const About: FC<
       Alert.alert('iOS 不支持直接安装 APK');
       return;
     }
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      {
-        title: '存储权限',
-        message: '需要存储权限来下载 APK',
-        buttonNeutral: '稍后询问',
-        buttonNegative: '取消',
-        buttonPositive: '确定',
-      },
-    );
+    // const granted = await PermissionsAndroid.request(
+    //   PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    //   {
+    //     title: '存储权限',
+    //     message: '需要存储权限来下载 APK',
+    //     buttonNeutral: '稍后询问',
+    //     buttonNegative: '取消',
+    //     buttonPositive: '确定',
+    //   },
+    // );
 
-    if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-      Alert.alert('权限未被授予');
-      return;
-    }
+    // if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+    //   Alert.alert('权限未被授予', granted);
+    //   return;
+    // }
 
     // Alert.alert('提示', '开始下载最新安装包，请耐心等待');
     setLoading(true);
 
     const apkUrlArr = apkUrl.split('/');
 
+    // 设置下载路径
     const path = `${RNFS.ExternalDirectoryPath}/${
       apkUrlArr[apkUrlArr.length - 1]
-    }`; // 设置下载路径
+    }`.replace(/(\/zzz_v)[\d.]+(\.apk)$/, '$1_last$2'); // 替换包名，防止apk包过多
 
     // 下载 APK
     RNFetchBlob.config({
