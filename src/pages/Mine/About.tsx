@@ -47,7 +47,8 @@ const About: FC<
   NativeStackScreenProps<RootStackParamList, StackPages.About>
 > = () => {
   const [newApiData, setNewApiData] = useState<fetchToCheckVersionRes>();
-  const [loading, setLoading] = useState(false);
+  const [checkVersionLoading, setcheckVersionDonwLoading] = useState(false);
+  const [downLoading, setDonwLoading] = useState(false);
   const [progress, setProgress] = useState(0); // 下载进度（0 到 100）
 
   //   const openUrl = url => {
@@ -58,9 +59,14 @@ const About: FC<
 
   useEffect(() => {
     // TODO move to store
-    fetchToCheckVersion().then(data => {
-      setNewApiData(data);
-    });
+    setcheckVersionDonwLoading(true);
+    fetchToCheckVersion()
+      .then(data => {
+        setNewApiData(data);
+      })
+      .finally(() => {
+        setcheckVersionDonwLoading(false);
+      });
   }, []);
 
   const downloadAPK = async (apkUrl: string) => {
@@ -86,14 +92,14 @@ const About: FC<
     // }
 
     // Alert.alert('提示', '开始下载最新安装包，请耐心等待');
-    setLoading(true);
+    setDonwLoading(true);
 
     const apkUrlArr = apkUrl.split('/');
 
     // 设置下载路径
     const path = `${RNFS.ExternalDirectoryPath}/${
       apkUrlArr[apkUrlArr.length - 1]
-    }`.replace(/(\/zzz_v)[\d.]+(\.apk)$/, '$1_last$2'); // 替换包名，防止apk包过多
+    }`.replace(/(\/zwd_v)[\d.]+(\.apk)$/, '$1_last$2'); // 替换包名，防止apk包过多
 
     // 下载 APK
     RNFetchBlob.config({
@@ -108,7 +114,7 @@ const About: FC<
         setProgress(progressPercent);
       })
       .then(res => {
-        setLoading(false);
+        setDonwLoading(false);
         // 下载完成，开始安装
         Alert.alert('提示', `下载完成，文件已保存到: ${res.path()}。`, [
           {
@@ -125,7 +131,7 @@ const About: FC<
       })
       .catch(error => {
         Alert.alert('下载失败', error.message);
-        setLoading(false);
+        setDonwLoading(false);
       });
   };
 
@@ -146,9 +152,14 @@ const About: FC<
 
           {/* <Text>{JSON.stringify(newApiData, null, 4)}</Text> */}
 
-          {newApiData?.hasUpdate && (
+          {checkVersionLoading ? (
+            <View style={styles.apkSpin}>
+              <ActivityIndicator size="large" color={COLOR_THEME_COMMON} />
+              <Text>检查更新中... </Text>
+            </View>
+          ) : newApiData?.hasUpdate ? (
             <>
-              {loading ? (
+              {downLoading ? (
                 <View style={styles.apkSpin}>
                   <ActivityIndicator size="large" color={COLOR_THEME_COMMON} />
                   <Text>下载中... </Text>
@@ -164,6 +175,12 @@ const About: FC<
                   <Text style={styles.apkText}>
                     发现最新版本，{newApiData.apk.name}
                   </Text>
+                  {newApiData.body ? (
+                    <>
+                      {/* <Text style={styles.apkText}>更新内容：</Text> */}
+                      <Text style={styles.apkText}>{newApiData.body}</Text>
+                    </>
+                  ) : null}
                   <TouchableOpacity
                     style={styles.apkBtnTouch}
                     onPress={() => {
@@ -174,8 +191,7 @@ const About: FC<
                 </>
               )}
             </>
-          )}
-          {!newApiData?.hasUpdate && (
+          ) : (
             <Text style={styles.apkText}>当前已是最新版本，无需更新</Text>
           )}
         </View>

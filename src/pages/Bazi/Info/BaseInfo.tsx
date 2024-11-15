@@ -40,8 +40,6 @@ export type PageDataType = {
   wuxingNumber: {name: WX; number: number; ten2: string}[];
   wuxingCgNumber: {name: WX; number: number; ten2: string}[];
   yueling: WX;
-  // isDeLing: boolean;
-  // isDedi: boolean;
   bazi: sizhuDetailsItem[];
 };
 

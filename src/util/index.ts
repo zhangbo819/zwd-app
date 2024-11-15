@@ -157,6 +157,7 @@ export type fetchToCheckVersionRes = {
   hasUpdate: boolean;
   tagName: string;
   published_at: string;
+  body: string;
   apk: {
     name: string;
     download_count: string;
@@ -206,6 +207,7 @@ export async function fetchToCheckVersion(): Promise<fetchToCheckVersionRes> {
           hasUpdate,
           tagName: data.name,
           published_at: data.published_at,
+          body: data.body,
           apk: {
             name: apkData.name,
             download_count: apkData.download_count,

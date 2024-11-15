@@ -269,17 +269,27 @@ enum DZ_LEVEL {
   '透干',
   '未透干',
 }
+// enum TG_POWER_LEVEL {
+//   '极强', // 当令 旺, 得强根 本气根
+//   '强2', // 当令 相, 得强根 本气根
+//   '强3', // 当令 旺, 得强根 中气根
+//   '强4', // 当令 相, 得强根 中气根
+//   '弱', // 余气根
+//   '虚浮', // 无根气
+// }
+
 export type sizhuDetailsItem = {
   tgdz: JZ_60;
   tg: TG;
   dz: DZ;
-  isDeLing: boolean;
-  tg_is_qg: boolean;
-  tg_level_text: string;
+  isDeLing: boolean; // 是否得令
+  tg_is_qg: boolean; // 是否有强根
+  tg_level_text: string; // 强根等级文字
   tg_opacity: number;
   tg_color: string;
-  dz_level_text: string;
-  tg_is_tougan: boolean;
+  // tg_power: TG_POWER_LEVEL; // 天干力量
+  dz_level_text: string; // 地支透干等级
+  tg_is_tougan: boolean; // 是否透干
 };
 
 function _exchangeGenqi(map: {
