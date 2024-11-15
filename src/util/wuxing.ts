@@ -716,15 +716,11 @@ class WuXingClass {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for (let key in tg_genqi) {
         if (dzs.find(d => tg_genqi[TG_LEVEL.禄].includes(d))) {
-          tg_level_text = `${TG_LEVEL[TG_LEVEL.本气根]}-${
-            TG_LEVEL[TG_LEVEL.禄]
-          }`;
+          tg_level_text = TG_LEVEL[TG_LEVEL.本气根];
           tg_opacity = 1;
           tg_is_qg = true;
         } else if (dzs.find(d => tg_genqi[TG_LEVEL.刃].includes(d))) {
-          tg_level_text = `${TG_LEVEL[TG_LEVEL.本气根]}-${
-            TG_LEVEL[TG_LEVEL.刃]
-          }`;
+          tg_level_text = TG_LEVEL[TG_LEVEL.本气根];
           tg_opacity = 1;
           tg_is_qg = true;
         } else if (dzs.find(d => tg_genqi[TG_LEVEL.中气根].includes(d))) {

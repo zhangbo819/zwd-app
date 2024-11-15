@@ -160,6 +160,8 @@ const BaseInfo: FC<{
 
     const pageBazi = WuXing.getSiZhuDetails(infoBazi);
 
+    console.log(JSON.stringify(pageBazi, null, 4))
+
     setPageData({
       dzcg,
       dzcg_text,
