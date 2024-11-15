@@ -31,6 +31,7 @@ import {
   COLOR_BLACK,
   FONT_PFS,
   COLOR_THEME_COMMON,
+  COLOR_ASH_GRAY,
 } from '../../constant/UI';
 import {Parsers} from '../../constant/moss';
 import STYLES from '../../constant/STYLES';
@@ -192,7 +193,17 @@ const About: FC<
               )}
             </>
           ) : (
-            <Text style={styles.apkText}>当前已是最新版本，无需更新</Text>
+            <>
+              {newApiData?.body ? (
+                <>
+                  {/* <Text style={styles.apkText}>更新内容：</Text> */}
+                  <Text style={[styles.apkText, styles.black]}>
+                    {newApiData.body}
+                  </Text>
+                </>
+              ) : null}
+              <Text style={styles.apkText}>当前已是最新版本，无需更新</Text>
+            </>
           )}
         </View>
       </ScrollView>
@@ -238,6 +249,9 @@ const styles = StyleSheet.create({
   apkText: {
     marginTop: 8,
     color: '#FF3B2F',
+  },
+  black: {
+    color: COLOR_ASH_GRAY,
   },
   apkBtnTouch: {
     marginTop: 8,
