@@ -10,15 +10,18 @@ import React from 'react';
 
 import Root from './Root';
 import {SafeAreaView} from 'react-native';
+import {RecoilRoot} from 'recoil';
 
 // import { store } from './store';
 
 export default function App() {
   return (
     // <Provider store={store}>
-    <SafeAreaView style={{flex: 1}}>
-      <Root />
-    </SafeAreaView>
+    <RecoilRoot>
+      <SafeAreaView style={{flex: 1}}>
+        <Root />
+      </SafeAreaView>
+    </RecoilRoot>
     // </Provider>
   );
 }

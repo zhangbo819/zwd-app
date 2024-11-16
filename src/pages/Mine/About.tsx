@@ -20,9 +20,11 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
 import * as Progress from 'react-native-progress';
+import {useRecoilState} from 'recoil';
 
 // import MyHeader from '../../components/Myheader';
 
+import {versionState} from '../../store';
 import {
   IMAGE_APP_ICON,
   STATUS_BAR_HEIGHT,
@@ -35,7 +37,7 @@ import {
 } from '../../constant/UI';
 import {Parsers} from '../../constant/moss';
 import STYLES from '../../constant/STYLES';
-import {fetchToCheckVersion, fetchToCheckVersionRes} from '../../util';
+import {fetchToCheckVersion} from '../../util';
 import {RootStackParamList, StackPages} from '../../types/interface';
 import version from '../../constant/version';
 import {isiOS} from '../../constant/config';
@@ -47,7 +49,7 @@ const {CalendarModule} = NativeModules;
 const About: FC<
   NativeStackScreenProps<RootStackParamList, StackPages.About>
 > = () => {
-  const [newApiData, setNewApiData] = useState<fetchToCheckVersionRes>();
+  const [appVersionData, setAppVersionData] = useRecoilState(versionState);
   const [checkVersionLoading, setcheckVersionDonwLoading] = useState(false);
   const [downLoading, setDonwLoading] = useState(false);
   const [progress, setProgress] = useState(0); // 下载进度（0 到 100）
@@ -59,15 +61,15 @@ const About: FC<
   //   };
 
   useEffect(() => {
-    // TODO move to store
     setcheckVersionDonwLoading(true);
     fetchToCheckVersion()
       .then(data => {
-        setNewApiData(data);
+        setAppVersionData(data);
       })
       .finally(() => {
         setcheckVersionDonwLoading(false);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const downloadAPK = async (apkUrl: string) => {
@@ -151,14 +153,14 @@ const About: FC<
             {'珍味道_v' + version.newVersionName}
           </Text>
 
-          {/* <Text>{JSON.stringify(newApiData, null, 4)}</Text> */}
+          {/* <Text>{JSON.stringify(appVersionData, null, 4)}</Text> */}
 
           {checkVersionLoading ? (
             <View style={styles.apkSpin}>
               <ActivityIndicator size="large" color={COLOR_THEME_COMMON} />
               <Text>检查更新中... </Text>
             </View>
-          ) : newApiData?.hasUpdate ? (
+          ) : appVersionData?.hasUpdate ? (
             <>
               {downLoading ? (
                 <View style={styles.apkSpin}>
@@ -174,18 +176,18 @@ const About: FC<
               ) : (
                 <>
                   <Text style={styles.apkText}>
-                    发现最新版本，{newApiData.apk.name}
+                    发现最新版本，{appVersionData.apk.name}
                   </Text>
-                  {newApiData.body ? (
+                  {appVersionData.body ? (
                     <>
                       {/* <Text style={styles.apkText}>更新内容：</Text> */}
-                      <Text style={styles.apkText}>{newApiData.body}</Text>
+                      <Text style={styles.apkText}>{appVersionData.body}</Text>
                     </>
                   ) : null}
                   <TouchableOpacity
                     style={styles.apkBtnTouch}
                     onPress={() => {
-                      downloadAPK(newApiData.apk.url);
+                      downloadAPK(appVersionData.apk.url);
                     }}>
                     <Text style={styles.apkBtn}>点击下载最新安装包</Text>
                   </TouchableOpacity>
@@ -194,11 +196,11 @@ const About: FC<
             </>
           ) : (
             <>
-              {newApiData?.body ? (
+              {appVersionData?.body ? (
                 <>
                   {/* <Text style={styles.apkText}>更新内容：</Text> */}
                   <Text style={[styles.apkText, styles.black]}>
-                    {newApiData.body}
+                    {appVersionData.body}
                   </Text>
                 </>
               ) : null}

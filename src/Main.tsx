@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 
-// import Icon from 'react-native-vector-icons/FontAwesome';
 import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
@@ -17,6 +16,8 @@ import BillScan from './pages/Bill';
 import BaziTab from './pages/Bazi';
 import {fetchToCheckVersion} from './util';
 import {isDev} from './constant/config';
+import {useRecoilState} from 'recoil';
+import {versionState} from './store';
 
 // import {MinPix, COLOR_THEME_COMMON, COLOR_BLACK} from './constant/UI';
 // import {getTabNavigatorConfig} from './navigation/config';
@@ -41,17 +42,16 @@ const MineIcon: BottomTabNavigationOptions['tabBarIcon'] = ({color, size}) => (
 );
 
 export default function () {
-  const [MineTabBarBadge, setMineTabBarBadge] = useState(0);
+  const [appVersionData, setAppVersionData] = useRecoilState(versionState);
 
   useEffect(() => {
     if (isDev) {
       return;
     }
     fetchToCheckVersion().then(data => {
-      if (data.hasUpdate) {
-        setMineTabBarBadge(1);
-      }
+      setAppVersionData(data);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -91,7 +91,9 @@ export default function () {
         options={{
           title: '我的',
           tabBarIcon: MineIcon,
-          ...(MineTabBarBadge > 0 ? {tabBarBadge: MineTabBarBadge} : {}),
+          ...(appVersionData !== null && appVersionData.hasUpdate
+            ? {tabBarBadge: 1}
+            : {}),
         }}
         component={Mine as React.ComponentType<{}>}
       />

@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC} from 'react';
 import {
   Text,
   View,
@@ -14,7 +14,9 @@ import {
 import {CompositeScreenProps} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
+import { useRecoilState } from 'recoil';
 
+import { versionState } from '../../store';
 import STYLES from '../../constant/STYLES';
 import {
   IMAGE_ARROW_RIGHT,
@@ -29,8 +31,7 @@ import {
   StackPages,
 } from '../../types/interface';
 // import DownloadApk from './DownloadApk';
-import {fetchToCheckVersion} from '../../util';
-import {isDev} from '../../constant/config';
+
 
 // 获取 CalendarModule 模块
 
@@ -40,19 +41,7 @@ const Mine: FC<
     BottomTabScreenProps<HomeBottomTabParamList, HomeBottomTabPages.Mine>
   >
 > = props => {
-  const [hasUpdate, setHasUpdate] = useState(false);
-
-  useEffect(() => {
-    // TODO move to store
-    if (isDev) {
-      return;
-    }
-    fetchToCheckVersion().then(data => {
-      if (data.hasUpdate) {
-        setHasUpdate(true);
-      }
-    });
-  }, []);
+  const [appVersionData] = useRecoilState(versionState);
 
   const handleAbout = () => {
     props.navigation.navigate(StackPages.About);
@@ -68,7 +57,7 @@ const Mine: FC<
         <RenderCard
           data={[
             {event: handleAccount, title: '账号管理'},
-            {event: handleAbout, title: '关于', hasUpdate},
+            {event: handleAbout, title: '关于', hasUpdate: appVersionData?.hasUpdate},
           ]}
         />
         {/* {isShowWebview && <DownloadApk setIsShowWebview={setIsShowWebview} />} */}
