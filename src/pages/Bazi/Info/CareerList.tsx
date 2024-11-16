@@ -226,7 +226,15 @@ const CareerList: FC<{
           {pillarShowData.map((item, index) => {
             return (
               <Col key={'nayin' + item.nayin + index}>
-                <Text style={styles.tenText}>{item.nayin}</Text>
+                <TouchModal text={item.nayin}>
+                  <Text
+                    style={[
+                      styles.tenText,
+                      {color: WuXing.getColorByWuxing(item.nayin[2])},
+                    ]}>
+                    {item.nayin}
+                  </Text>
+                </TouchModal>
               </Col>
             );
           })}
@@ -375,7 +383,7 @@ const styles = StyleSheet.create({
   },
   shenshaText: {
     fontSize: 14,
-    color: '#000',
+    color: '#B2955E',
     textAlign: 'center',
   },
 
