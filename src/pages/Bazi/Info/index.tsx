@@ -9,9 +9,11 @@ import {RootStackParamList, StackPages} from '../../../types/interface';
 import {DZ, Ten, TG, ZhangSheng} from '../../../util/wuxing';
 import paipan, {PaipanInfo} from '../../../util/paipan';
 import {ShenshaItem} from '../../../util/shensha';
+import {isiOS} from '../../../constant/config';
+
+import BaziModal from './components/BaziModal';
 import BaseInfo from './BaseInfo';
 import CareerList from './CareerList';
-import {isiOS} from '../../../constant/config';
 
 // const init_Data = paipan.GetInfo(1, Date.now());
 export enum PillarTitle {
@@ -114,6 +116,8 @@ const BaziInfo: FC<
           onIndexChange={setIndex}
         />
       </Spin>
+      {/* 弹窗 */}
+      <BaziModal />
     </View>
   );
 };

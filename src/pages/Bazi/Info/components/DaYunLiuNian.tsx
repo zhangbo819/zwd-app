@@ -376,14 +376,14 @@ const DaYunLiuNian: FC<{
                       : item.start_time[0] - paipanInfo.yy + 1}
                     岁
                   </Text>
-                  <WuxingText text={item.name[0]} size="mini">
+                  <WuxingText disabled text={item.name[0]} size="mini">
                     {/* {!isXiaoYun && (
                     <Text style={{color: '#000'}}>
                       {paipan.}
                     </Text>
                   )} */}
                   </WuxingText>
-                  <WuxingText text={item.name[1]} size="mini" />
+                  <WuxingText disabled text={item.name[1]} size="mini" />
                 </TouchableOpacity>
               );
             }}
@@ -435,8 +435,8 @@ const DaYunLiuNian: FC<{
                   ]);
                 }}>
                 <Text style={[styles.itemText, {color}]}>{item.year}</Text>
-                <WuxingText text={item.name[0]} size="mini" />
-                <WuxingText text={item.name[1]} size="mini" />
+                <WuxingText disabled text={item.name[0]} size="mini" />
+                <WuxingText disabled text={item.name[1]} size="mini" />
               </TouchableOpacity>
             );
           }}
@@ -488,8 +488,8 @@ const DaYunLiuNian: FC<{
                 <Text style={[styles.itemText, {color}]}>
                   {`${item.mouth}/${item.day}`}
                 </Text>
-                <WuxingText text={item.name[0]} size="mini" />
-                <WuxingText text={item.name[1]} size="mini" />
+                <WuxingText disabled text={item.name[0]} size="mini" />
+                <WuxingText disabled text={item.name[1]} size="mini" />
               </TouchableOpacity>
             );
           }}
@@ -536,8 +536,8 @@ const DaYunLiuNian: FC<{
                 <Text style={[styles.itemText, {color}]}>
                   {`${item.mouth}/${item.day}`}
                 </Text>
-                <WuxingText text={item.name[0]} size="mini" />
-                <WuxingText text={item.name[1]} size="mini" />
+                <WuxingText disabled text={item.name[0]} size="mini" />
+                <WuxingText disabled text={item.name[1]} size="mini" />
               </TouchableOpacity>
             );
           }}

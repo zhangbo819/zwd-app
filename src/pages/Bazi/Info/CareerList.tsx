@@ -1,23 +1,16 @@
 import React, {FC, useEffect, useMemo, useState} from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 
-import MyModal from '../../../components/MyModal';
 import {Col, Row} from '../../../components/Layout';
+import WuxingText from '../components/WuxingText';
+import DaYunLiuNian from './components/DaYunLiuNian';
 import {COLOR_THEME_COMMON} from '../../../constant/UI';
 import {DZ, Ten, TG, WuXing} from '../../../util/wuxing';
 import {PaipanInfo} from '../../../util/paipan';
 import Shensha from '../../../util/shensha';
 import NaYin from '../../../util/Nayin';
-import textJSON from '../../../util/text';
-import WuxingText from '../components/WuxingText';
-import DaYunLiuNian from './components/DaYunLiuNian';
 import {PillarItem, PillarTitle, Sizhu} from '.';
+import {TouchModal} from './components/BaziModal';
 
 const CareerList: FC<{
   name: string;
@@ -30,10 +23,6 @@ const CareerList: FC<{
     () => pillarData.filter(i => i.isShow),
     [pillarData],
   );
-
-  // 公共弹窗
-  const [isShowModal, setIsShowMoal] = useState(false);
-  const [modalText, setModalText] = useState('');
 
   useEffect(() => {
     setPillarData(
@@ -69,14 +58,6 @@ const CareerList: FC<{
       }),
     );
   }, [paipanInfo]);
-
-  const setModal = (text: string) => {
-    if (text === '' || typeof text === 'undefined') {
-      return;
-    }
-    setModalText(text);
-    setIsShowMoal(true);
-  };
 
   // 阴阳历日期
   const renderDateText = (isYang = false) => {
@@ -130,10 +111,9 @@ const CareerList: FC<{
           {pillarShowData.map((item, index) => {
             return (
               <Col key={'主星_' + item + index}>
-                <TouchableOpacity
-                  onPress={() => setModal(textJSON[item.zhuxing as Ten])}>
+                <TouchModal text={item.zhuxing}>
                   <Text style={styles.tenText}>{item.zhuxing}</Text>
-                </TouchableOpacity>
+                </TouchModal>
               </Col>
             );
           })}
@@ -146,9 +126,7 @@ const CareerList: FC<{
           {pillarShowData.map((item, index) => {
             return (
               <Col key={'tg' + item.tg + index}>
-                <TouchableOpacity onPress={() => setModal(textJSON[item.tg])}>
-                  <WuxingText text={item.tg} />
-                </TouchableOpacity>
+                <WuxingText text={item.tg} />
               </Col>
             );
           })}
@@ -161,9 +139,7 @@ const CareerList: FC<{
           {pillarShowData.map((item, index) => {
             return (
               <Col key={'dz' + item.dz + index}>
-                <TouchableOpacity onPress={() => setModal(textJSON[item.dz])}>
-                  <WuxingText text={item.dz} />
-                </TouchableOpacity>
+                <WuxingText text={item.dz} />
               </Col>
             );
           })}
@@ -179,10 +155,11 @@ const CareerList: FC<{
                 const dzcg = item.dzcg[index];
                 return (
                   <Col key={'dzcg' + dzcg + index + y}>
-                    <TouchableOpacity
-                      onPress={() => setModal(textJSON[dzcg?.[0] as DZ])}>
-                      <WuxingText text={dzcg} size="mini" />
-                    </TouchableOpacity>
+                    <WuxingText
+                      text={dzcg}
+                      touchModalText={dzcg?.[0]}
+                      size="mini"
+                    />
                   </Col>
                 );
               })}
@@ -200,15 +177,11 @@ const CareerList: FC<{
                 const cg_index = item.fx[index];
                 return (
                   <Col key={'fx_' + cg_index + index + y}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        paipanInfo !== null &&
-                        setModal(textJSON[paipanInfo.tenMap[cg_index] as Ten])
-                      }>
+                    <TouchModal text={paipanInfo.tenMap[cg_index]}>
                       <Text style={styles.tenText}>
                         {paipanInfo === null ? '' : paipanInfo.tenMap[cg_index]}
                       </Text>
-                    </TouchableOpacity>
+                    </TouchModal>
                   </Col>
                 );
               })}
@@ -223,12 +196,9 @@ const CareerList: FC<{
           {pillarShowData.map((item, index) => {
             return (
               <Col key={'xingyun' + item.xingyun + index}>
-                <TouchableOpacity
-                  onPress={() =>
-                    item.xingyun !== null && setModal(textJSON[item.xingyun])
-                  }>
+                <TouchModal text={item.xingyun}>
                   <Text style={styles.tenText}>{item.xingyun}</Text>
-                </TouchableOpacity>
+                </TouchModal>
               </Col>
             );
           })}
@@ -241,12 +211,9 @@ const CareerList: FC<{
           {pillarShowData.map((item, index) => {
             return (
               <Col key={'zizuo' + item.zizuo + index}>
-                <TouchableOpacity
-                  onPress={() =>
-                    item.zizuo !== null && setModal(textJSON[item.zizuo])
-                  }>
+                <TouchModal text={item.zizuo}>
                   <Text style={styles.tenText}>{item.zizuo}</Text>
-                </TouchableOpacity>
+                </TouchModal>
               </Col>
             );
           })}
@@ -276,10 +243,9 @@ const CareerList: FC<{
                 return (
                   <Col key={'ss_' + ss_text + index + y}>
                     {ss_text && (
-                      <TouchableOpacity
-                        onPress={() => setModal(Shensha.getDetails(ss_text))}>
+                      <TouchModal text={Shensha.getDetails(ss_text)}>
                         <Text style={styles.shenshaText}>{ss_text}</Text>
-                      </TouchableOpacity>
+                      </TouchModal>
                     )}
                   </Col>
                 );
@@ -295,6 +261,7 @@ const CareerList: FC<{
   const renderTgDzRelation = () => {
     const relation_tg = WuXing.getTgRelation(pillarShowData.map(i => i.tg));
     const relation_dz = WuXing.getDzRelation(pillarShowData.map(i => i.dz));
+
     return (
       <View style={styles.tgDzRelation}>
         <Row>
@@ -371,11 +338,6 @@ const CareerList: FC<{
 
       {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
       {/* <Text>{JSON.stringify(pillarShowData, null, 4)}</Text> */}
-
-      {/* 弹窗 */}
-      <MyModal isShow={isShowModal} onClose={() => setIsShowMoal(false)}>
-        <Text style={{fontSize: 20}}>{modalText}</Text>
-      </MyModal>
     </ScrollView>
   );
 };

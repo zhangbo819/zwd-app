@@ -1,6 +1,6 @@
 import {TG, DZ, Ten, ZhangSheng} from './wuxing';
 
-export default {
+const textJSON: Record<string, string> = {
   [TG.甲]: `甲木，纯阳之木，名为大林木，有参天之势，性坚质硬，栋梁之材，故为阳木。
     《滴天髓》：甲木参天，脱胎要火。春不容金，秋不容土。火炽乘龙，水荡骑虎。地润天和，植立千古。`,
   // 甲木万物类象：
@@ -414,3 +414,5 @@ export default {
   “养”在疾厄宫：较为不吉，若同度正曜不吉，则为患上潜伏性的疾病。
   “养”在财帛宫、官禄宫：注意“潜龙勿用”的特性，可以积极计划，培养元气，但不可冒昧行动。`,
 };
+
+export default textJSON;

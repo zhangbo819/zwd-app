@@ -30,6 +30,7 @@ import {
   viewportWidth,
 } from '../../../constant/UI';
 import TabWuXingLi from './components/TabWuXingLi';
+import {TouchModal} from './components/BaziModal';
 
 const SHOW_DZ_12 = [DZ_12[11], ...DZ_12.slice(0, 11)];
 
@@ -160,7 +161,7 @@ const BaseInfo: FC<{
 
     const pageBazi = WuXing.getSiZhuDetails(infoBazi);
 
-    console.log(JSON.stringify(pageBazi, null, 4))
+    // console.log(JSON.stringify(pageBazi, null, 4))
 
     setPageData({
       dzcg,
@@ -217,7 +218,9 @@ const BaseInfo: FC<{
             const isRizhu = item === rizhu_tg;
             return (
               <View key={item} style={styles.tgItem}>
-                <Text style={styles.tenText}>{paipanInfo.tenMap[index]}</Text>
+                <TouchModal text={paipanInfo.tenMap[index]}>
+                  <Text style={styles.tenText}>{paipanInfo.tenMap[index]}</Text>
+                </TouchModal>
                 <WuxingText
                   style={
                     isRizhu && [styles.isRizhu, {borderColor: color_rizhu}]
@@ -242,9 +245,10 @@ const BaseInfo: FC<{
                 <View key={item} style={styles.dzItem}>
                   <WuxingText text={item} />
                   <Row>
-                    {/* <Text style={{color: '#000', fontSize: 18, fontWeight: 'bold'}}>
-              {'藏干'}
-            </Text> */}
+                    {/* <Text
+                      style={{color: '#000', fontSize: 18, fontWeight: 'bold'}}>
+                      {'藏干'}
+                    </Text> */}
                     {pageData.dzcg_text &&
                       Array.isArray(pageData.dzcg_text[index]) &&
                       pageData.dzcg_text[index].map((j, k) => {
@@ -360,7 +364,12 @@ const BaseInfo: FC<{
               const nowWuxingColor = WuXing.getColorByWuxing(i.name);
               return (
                 <Row key={'wuxingNumber_' + i.name} alignItems="center">
-                  <WuxingText size="mid" fontWeight="bold" text={i.name} />
+                  <WuxingText
+                    disabled
+                    size="mid"
+                    fontWeight="bold"
+                    text={i.name}
+                  />
                   <Col style={{marginHorizontal: 4}}>
                     <Progress.Bar
                       progress={i.number / 8}

@@ -37,8 +37,8 @@ const TabWuXingLi: FC<{
                 ]}>
                 {i.tg_level_text}
               </Text>
-              <WuxingText margin={2} text={i.tg} />
-              <WuxingText margin={2} text={i.dz} />
+              <WuxingText disabled margin={2} text={i.tg} />
+              <WuxingText disabled margin={2} text={i.dz} />
               <Text
                 style={[
                   styles.bold,
@@ -212,6 +212,7 @@ const styles = StyleSheet.create({
   },
   bold: {
     fontWeight: 'bold',
+    color: '#000',
   },
 });
 

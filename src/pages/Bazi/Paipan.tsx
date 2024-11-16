@@ -135,8 +135,8 @@ const Paipan: FC<
             {nowPaipan.bazi.map((zhu, index) => {
               return (
                 <View style={styles.zhuItem} key={'now_zhu' + index}>
-                  <WuxingText size="mid" text={zhu[0]} />
-                  <WuxingText size="mid" text={zhu[1]} />
+                  <WuxingText disabled size="mid" text={zhu[0]} />
+                  <WuxingText disabled size="mid" text={zhu[1]} />
                 </View>
               );
             })}
