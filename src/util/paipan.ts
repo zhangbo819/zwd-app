@@ -1342,7 +1342,7 @@ class Paipan {
     const years = [];
     const xiaoyun: {name: JZ_60; year: number}[] = [];
     let arr = [];
-    for (let i = 0; i <= 120; i++) {
+    for (let i = 0; i <= 130; i++) {
       const t = (tg[0] + i) % 10;
       const d = (dz[0] + i) % 12;
       const tgdz_text = (this.ctg[t] + this.cdz[d]) as JZ_60;
@@ -1362,7 +1362,7 @@ class Paipan {
       }
     }
     // res.big.xiaoyun = xiaoyun;
-    // console.log('years', years)
+    console.log('years', years, years.length)
     years.forEach((year, index) => {
       res.big.data[index].years = year;
     });
