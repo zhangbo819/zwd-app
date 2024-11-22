@@ -4,12 +4,11 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 
 import Spin from '../../../components/Spin';
-import {COLOR_THEME_COMMON, NAV_COMMON_HEIGHT} from '../../../constant/UI';
+import {COLOR_THEME_COMMON} from '../../../constant/UI';
 import {RootStackParamList, StackPages} from '../../../types/interface';
 import {DZ, Ten, TG, ZhangSheng} from '../../../util/wuxing';
 import paipan, {PaipanInfo} from '../../../util/paipan';
 import {ShenshaItem} from '../../../util/shensha';
-import {isiOS} from '../../../constant/config';
 
 import BaziModal from './components/BaziModal';
 import BaseInfo from './BaseInfo';
@@ -51,7 +50,7 @@ export const Sizhu = [
 const BaziInfo: FC<
   NativeStackScreenProps<RootStackParamList, StackPages.BaziInfo>
 > = props => {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(1);
   const [paipanInfo, setPaipanInfo] = useState<PaipanInfo | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -88,7 +87,7 @@ const BaziInfo: FC<
   }, [paipanInfo, props.route.params.name]);
 
   return (
-    <View style={[styles.container, isiOS && {paddingTop: NAV_COMMON_HEIGHT}]}>
+    <View style={styles.container}>
       <Spin spinning={loading}>
         <TabView
           navigationState={{

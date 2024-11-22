@@ -1363,7 +1363,9 @@ class Paipan {
     }
     // res.big.xiaoyun = xiaoyun;
     years.forEach((year, index) => {
-      res.big.data[index].years = year;
+      if (res.big.data[index]) {
+        res.big.data[index].years = year;
+      }
     });
     // console.log('xiaoyun', xiaoyun);
     // 小运

@@ -255,6 +255,8 @@ enum DZ_GX {
   三刑 = '三刑',
   三合 = '三合',
   三会 = '三会',
+  拱合 = '拱合',
+  拱会 = '拱会',
 }
 
 enum TG_LEVEL {
@@ -354,6 +356,10 @@ class WuXingClass {
       [DZ.辰, DZ.丑],
       [DZ.未, DZ.戌],
     ],
+    [DZ_GX.三刑]: [
+      [DZ.丑, DZ.未, DZ.戌], //（土力量增加，藏干互毁）
+      [DZ.寅, DZ.巳, DZ.申], //（本气互毁）
+    ],
     [DZ_GX.三合]: [
       [DZ.寅, DZ.午, DZ.戌],
       [DZ.申, DZ.子, DZ.辰],
@@ -361,15 +367,17 @@ class WuXingClass {
       [DZ.亥, DZ.卯, DZ.未],
     ],
     [DZ_GX.三会]: [
-      [DZ.寅, DZ.卯, DZ.辰],
       [DZ.巳, DZ.午, DZ.未],
-      [DZ.申, DZ.酉, DZ.戌],
       [DZ.亥, DZ.子, DZ.丑],
+      [DZ.申, DZ.酉, DZ.戌],
+      [DZ.寅, DZ.卯, DZ.辰],
     ],
-    [DZ_GX.三刑]: [
-      [DZ.丑, DZ.未, DZ.戌], //（土力量增加，藏干互毁）
-      [DZ.寅, DZ.巳, DZ.申], //（本气互毁）
-    ],
+    get [DZ_GX.拱合]() {
+      return this[DZ_GX.三合];
+    },
+    get [DZ_GX.拱会]() {
+      return this[DZ_GX.三会];
+    },
   };
 
   map_tg_genqi = {
@@ -568,7 +576,7 @@ class WuXingClass {
       for (let j = i - 1; j >= 0; j--) {
         // console.log(target[i], target[j]);
         // 2
-        const gx = this.checkDZRelation(target[i], target[j]);
+        const gx = this.checkDZRelation(target[i], target[j], null, target);
         if (gx.length) {
           gx.forEach(({text, color}) => {
             relation.push({name: target[j], index: j, text, color});
@@ -576,7 +584,12 @@ class WuXingClass {
         }
         // 3
         for (let k = j - 1; k >= 0; k--) {
-          const gx3 = this.checkDZRelation(target[i], target[j], target[k]);
+          const gx3 = this.checkDZRelation(
+            target[i],
+            target[j],
+            target[k],
+            target,
+          );
           if (gx3.length) {
             gx3.forEach(({text, color}) => {
               relation.push({
@@ -602,14 +615,33 @@ class WuXingClass {
   }
 
   // 校验地支关系
-  private checkDZRelation(a: DZ, b: DZ, c: DZ | null = null) {
+  private checkDZRelation(
+    a: DZ,
+    b: DZ,
+    c: DZ | null = null,
+    target: DZ[] = [],
+  ) {
     const res: {text: string; color: string}[] = [];
     const inputs = (c === null ? [a, b] : [a, b, c])
       .sort((x, y) => x.charCodeAt(0) - y.charCodeAt(0))
       .join('');
+    const map_3he = [WX.火, WX.水, WX.金, WX.木];
+
     for (let key in this.map_dzgx) {
       this.map_dzgx[key as DZ_GX].forEach((gxItems, index) => {
-        if (
+        if (key === DZ_GX.拱会 || key === DZ_GX.拱合) {
+          if (c === null && gxItems.includes(a) && gxItems.includes(b)) {
+            const rest = gxItems.filter(i => i !== a && i !== b);
+            if (!target.includes(rest?.[0])) {
+              // console.log(key, a, b, index);
+              res.push({
+                // text: `${a}${b}${key[0]}${rest[0]}半三${key[1]}${map_3he[index]}局`,
+                text: `${a}${b}${key}${map_3he[index]}局`,
+                color: '',
+              });
+            }
+          }
+        } else if (
           gxItems.length === inputs.length &&
           gxItems.sort((x, y) => x.charCodeAt(0) - y.charCodeAt(0)).join('') ===
             inputs
@@ -661,22 +693,21 @@ class WuXingClass {
             case DZ_GX.破:
               res.push({text: gxItems[0] + gxItems[1] + DZ_GX.破, color: ''});
               break;
+            case DZ_GX.三刑:
+              res.push({text: a + b + c + DZ_GX.三刑, color: ''});
+              break;
             case DZ_GX.三合:
-              const map_3he = [WX.火, WX.水, WX.金, WX.木];
               res.push({
                 text: a + b + c + DZ_GX.三合 + map_3he[index] + '局',
                 color: '',
               });
               break;
             case DZ_GX.三会:
-              const map_3hui = [WX.木, WX.火, WX.金, WX.水];
               res.push({
-                text: a + b + c + DZ_GX.三会 + map_3hui[index] + '局',
+                text: a + b + c + DZ_GX.三会 + map_3he[index] + '局',
                 color: '',
               });
               break;
-            case DZ_GX.三刑:
-              res.push({text: a + b + c + DZ_GX.三刑, color: ''});
           }
         }
       });

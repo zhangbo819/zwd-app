@@ -1,5 +1,12 @@
 import React, {FC, useEffect, useMemo, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Ico5 from 'react-native-vector-icons/FontAwesome5';
 
 import {Col, Row} from '../../../components/Layout';
 import WuxingText from '../components/WuxingText';
@@ -11,6 +18,7 @@ import Shensha from '../../../util/shensha';
 import NaYin from '../../../util/Nayin';
 import {PillarItem, PillarTitle, Sizhu} from '.';
 import {TouchModal} from './components/BaziModal';
+import TgDzRelationModal from './components/TgDzRelationModal';
 
 const CareerList: FC<{
   name: string;
@@ -22,6 +30,16 @@ const CareerList: FC<{
   const pillarShowData = useMemo(
     () => pillarData.filter(i => i.isShow),
     [pillarData],
+  );
+
+  // 天干地支关系
+  const [isShowDgdzModal, setIsShowDgdzModal] = useState(false);
+  const data_tgdz_relation = useMemo(
+    () => [
+      WuXing.getTgRelation(pillarShowData.map(i => i.tg)),
+      WuXing.getDzRelation(pillarShowData.map(i => i.dz)),
+    ],
+    [pillarShowData],
   );
 
   useEffect(() => {
@@ -267,11 +285,13 @@ const CareerList: FC<{
 
   // 天干地支关系
   const renderTgDzRelation = () => {
-    const relation_tg = WuXing.getTgRelation(pillarShowData.map(i => i.tg));
-    const relation_dz = WuXing.getDzRelation(pillarShowData.map(i => i.dz));
+    const [relation_tg, relation_dz] = data_tgdz_relation;
+    // console.log('relation_dz', JSON.stringify(data_tgdz_relation, null, 4))
 
     return (
-      <View style={styles.tgDzRelation}>
+      <TouchableOpacity
+        style={styles.tgDzRelation}
+        onPress={() => setIsShowDgdzModal(true)}>
         <Row>
           <Text style={styles.tgDzRelationTitle}>天干留意：</Text>
           <View style={styles.tgGxRow}>
@@ -312,7 +332,8 @@ const CareerList: FC<{
             )}
           </View>
         </Row>
-      </View>
+        <Ico5 style={styles.tgDzRelationIcon} name="chevron-right" />
+      </TouchableOpacity>
     );
   };
 
@@ -346,6 +367,13 @@ const CareerList: FC<{
 
       {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
       {/* <Text>{JSON.stringify(pillarShowData, null, 4)}</Text> */}
+
+      {/* 天干地支关系弹窗 */}
+      <TgDzRelationModal
+        isShow={isShowDgdzModal}
+        onClose={() => setIsShowDgdzModal(false)}
+        pillarShowData={pillarShowData}
+      />
     </ScrollView>
   );
 };
@@ -393,12 +421,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
   },
+  tgDzRelationIcon: {
+    position: 'absolute',
+    right: 0,
+    top: '50%',
+    color: COLOR_THEME_COMMON,
+  },
   tgDzRelationTitle: {
     fontSize: 16,
     color: COLOR_THEME_COMMON,
     fontWeight: 'bold',
   },
   tgGxRow: {
+    flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
