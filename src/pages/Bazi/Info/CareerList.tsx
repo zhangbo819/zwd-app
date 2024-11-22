@@ -28,7 +28,7 @@ const CareerList: FC<{
   // 所有柱数据
   const [pillarData, setPillarData] = useState<PillarItem[]>([]);
   const pillarShowData = useMemo(
-    () => pillarData.filter(i => i.isShow),
+    () => pillarData.filter(i => i.isShow && i.tg + i.dz !== '小运'),
     [pillarData],
   );
 
