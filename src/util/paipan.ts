@@ -1362,7 +1362,6 @@ class Paipan {
       }
     }
     // res.big.xiaoyun = xiaoyun;
-    console.log('years', years, years.length)
     years.forEach((year, index) => {
       res.big.data[index].years = year;
     });

@@ -32,7 +32,12 @@ import {
 import TabWuXingLi from './components/TabWuXingLi';
 import {TouchModal} from './components/BaziModal';
 
-const SHOW_DZ_12 = [DZ_12[11], ...DZ_12.slice(0, 11)];
+const SHOW_DZ_12 = [
+  [DZ_12[11]].concat(DZ_12.slice(0, 2)),
+  DZ_12.slice(2, 5),
+  DZ_12.slice(5, 8),
+  DZ_12.slice(8, 11),
+];
 
 export type PageDataType = {
   dzcg: number[][];
@@ -233,49 +238,53 @@ const BaseInfo: FC<{
         </Row>
         <Row style={[styles.tgdzList, {display: isShowTgdz ? 'flex' : 'none'}]}>
           <Text style={styles.tgdzTitle}>十二地支对应日主</Text>
-          {SHOW_DZ_12.map((item, index) => {
+          {SHOW_DZ_12.map((items, i) => {
             const fw_map = ['北方水', '东方木', '南方火', '西方金'];
             return (
-              <>
-                {index % 3 === 0 && (
-                  <Text key={'title_' + index / 3} style={styles.tgdzTitle}>
-                    {fw_map[index / 3]}
-                  </Text>
-                )}
-                <View key={item} style={styles.dzItem}>
-                  <WuxingText text={item} />
-                  <Row>
-                    {/* <Text
-                      style={{color: '#000', fontSize: 18, fontWeight: 'bold'}}>
-                      {'藏干'}
-                    </Text> */}
-                    {pageData.dzcg_text &&
-                      Array.isArray(pageData.dzcg_text[index]) &&
-                      pageData.dzcg_text[index].map((j, k) => {
-                        // const isRizhu = j[0] === pageData.bazi[2]?.tg;
+              <View key={'title_' + i}>
+                <Text style={styles.tgdzTitle}>{fw_map[i]}</Text>
 
-                        return (
-                          <View key={item + j} style={styles.dzcgItem}>
-                            <WuxingText
-                              style={[
-                                styles.notRizhu,
-                                // isRizhu && [
-                                //   styles.isRizhu,
-                                //   {borderColor: color_rizhu},
-                                // ],
-                              ]}
-                              size="mid"
-                              text={j}
-                            />
-                            <Text style={styles.tenText}>
-                              {paipanInfo.tenMap[pageData.dzcg[index][k]]}
-                            </Text>
-                          </View>
-                        );
-                      })}
-                  </Row>
-                </View>
-              </>
+                <Row>
+                  {items.map((item, index) => {
+                    return (
+                      <View key={item} style={styles.dzItem}>
+                        <WuxingText text={item} />
+                        <Row>
+                          {pageData.dzcg_text &&
+                            Array.isArray(pageData.dzcg_text[index]) &&
+                            pageData.dzcg_text[index].map((j, k) => {
+                              // const isRizhu = j[0] === pageData.bazi[2]?.tg;
+
+                              const cg_shishen =
+                                paipanInfo.tenMap[pageData.dzcg[index][k]];
+                              return (
+                                <View key={item + j} style={styles.dzcgItem}>
+                                  <WuxingText
+                                    style={[
+                                      styles.notRizhu,
+                                      // isRizhu && [
+                                      //   styles.isRizhu,
+                                      //   {borderColor: color_rizhu},
+                                      // ],
+                                    ]}
+                                    size="mid"
+                                    text={j}
+                                    touchModalText={j[0]}
+                                  />
+                                  <TouchModal text={cg_shishen}>
+                                    <Text style={styles.tenText}>
+                                      {cg_shishen}
+                                    </Text>
+                                  </TouchModal>
+                                </View>
+                              );
+                            })}
+                        </Row>
+                      </View>
+                    );
+                  })}
+                </Row>
+              </View>
             );
           })}
         </Row>

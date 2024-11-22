@@ -20,6 +20,7 @@ const WuxingText: FC<{
   style?: StyleProp<ViewStyle>;
   margin?: FlexStyle['margin'];
   fontWeight?: TextStyle['fontWeight'];
+  color_text?: string;
 }> = ({
   text = '',
   touchModalText,
@@ -29,9 +30,12 @@ const WuxingText: FC<{
   fontWeight,
   margin,
   style,
+  color_text,
 }) => {
   // 五行颜色
-  const color_text = text.length > 1 ? text[0] : text;
+  if (typeof color_text === 'undefined') {
+    color_text = text.length > 1 ? text[0] : text;
+  }
 
   return (
     <View style={[styles.col, {margin}, style]}>
