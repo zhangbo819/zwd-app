@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
-
+import {StyleSheet, View} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
@@ -41,6 +42,27 @@ const MineIcon: BottomTabNavigationOptions['tabBarIcon'] = ({color, size}) => (
   <Icon name="user" color={color} size={size} />
 );
 
+const Header = () => {
+  const insets = useSafeAreaInsets(); // 获取安全区边距
+
+  return (
+    <View
+      style={[
+        styles.header,
+        {
+          paddingTop: insets.top,
+        },
+      ]}
+    />
+  );
+};
+
+const styles = StyleSheet.create({
+  header: {
+    backgroundColor: '#fff',
+  },
+});
+
 export default function () {
   const [appVersionData, setAppVersionData] = useRecoilState(versionState);
 
@@ -59,12 +81,14 @@ export default function () {
       initialRouteName={HomeBottomTabPages.Bazi}
       screenOptions={{
         tabBarActiveTintColor: COLOR_THEME_COMMON,
+        // headerShown: false,
+        header: Header,
       }}>
       <Tab.Screen
         name={HomeBottomTabPages.Home}
         options={{
           title: '账本',
-          headerShown: false,
+          // headerShown: false,
           tabBarIcon: BillIcon,
         }}
         component={BillScan}
@@ -81,7 +105,6 @@ export default function () {
         name={HomeBottomTabPages.Bazi}
         options={{
           title: '八字',
-          headerShown: false,
           tabBarIcon: BaziIcon,
         }}
         component={BaziTab}

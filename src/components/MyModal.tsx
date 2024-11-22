@@ -7,6 +7,7 @@ import {
   TouchableHighlight,
   View,
 } from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const MyModal: FC<{
   isShow?: boolean;
@@ -14,6 +15,7 @@ const MyModal: FC<{
   children?: ReactNode;
 }> = ({isShow, onClose, children}) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const insets = useSafeAreaInsets(); // 获取安全区边距
 
   useEffect(() => {
     if (typeof isShow !== 'undefined') {
@@ -32,9 +34,12 @@ const MyModal: FC<{
         //   setModalVisible(!modalVisible);
         // }}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            {/* <Text style={styles.modalText}>Hello World!</Text> */}
+        <View
+          style={[
+            styles.centeredView,
+            {marginTop: insets.top, marginBottom: insets.bottom},
+          ]}>
+          <View style={[styles.modalView]}>
             <ScrollView style={styles.ScrollView}>{children}</ScrollView>
 
             <TouchableHighlight
@@ -69,7 +74,10 @@ const styles = StyleSheet.create({
     // marginTop: 22,
   },
   modalView: {
-    margin: 20,
+    flexGrow: 0,
+    width: '90%',
+    maxHeight: '100%',
+    // backgroundColor: '#f00',
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 20,
@@ -84,8 +92,11 @@ const styles = StyleSheet.create({
     // elevation: 5,
   },
   ScrollView: {
-    flexGrow: 0,
-    paddingHorizontal: 10
+    // flexGrow: 0,
+    width: '100%',
+    // flexGrow: 0,
+    // backgroundColor: '#ff0',
+    // paddingHorizontal: 10,
     // maxHeight: '80%',
   },
   openButton: {
@@ -100,10 +111,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
     fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 15,
     textAlign: 'center',
   },
 });

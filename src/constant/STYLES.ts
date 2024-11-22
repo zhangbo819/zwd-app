@@ -71,7 +71,7 @@ const STYLES: Record<string, any> = {
   commonBg: {
     backgroundColor: '#FFF',
     flex: 1,
-    paddingTop: STATUS_BAR_HEIGHT,
+    // paddingTop: STATUS_BAR_HEIGHT,
   },
 };
 export default STYLES;

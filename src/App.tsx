@@ -9,7 +9,7 @@ import React from 'react';
 // import {Provider} from 'react-redux'
 
 import Root from './Root';
-import {SafeAreaView} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {RecoilRoot} from 'recoil';
 
 // import { store } from './store';
@@ -17,11 +17,11 @@ import {RecoilRoot} from 'recoil';
 export default function App() {
   return (
     // <Provider store={store}>
-    <RecoilRoot>
-      <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1}}>
+      <RecoilRoot>
         <Root />
-      </SafeAreaView>
-    </RecoilRoot>
+      </RecoilRoot>
+    </SafeAreaView>
     // </Provider>
   );
 }
