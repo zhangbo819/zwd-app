@@ -76,7 +76,7 @@ const TgDzRelationModal: FC<{
           });
         })}
 
-        <Row style={{flex: 1}}>
+        <Row style={styles.zhus}>
           {pillarShowData.map(i => {
             return (
               <Col key={i.title}>
@@ -151,6 +151,10 @@ const TgDzRelationModal: FC<{
 const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
+  },
+  zhus: {
+    // flex: 1,
+    marginVertical: 12,
   },
   line: {
     position: 'absolute',

@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
+import { COLOR_THEME_COMMON } from '../constant/UI';
+
 const MyModal: FC<{
   isShow?: boolean;
   onClose?: () => void;
@@ -78,7 +80,7 @@ const styles = StyleSheet.create({
     width: '90%',
     maxHeight: '100%',
     // backgroundColor: '#f00',
-    padding: 20,
+    paddingVertical: 12,
     backgroundColor: 'white',
     borderRadius: 20,
     alignItems: 'center',
@@ -89,11 +91,12 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    // elevation: 5,
+    elevation: 5,
   },
   ScrollView: {
     // flexGrow: 0,
     width: '100%',
+    paddingHorizontal: 12,
     // flexGrow: 0,
     // backgroundColor: '#ff0',
     // paddingHorizontal: 10,
@@ -101,7 +104,7 @@ const styles = StyleSheet.create({
   },
   openButton: {
     marginTop: 10,
-    backgroundColor: '#2196F3',
+    backgroundColor: COLOR_THEME_COMMON,
     borderRadius: 20,
     padding: 10,
     paddingHorizontal: 15,
