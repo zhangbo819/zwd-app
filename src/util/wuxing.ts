@@ -557,9 +557,11 @@ class WuXingClass {
     const res: {
       name: DZ;
       index: number;
+      end: number;
       relation: {
-        name: DZ | DZ[];
-        index: number | number[];
+        name: DZ[];
+        index: number[];
+        start: number;
         text: string;
         color: string;
       }[];
@@ -568,8 +570,9 @@ class WuXingClass {
     // 从后向前
     for (let i = target.length - 1; i >= 0; i--) {
       const relation: {
-        name: DZ | DZ[];
-        index: number | number[];
+        name: DZ[];
+        index: number[];
+        start: number;
         text: string;
         color: string;
       }[] = [];
@@ -579,7 +582,7 @@ class WuXingClass {
         const gx = this.checkDZRelation(target[i], target[j], null, target);
         if (gx.length) {
           gx.forEach(({text, color}) => {
-            relation.push({name: target[j], index: j, text, color});
+            relation.push({name: [target[j]], index: [j], start: j, text, color});
           });
         }
         // 3
@@ -593,8 +596,9 @@ class WuXingClass {
           if (gx3.length) {
             gx3.forEach(({text, color}) => {
               relation.push({
-                name: [target[j], target[k]],
-                index: [j, k],
+                name: [target[k], target[j]],
+                start: j > k ? k : j,
+                index: [k, j],
                 text,
                 color,
               });
@@ -606,6 +610,7 @@ class WuXingClass {
         res.push({
           name: target[i],
           index: i,
+          end: i,
           relation,
         });
       }
@@ -636,7 +641,7 @@ class WuXingClass {
               // console.log(key, a, b, index);
               res.push({
                 // text: `${a}${b}${key[0]}${rest[0]}半三${key[1]}${map_3he[index]}局`,
-                text: `${a}${b}半${key[1]}${map_3he[index]}局`,
+                text: `${a}${b}半三${key[1]}${map_3he[index]}局`,
                 color: '',
               });
             }
