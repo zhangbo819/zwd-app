@@ -630,13 +630,13 @@ class WuXingClass {
     for (let key in this.map_dzgx) {
       this.map_dzgx[key as DZ_GX].forEach((gxItems, index) => {
         if (key === DZ_GX.拱会 || key === DZ_GX.拱合) {
-          if (c === null && gxItems.includes(a) && gxItems.includes(b)) {
+          if (c === null && a !== b && gxItems.includes(a) && gxItems.includes(b)) {
             const rest = gxItems.filter(i => i !== a && i !== b);
-            if (!target.includes(rest?.[0])) {
+            if (!target.includes(rest[0])) {
               // console.log(key, a, b, index);
               res.push({
                 // text: `${a}${b}${key[0]}${rest[0]}半三${key[1]}${map_3he[index]}局`,
-                text: `${a}${b}${key}${map_3he[index]}局`,
+                text: `${a}${b}半${key[1]}${map_3he[index]}局`,
                 color: '',
               });
             }

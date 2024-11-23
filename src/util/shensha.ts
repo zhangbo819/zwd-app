@@ -1187,13 +1187,13 @@ export default class Shensha {
         学堂又称官贵学堂，八字带学堂的命格，大都饱读诗书，记忆力很好，行为举止无形间给人一种高贵气质的感觉，很多高学历甚至达官显贵之人，八字都有学堂贵星的加临。
         八字如果见到文昌又有学堂，可以说是一个贵气十足的命格；只要见到其中一位，都很擅长读书，一生当中也都能够化险为夷。`,
       rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
-        const [nianzhu, yuezhu, rizhu, shizhu] = bazi;
+        const [nianzhu] = bazi;
         const nayin_nian_wuxing = NaYin.getNayinWuxing(nianzhu);
         let res: false | ShenshaItem.学堂 | ShenshaItem.正学堂 = false;
 
-        if (![yuezhu, rizhu, shizhu].includes(target)) {
-          return res;
-        }
+        // if (![yuezhu, rizhu, shizhu].includes(target)) {
+        //   return res;
+        // }
 
         switch (nayin_nian_wuxing) {
           case WX.金:
@@ -1253,13 +1253,13 @@ export default class Shensha {
         本软件使用第一种纳音查法。
       `,
       rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
-        const [nianzhu, yuezhu, rizhu, shizhu] = bazi;
+        const [nianzhu] = bazi;
         const nayin_nian_wuxing = NaYin.getNayinWuxing(nianzhu);
         let res: false | ShenshaItem.词馆 | ShenshaItem.正词馆 = false;
 
-        if (![yuezhu, rizhu, shizhu].includes(target)) {
-          return res;
-        }
+        // if (![yuezhu, rizhu, shizhu].includes(target)) {
+        //   return res;
+        // }
 
         switch (nayin_nian_wuxing) {
           case WX.金:
