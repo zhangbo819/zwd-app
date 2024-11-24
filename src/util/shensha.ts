@@ -651,15 +651,15 @@ export default class Shensha {
         精评：主平安福气，丰衣足食。
         古诀：
         凡甲、丙两干见寅或子，乙、癸两干见卯或丑，戊干见申，己干见未，丁干见亥，庚干见午，辛干见巳，壬干见辰是也。
-        查法以年/月干查地支
+        查法以年/日干查地支
         出自明代《甲丙相邀入虎乡歌》，甲丙相邀入虎乡，更游鼠穴高强，戊猴己未丁宜亥，乙癸逢牛卯禄昌，庚赶马头辛到巳，壬骑龙背喜非常，此为有福文昌贵，遇者应知受宠光。
         人命若带福星。主一生禄禄不缺，格局配合得当，自然多福多寿，金玉满堂。平常人得之，亦主三餐温饱，无忧无虑。此星多主平安福气而不主富贵。
         命中带有福星贵人，不但能够遇事不为凶，甚至可以遇难呈祥，化险为夷，一辈子享受悠闲的福气。如果再加上岁运和流年的配合，那自然是一个福禄兴昌、光宗耀祖的命。倘若得不到岁运流年扶持的话，也可以平安的享受快乐的生活，所以说福星贵人是一个很高贵的星。
 `,
       rule(bazi: [JZ_60, JZ_60, JZ_60, JZ_60], target: JZ_60) {
-        const [nianzhu, yuezhu] = bazi;
+        const [nianzhu, , rizhu] = bazi;
         const [niangan] = nianzhu;
-        const [yuegan] = yuezhu;
+        const [rigan] = rizhu;
         let res: false | ShenshaItem.福星贵人 = false;
 
         function verify(t: TG) {
@@ -710,7 +710,7 @@ export default class Shensha {
         }
 
         verify(niangan as TG);
-        verify(yuegan as TG);
+        verify(rigan as TG);
 
         return res;
       },

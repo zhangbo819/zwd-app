@@ -5,8 +5,8 @@ import MyModal from '../../../../components/MyModal';
 import {Col, Row} from '../../../../components/Layout';
 import {WuXing} from '../../../../util/wuxing';
 import WuxingText from '../../components/WuxingText';
-import {PillarItem} from '..';
 import {COLOR_THEME_COMMON} from '../../../../constant/UI';
+import {PillarItem} from '..';
 
 const TgDzRelationModal: FC<{
   isShow: boolean;
