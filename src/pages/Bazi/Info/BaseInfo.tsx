@@ -190,7 +190,7 @@ const BaseInfo: FC<{
     let res = `${isYang ? '阳历' : '阴历'}：${arr[0]}年${arr[1]}月${arr[2]}日 `;
     res += isYang
       ? `${paipanInfo.hh}:${paipanInfo.mt}`
-      : `${pageData.bazi[3]?.tg}时`;
+      : `${pageData.bazi[3]?.dz}时`;
     return (
       <Row>
         <Text style={styles.commonText}>{res}</Text>
