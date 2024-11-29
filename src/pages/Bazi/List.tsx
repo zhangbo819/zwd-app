@@ -25,7 +25,6 @@ import {Parsers} from '../../constant/moss';
 import {
   COLOR_LINEGRAY,
   COLOR_THEME_COMMON,
-  FONT_PFR,
   FONT_PFS,
   MinPix,
 } from '../../constant/UI';
@@ -72,8 +71,8 @@ const List: FC<
   };
 
   const handleDelete = (item: PaipanItem, index: number) => {
-    Alert.alert('提示', `确定要删除${item.name}`, [
-      {text: '取消', onPress: () => console.log('OK Pressed!')},
+    Alert.alert('提示', `确定要删除 "${item.name}"`, [
+      {text: '取消', onPress: () => {}},
       {
         text: '确定',
         onPress: async () => {
@@ -98,36 +97,34 @@ const List: FC<
       <TouchableOpacity
         key={'baziList_' + item.id}
         style={styles.Touch}
-        // activeOpacity={0.8}
-        onPress={() => handleItem(item)}
-        // onLongPress={() => handleDelete({index})}
-      >
-        <Text style={styles.ItemText}>
+        onPress={() => handleItem(item)}>
+        <Text style={[styles.Col, styles.ItemText]}>
           {`${item.name || '未命名'} `}
-          <Text style={styles.ItemSmallText}>{`${
-            item.gender === 0 ? '男' : '女'
-          } ${date.getFullYear()}年${
-            date.getMonth() + 1
-          }月${date.getDate()}日${date.getHours()}时`}</Text>
         </Text>
-        <Icon
-          style={styles.delete}
-          name="delete"
-          onPress={() => handleDelete(item, index)}
-        />
+        <Text style={[styles.Col2, styles.ItemSmallText]}>
+          {`${date.getFullYear()}年${
+            date.getMonth() + 1
+          }月${date.getDate()}日${date.getHours()}时`}
+          <Text>{` ${item.gender === 0 ? '男' : '女'}`}</Text>
+        </Text>
+        <View style={styles.Col}>
+          <Icon
+            style={styles.delete}
+            name="delete"
+            onPress={() => handleDelete(item, index)}
+          />
+        </View>
       </TouchableOpacity>
     );
   };
 
-  const renderSeparator = () => (
-    <View style={{height: MinPix * 2, backgroundColor: COLOR_LINEGRAY}} />
-  );
+  const renderSeparator = () => <View style={styles.separator} />;
 
   const renderFooterComponent = () => {
     // console.log('this.FlatList',this.FlatList)
     // to do length by Screen
     return list.length < 10 ? null : (
-      <View style={[STYLES.CCC, {marginTop: 5}]}>
+      <View style={[STYLES.CCC, {marginVertical: 10}]}>
         <Text style={{fontFamily: FONT_PFS}}>没有更多了...</Text>
       </View>
     );
@@ -140,7 +137,7 @@ const List: FC<
         // style={styles.BillList.ScrollContent}
         data={list}
         renderItem={renderItem}
-        keyExtractor={(_, index) => 'BaziKeyExtractor_' + index}
+        keyExtractor={item => 'BaziKeyExtractor_' + item.id}
         ItemSeparatorComponent={renderSeparator}
         ListEmptyComponent={ListEmptyComponent}
         // ListHeaderComponent={renderHeaderComponent}
@@ -164,6 +161,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  separator: {
+    height: MinPix * 2,
+    backgroundColor: COLOR_LINEGRAY,
+  },
   Touch: {
     flex: 1,
     marginVertical: 5,
@@ -172,13 +173,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  Col2: {
+    flex: 2,
+    textAlign: 'center',
+    // backgroundColor: "#ff0"
+  },
+  Col: {
+    flex: 1,
+  },
   ItemText: {
     marginRight: 8,
     paddingVertical: 5,
-    fontFamily: FONT_PFR,
+    fontFamily: FONT_PFS,
     fontWeight: 'bold',
     fontSize: 18,
-    textAlign: 'center',
+    // textAlign: 'center',
     color: '#000',
   },
   ItemSmallText: {
@@ -186,6 +195,7 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
   },
   delete: {
+    alignSelf: 'flex-end',
     fontSize: 24,
     color: COLOR_THEME_COMMON,
   },
