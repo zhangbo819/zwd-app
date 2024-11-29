@@ -641,7 +641,7 @@ class WuXingClass {
               // console.log(key, a, b, index);
               res.push({
                 // text: `${a}${b}${key[0]}${rest[0]}半三${key[1]}${map_3he[index]}局`,
-                text: `${a}${b}半三${key[1]}${map_3he[index]}局`,
+                text: `${a}${b}拱${key[1]}${map_3he[index]}局`,
                 color: '',
               });
             }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     Text,
     View,
-    Keyboard,
+    // Keyboard,
     FlatList,
     RefreshControl,
     TouchableOpacity,
@@ -14,7 +14,7 @@ import {
     Animated
 } from 'react-native';
 
-// import Icon from 'react-native-vector-icons/FontAwesome';
+import Ico5 from 'react-native-vector-icons/FontAwesome5';
 
 import { ListEmptyComponent } from '../../components/ListEmptyComp';
 import { loadStorage, saveStorage, isiOS } from '../../constant/config';
@@ -28,8 +28,8 @@ import {
     COLOR_WHITE,
     COLOR_GRAY,
     COLOR_BLACK,
-    COLOR_ORANGE,
-    STATUS_BAR_HEIGHT
+    STATUS_BAR_HEIGHT,
+    COLOR_THEME_COMMON
 } from '../../constant/UI';
 import { Parsers } from '../../constant/moss';
 import { getHeight, getWidth } from '../../util';
@@ -182,16 +182,16 @@ class WarehouseList extends Component {
                     style={styles.WarehouseList.chevron}
                     onPress={this.handleChevron.bind(this, { isUp: true, index })}
                 >
-                    {/* <Icon name={'chevron-up'} size={16} color={COLOR_ORANGE} /> */}
-                    <Text>+</Text>
+                    <Ico5 name="chevron-up" size={16} color={COLOR_THEME_COMMON} />
+                    {/* <Text>+</Text> */}
                 </TouchableOpacity>
                 <Text style={styles.WarehouseList.value}>{value}</Text>
                 <TouchableOpacity
                     style={styles.WarehouseList.chevron}
                     onPress={this.handleChevron.bind(this, { isUp: false, index })}
                 >
-                    {/* <Icon name={'chevron-down'} size={16} color={COLOR_ORANGE} /> */}
-                    <Text>-</Text>
+                    <Ico5 name="chevron-down" size={16} color={COLOR_THEME_COMMON} />
+                    {/* <Text>-</Text> */}
                 </TouchableOpacity>
             </View>
         </TouchableOpacity>
