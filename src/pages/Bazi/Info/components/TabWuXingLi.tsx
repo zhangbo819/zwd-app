@@ -37,7 +37,12 @@ const TabWuXingLi: FC<{
                 ]}>
                 {i.tg_level_text}
               </Text>
-              <WuxingText disabled margin={2} text={i.tg} />
+              <WuxingText
+                style={{opacity: i.tg_opacity}}
+                disabled
+                margin={2}
+                text={i.tg}
+              />
               <WuxingText disabled margin={2} text={i.dz} />
               <Text
                 style={[

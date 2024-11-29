@@ -123,6 +123,7 @@ const BaseInfo: FC<{
       r[tg10Wuxing[halfIndex]] = map[i];
       return r;
     }, {} as Record<WX, string>);
+
     // 五行数量
     const wuxingNumber = infoBazi.reduce(
       (r, i) => {
@@ -132,8 +133,8 @@ const BaseInfo: FC<{
             j.name === WuXing.getWuxing(i[1])
           ) {
             j.number++;
-            j.ten2 = wxTenMap[j.name];
           }
+          j.ten2 = wxTenMap[j.name];
         });
 
         return r;
@@ -165,6 +166,8 @@ const BaseInfo: FC<{
       );
 
     const pageBazi = WuXing.getSiZhuDetails(infoBazi);
+
+    // WuXing.getDzPower(infoBazi, paipanInfo.tenMap);
 
     // console.log(JSON.stringify(pageBazi, null, 4))
 
@@ -399,6 +402,25 @@ const BaseInfo: FC<{
             五行数量总数为8（8字4天干4地支本气，不加藏干）3个及以上为多，1个及以下为少。
           </Text>
         </View>
+
+        {/* <Text style={styles.wuxingTitle2}>二、五行力量</Text>
+        <View style={styles.wuxingView}>
+          <Row>
+            <Text>同党</Text>
+            <Col alignItems="center" justifyContent="center">
+              <Progress.Bar
+                // style={{flex:1,backgroundColor:'blue'}}
+                width={viewportWidth - 116}
+                progress={0.9}
+                height={8}
+                color={'red'}
+                unfilledColor={'blue'}
+                borderColor="#fff"
+              />
+            </Col>
+            <Text>异党</Text>
+          </Row>
+        </View> */}
 
         <Text style={styles.wuxingTitle2}>二、各柱力量</Text>
         <TabWuXingLi pageData={pageData} />

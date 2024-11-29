@@ -582,7 +582,13 @@ class WuXingClass {
         const gx = this.checkDZRelation(target[i], target[j], null, target);
         if (gx.length) {
           gx.forEach(({text, color}) => {
-            relation.push({name: [target[j]], index: [j], start: j, text, color});
+            relation.push({
+              name: [target[j]],
+              index: [j],
+              start: j,
+              text,
+              color,
+            });
           });
         }
         // 3
@@ -635,7 +641,12 @@ class WuXingClass {
     for (let key in this.map_dzgx) {
       this.map_dzgx[key as DZ_GX].forEach((gxItems, index) => {
         if (key === DZ_GX.拱会 || key === DZ_GX.拱合) {
-          if (c === null && a !== b && gxItems.includes(a) && gxItems.includes(b)) {
+          if (
+            c === null &&
+            a !== b &&
+            gxItems.includes(a) &&
+            gxItems.includes(b)
+          ) {
             const rest = gxItems.filter(i => i !== a && i !== b);
             if (!target.includes(rest[0])) {
               // console.log(key, a, b, index);
@@ -791,6 +802,69 @@ class WuXingClass {
     });
 
     return res;
+  }
+
+  // 地支力量
+  public getDzPower(bazi: JZ_60[], tenMap: Ten[]) {
+    const dzs = bazi.map(i => i[1] as DZ);
+    const wx_dz = dzs.map(i => this.getWuxing(i) as WX);
+
+    const wx_numb = wx_dz.reduce(
+      (r, i) => {
+        r[i]++;
+        return r;
+      },
+      {[WX.金]: 0, [WX.木]: 0, [WX.水]: 0, [WX.火]: 0, [WX.土]: 0},
+    );
+    const arr_wu_nums = Array(5)
+      .fill(null)
+      .map((_, index) => {
+        const active = Object.keys(wx_numb).filter(
+          key => wx_numb[key as WX] === index,
+        );
+        if (active.length) {
+          return active;
+        }
+        return null;
+      });
+    console.log('arr_wu_nums', arr_wu_nums);
+    let max_num = 0;
+    let max_wx = WX.金;
+    Object.keys(wx_numb).forEach(i => {
+      if (wx_numb[i as WX] > max_num) {
+        max_num = wx_numb[i as WX];
+        max_wx = i as WX;
+      }
+    });
+    console.log('wx_numb', wx_numb, max_wx);
+
+    const [, [, yueling]] = bazi;
+    const yueling_wuxing = this.getWuxing(yueling) as WX;
+    // console.log('yueling_wuxing', yueling_wuxing);
+
+    console.log('tenMap', tenMap);
+    const yuelingMap = YueLinByWuxing[yueling_wuxing];
+    // console.log('yuelingMap', yuelingMap);
+
+    const max_yue_index = yuelingMap.findIndex(i => i === yueling_wuxing);
+    // console.log('yuelingMap', yuelingMap, max_yue_index);
+
+    if (wx_numb[max_wx] === 4) {
+      // get
+    } else if (wx_numb[max_wx] === 3) {
+      if (max_yue_index === 0) {
+        // get
+      } else {
+        // this.map_dzgx[DZ_GX.三会]
+      }
+    } else if (wx_numb[max_wx] === 2) {
+      if (max_yue_index === 0) {
+        // get
+      } else {
+        // this.map_dzgx[DZ_GX.三会]
+      }
+    } else {
+    }
   }
 }
 
