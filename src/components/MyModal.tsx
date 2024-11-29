@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-import { COLOR_THEME_COMMON } from '../constant/UI';
+import {COLOR_THEME_COMMON} from '../constant/UI';
 
 const MyModal: FC<{
   isShow?: boolean;
+  title?: string;
   onClose?: () => void;
   children?: ReactNode;
-}> = ({isShow, onClose, children}) => {
+}> = ({isShow, title = '', onClose, children}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const insets = useSafeAreaInsets(); // 获取安全区边距
 
@@ -42,6 +43,7 @@ const MyModal: FC<{
             {marginTop: insets.top, marginBottom: insets.bottom},
           ]}>
           <View style={[styles.modalView]}>
+            {title && <Text style={styles.title}>{title}</Text>}
             <ScrollView style={styles.ScrollView}>{children}</ScrollView>
 
             <TouchableHighlight
@@ -80,7 +82,8 @@ const styles = StyleSheet.create({
     width: '90%',
     maxHeight: '100%',
     // backgroundColor: '#f00',
-    paddingVertical: 12,
+    paddingTop: 6,
+    paddingBottom: 12,
     backgroundColor: 'white',
     borderRadius: 20,
     alignItems: 'center',
@@ -92,6 +95,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  title: {
+    paddingBottom: 6,
+    fontSize: 22,
+    color: '#000',
+    fontWeight: 'bold',
   },
   ScrollView: {
     // flexGrow: 0,

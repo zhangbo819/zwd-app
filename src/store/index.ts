@@ -11,6 +11,7 @@ const baziModalState = atom({
   key: 'baziModalState',
   default: {
     isShow: false,
+    title: '',
     text: '',
   },
 });
@@ -24,7 +25,11 @@ export const baziModalSelector = selector({
         set(baziModalState, {...newValue, isShow: false});
         return;
       } else if (textJSON[newValue.text]) {
-        set(baziModalState, {...newValue, text: textJSON[newValue.text]});
+        set(baziModalState, {
+          ...newValue,
+          title: newValue.title || newValue.text,
+          text: textJSON[newValue.text],
+        });
         return;
       }
     }

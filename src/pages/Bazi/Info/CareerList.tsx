@@ -269,7 +269,7 @@ const CareerList: FC<{
                 return (
                   <Col key={'ss_' + ss_text + index + y}>
                     {ss_text && (
-                      <TouchModal text={Shensha.getDetails(ss_text)}>
+                      <TouchModal title={ss_text} text={Shensha.getDetails(ss_text)}>
                         <Text style={styles.shenshaText}>{ss_text}</Text>
                       </TouchModal>
                     )}

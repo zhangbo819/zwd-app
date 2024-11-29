@@ -101,11 +101,8 @@ const BaziInfo: FC<
           renderTabBar={p => {
             return (
               <TabBar
-                style={{backgroundColor: '#fff'}}
-                indicatorStyle={{
-                  backgroundColor: COLOR_THEME_COMMON,
-                  height: StyleSheet.hairlineWidth * 2,
-                }}
+                style={styles.tabBg}
+                indicatorStyle={styles.tabBarIndicator}
                 activeColor={COLOR_THEME_COMMON}
                 inactiveColor={'#666'}
                 {...p}
@@ -131,57 +128,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FAFAFA',
   },
-  pagesScrollView: {
-    paddingHorizontal: 8,
-    // paddingBottom: 16,
-  },
-  topInfo: {
-    padding: 8,
+  tabBg: {
     backgroundColor: '#fff',
   },
-  yinyangText: {
-    fontSize: 16,
-  },
-
-  pillarGrid: {
-    marginTop: 12,
-    paddingVertical: 8,
-    backgroundColor: '#fff',
-  },
-  subheading: {
-    fontSize: 16,
-    color: '#9F9F9F',
-    textAlign: 'center',
-  },
-  tenText: {
-    fontSize: 16,
-    color: '#4B4B4B',
-    textAlign: 'center',
-  },
-  shenshaText: {
-    fontSize: 14,
-    color: '#000',
-    textAlign: 'center',
-  },
-
-  tgDzRelation: {
-    marginVertical: 12,
-    padding: 8,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-  },
-  tgDzRelationTitle: {
-    fontSize: 16,
-    color: COLOR_THEME_COMMON,
-    fontWeight: 'bold',
-  },
-  tgGxRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  tgGxItem: {
-    marginHorizontal: 4,
-    fontSize: 16,
+  tabBarIndicator: {
+    backgroundColor: COLOR_THEME_COMMON,
+    height: StyleSheet.hairlineWidth * 2,
   },
 });
 

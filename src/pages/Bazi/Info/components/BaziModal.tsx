@@ -12,6 +12,7 @@ const BaziModal: FC<{}> = () => {
     <View style={styles.contentContainer}>
       <MyModal
         isShow={baziModal.isShow}
+        title={baziModal.title}
         onClose={() => setBaziModal({...baziModal, isShow: false})}>
         <Text style={[styles.text]}>{baziModal.text}</Text>
       </MyModal>
@@ -32,18 +33,23 @@ const styles = StyleSheet.create({
 export default BaziModal;
 
 export const TouchModal: FC<{
+  title?: string | null;
   text?: string | null;
   disabled?: boolean;
   children?: ReactNode;
-}> = ({text = '', disabled, children}) => {
+}> = ({title = '', text = '', disabled, children}) => {
   const [, setBaziModal] = useRecoilState(baziModalSelector);
 
   return (
     <TouchableOpacity
       disabled={disabled}
-      onPress={() =>
-        setBaziModal({text: text === null ? '' : text, isShow: true})
-      }>
+      onPress={() => {
+        setBaziModal({
+          text: text === null ? '' : text,
+          title: title === null ? '' : title,
+          isShow: true,
+        });
+      }}>
       {children}
     </TouchableOpacity>
   );

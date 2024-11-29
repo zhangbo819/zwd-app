@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topInfo: {
-    marginTop: 8,
+    marginTop: 12,
     padding: 8,
     backgroundColor: '#fff',
   },
