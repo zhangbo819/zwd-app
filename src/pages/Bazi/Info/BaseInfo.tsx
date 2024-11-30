@@ -249,17 +249,19 @@ const BaseInfo: FC<{
 
                 <Row>
                   {items.map((item, index) => {
+                    const key = i * 3 + index;
                     return (
                       <View key={item} style={styles.dzItem}>
                         <WuxingText text={item} />
+
                         <Row>
                           {pageData.dzcg_text &&
-                            Array.isArray(pageData.dzcg_text[index]) &&
-                            pageData.dzcg_text[index].map((j, k) => {
+                            Array.isArray(pageData.dzcg_text[key]) &&
+                            pageData.dzcg_text[key].map((j, k) => {
                               // const isRizhu = j[0] === pageData.bazi[2]?.tg;
 
                               const cg_shishen =
-                                paipanInfo.tenMap[pageData.dzcg[index][k]];
+                                paipanInfo.tenMap[pageData.dzcg[key][k]];
                               return (
                                 <View key={item + j} style={styles.dzcgItem}>
                                   <WuxingText
