@@ -34,7 +34,7 @@ const TgDzRelationModal: FC<{
 
   return (
     <View style={styles.contentContainer}>
-      <MyModal isShow={isShow} onClose={onClose}>
+      <MyModal title="天干地支关系" isShow={isShow} onClose={onClose}>
         <View style={{height: 10}} />
         {data_relation.tg.map(item => {
           const end = item.index;
