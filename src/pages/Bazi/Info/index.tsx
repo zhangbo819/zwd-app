@@ -24,6 +24,7 @@ export enum PillarTitle {
   流年 = '流年',
   流月 = '流月',
   流日 = '流日',
+  流时 = '流时',
 }
 
 export type PillarItem = {

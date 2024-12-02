@@ -1477,6 +1477,49 @@ class Paipan {
     return res;
   }
 
+  // 根据当前时间获取流日
+  public getLiuShi(date: number) {
+    const dateObj = new Date(date);
+
+    const [yy, mm, dd, hh, mt, ss] = [
+      dateObj.getFullYear(),
+      dateObj.getMonth() + 1,
+      dateObj.getDate(),
+      dateObj.getHours(),
+      dateObj.getMinutes(),
+      dateObj.getSeconds(),
+    ];
+
+    const {tg, dz} = this.GetGanZhi(yy, mm, dd, hh, mt, ss);
+
+    let tg_item = tg[3];
+    let dz_item = dz[3];
+    const res = [];
+
+    for (let i = 0; i < 12; i++) {
+      if (i !== 0) {
+        tg_item++;
+        dz_item++;
+        if (tg_item >= this.ctg.length) {
+          tg_item = 0;
+        }
+        if (dz_item >= this.cdz.length) {
+          dz_item = 0;
+        }
+      }
+      const new_hh = hh + i * 2 - 1;
+      const time_text = `${i === 0 ? 23 : new_hh}-${new_hh + 2}`;
+      res.push({
+        name: this.ctg[tg_item] + this.cdz[dz_item] as JZ_60,
+        hh: new_hh,
+        time_text,
+      });
+    }
+
+    // console.log('res', res);
+    return res;
+  }
+
   // 79 710 711, 80 81 - 811, - , 611, 70, 71, 72, 73
   private _getJZ60SByStartEnd(start: number[], end: number[]) {
     const res: {name: JZ_60; mouth: number; day: number}[] = [];

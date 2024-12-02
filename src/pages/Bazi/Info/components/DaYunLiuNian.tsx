@@ -28,6 +28,7 @@ const DaYunLiuNian: FC<{
   const [activeLnIndex, setActiveLnIndex] = useState(0);
   const [activeLyIndex, setActiveLyIndex] = useState(0);
   const [activeLrIndex, setActiveLrIndex] = useState(0);
+  const [activeLsIndex, setActiveLsIndex] = useState(0);
   const [lyData, setLyData] = useState<
     | null
     | {
@@ -38,12 +39,23 @@ const DaYunLiuNian: FC<{
         days: {name: JZ_60; mouth: number; day: number}[];
       }[]
   >(null);
+  const [lsData, setLsData] = useState<
+    | null
+    | {
+        name: JZ_60;
+        hh: number;
+        time_text: string;
+      }[]
+  >(null);
   const isInit = useRef(true);
-  const refLists = useRef<Record<'dy' | 'ln' | 'ly' | 'lr', FlatList | null>>({
+  const refLists = useRef<
+    Record<'dy' | 'ln' | 'ly' | 'lr' | 'ls', FlatList | null>
+  >({
     dy: null,
     ln: null,
     ly: null,
     lr: null,
+    ls: null,
   });
 
   // 大运流年流月等切换后自动更新四柱表
@@ -144,10 +156,12 @@ const DaYunLiuNian: FC<{
         const activeLyData = lyData[activeLyIndex];
         const activeLrData = activeLyData.days[activeLrIndex];
         const ly_tgdz = activeLyData.name;
-        const lr_tgdz = activeLrData.name;
+        const lr_tgdz = activeLrData?.name;
+        const ls_tgdz =
+          lsData === null ? JZ_60.甲子 : lsData[activeLsIndex]?.name;
 
         const {dzcg: lyr_dzcg, dzcg_text: lyr_dzcg_text} = paipan.getDzcgText(
-          [ly_tgdz, lr_tgdz].map(item =>
+          [ly_tgdz, lr_tgdz, ls_tgdz].map(item =>
             paipan.cdz.findIndex(j => j === item?.[1]),
           ),
         );
@@ -205,6 +219,34 @@ const DaYunLiuNian: FC<{
           lrItem.isShow = s[lrIndex].isShow;
           s[lrIndex] = lrItem;
         }
+
+        // 流时
+        const lsIndex = s.findIndex(i => i.title === PillarTitle.流时);
+        const LsZhuxingIndex = TG_10.findIndex(j => j === ls_tgdz[0]);
+        const lsItem = {
+          title: PillarTitle.流时,
+          isShow: true,
+          zhuxing: paipanInfo.tenMap[LsZhuxingIndex],
+          tg: ls_tgdz[0] as TG,
+          dz: ls_tgdz[1] as DZ,
+          dzcg: lyr_dzcg_text[2],
+          fx: lyr_dzcg[2],
+          xingyun: NaYin.getXingYun(ls_tgdz, paipanInfo.bazi[2][0] as TG),
+          zizuo: NaYin.getXingYun(ls_tgdz, ls_tgdz[0] as TG),
+          nayin: NaYin.getNayin(ls_tgdz),
+          ss: Shensha.getData(
+            paipanInfo.bazi,
+            ls_tgdz,
+            paipanInfo.yinli,
+            paipanInfo.gender,
+          ),
+        };
+        if (lrIndex < 0) {
+          s.push(lsItem);
+        } else {
+          lsItem.isShow = s[lsIndex].isShow;
+          s[lsIndex] = lsItem;
+        }
       }
 
       return [...s];
@@ -213,13 +255,37 @@ const DaYunLiuNian: FC<{
     activeDyIndex,
     activeLnIndex,
     activeLrIndex,
+    activeLsIndex,
     activeLyIndex,
+    lsData,
     lyData,
     paipanInfo,
     setPillarData,
   ]);
   // console.log('render in');
 
+  const getLsDate = ({
+    newLiuYueData = lyData,
+    newLyIndex = activeLyIndex,
+    newLrIndex = activeLrIndex,
+  }: {
+    newLiuYueData?: any;
+    newLyIndex?: number;
+    newLrIndex?: number;
+  }) => {
+    if (newLiuYueData === null) {
+      return new Date().getTime();
+    }
+    const ls_year = newLiuYueData[newLyIndex].year;
+    const ls_mouth = newLiuYueData[newLyIndex].days[newLrIndex].mouth;
+    const ls_day = newLiuYueData[newLyIndex].days[newLrIndex].day;
+    const ls_date = new Date(`${ls_year}-${ls_mouth}-${ls_day}`);
+    ls_date.setHours(0);
+    // console.log('ls_date', ls_date.toLocaleString(), new Date().getHours());
+    return ls_date.getTime();
+  };
+
+  // 点击当前
   const handleNow = () => {
     const data = paipanInfo.big.data;
     const nowYears = new Date().getFullYear();
@@ -252,6 +318,7 @@ const DaYunLiuNian: FC<{
       return mouth_max.getTime() > new Date().getTime();
     });
     setActiveLyIndex(newLyIndex);
+
     // 流日
     let newLrIndex = newLiuYueData[newLyIndex].days.findIndex(
       i =>
@@ -261,6 +328,14 @@ const DaYunLiuNian: FC<{
       newLrIndex = 0;
     }
     setActiveLrIndex(newLrIndex);
+
+    // 流时
+    const ls_date = getLsDate({newLiuYueData, newLyIndex, newLrIndex});
+    // console.log('ls_date', ls_date.toLocaleString(), new Date().getHours());
+    const newLsData = paipan.getLiuShi(ls_date);
+    setLsData(newLsData);
+    const newLsIndex = Math.floor((new Date().getHours() + 1) / 2);
+    setActiveLsIndex(newLsIndex);
 
     // 延迟50ms 等待列表数据先更新完再跳转到底部
     setTimeout(() => {
@@ -292,6 +367,12 @@ const DaYunLiuNian: FC<{
           viewOffset: 150,
         });
       }
+      if (refLists.current.ls?.props.data) {
+        refLists.current.ls?.scrollToIndex?.({
+          index: newLsIndex,
+          viewOffset: 150,
+        });
+      }
     }, 500); // todo 500ms
   };
 
@@ -308,6 +389,7 @@ const DaYunLiuNian: FC<{
       PillarTitle.流年,
       PillarTitle.流月,
       PillarTitle.流日,
+      PillarTitle.流时,
     ],
   ) => {
     setPillarData(s => {
@@ -328,7 +410,7 @@ const DaYunLiuNian: FC<{
     return (
       <View style={styles.rowList}>
         <TouchableOpacity
-          style={[styles.dayunItem, title_active && styles.activeListTitle]}
+          style={[styles.listTilte, title_active && styles.activeListTitle]}
           onPress={() => {
             if (title_active) {
               triggerPillarDataShow(false);
@@ -366,6 +448,19 @@ const DaYunLiuNian: FC<{
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
                 onPress={() => {
                   setActiveDyIndex(index);
+                  if (title_active) {
+                    triggerPillarDataShow(true, [
+                      PillarTitle.大运,
+                      PillarTitle.流年,
+                    ]);
+                    triggerPillarDataShow(false, [
+                      PillarTitle.流月,
+                      PillarTitle.流日,
+                      PillarTitle.流时,
+                    ]);
+                  }
+                  setLyData(null);
+                  setLsData(null);
                 }}>
                 <Text style={[styles.itemText, {color}]}>
                   {isXiaoYun ? paipanInfo.yy : item.start_time[0]}
@@ -400,16 +495,12 @@ const DaYunLiuNian: FC<{
     return (
       <View style={styles.rowList}>
         <TouchableOpacity
-          style={[styles.dayunItem, title_active && styles.activeListTitle]}
+          style={[styles.listTilte, title_active && styles.activeListTitle]}
           onPress={() => {
             if (title_active) {
               triggerPillarDataShow(false);
             } else {
               triggerPillarDataShow(true, [PillarTitle.大运, PillarTitle.流年]);
-              // triggerPillarDataShow(false, [
-              //   PillarTitle.流月,
-              //   PillarTitle.流日,
-              // ]);
             }
           }}>
           <Text
@@ -443,6 +534,11 @@ const DaYunLiuNian: FC<{
                 onPress={() => {
                   setLyData(paipan.getLiuYueByYear(item.year, item.name));
                   setActiveLnIndex(index);
+                  setLsData(null);
+                  if (title_active) {
+                    triggerPillarDataShow(true);
+                    triggerPillarDataShow(false, [PillarTitle.流时]);
+                  }
                 }}>
                 <Text style={[styles.itemText, {color}]}>{item.year}</Text>
                 <WuxingText disabled text={item.name[0]} size="mini" />
@@ -463,12 +559,13 @@ const DaYunLiuNian: FC<{
       <View style={styles.rowList}>
         {lyData !== null && (
           <TouchableOpacity
-            style={[styles.dayunItem, title_active && styles.activeListTitle]}
+            style={[styles.listTilte, title_active && styles.activeListTitle]}
             onPress={() => {
               if (title_active) {
                 triggerPillarDataShow(false, [
                   PillarTitle.流月,
                   PillarTitle.流日,
+                  PillarTitle.流时,
                 ]);
               } else {
                 triggerPillarDataShow(true, [
@@ -510,6 +607,11 @@ const DaYunLiuNian: FC<{
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
                 onPress={() => {
                   setActiveLyIndex(index);
+                  setLsData(null);
+                  if (title_active) {
+                    triggerPillarDataShow(true);
+                    triggerPillarDataShow(false, [PillarTitle.流时]);
+                  }
                 }}>
                 <Text>{JQ_12[index]}</Text>
                 <Text style={[styles.itemText, {color}]}>
@@ -533,10 +635,13 @@ const DaYunLiuNian: FC<{
       <View style={styles.rowList}>
         {lyData !== null && (
           <TouchableOpacity
-            style={[styles.dayunItem, title_active && styles.activeListTitle]}
+            style={[styles.listTilte, title_active && styles.activeListTitle]}
             onPress={() => {
               if (title_active) {
-                triggerPillarDataShow(false, [PillarTitle.流日]);
+                triggerPillarDataShow(false, [
+                  PillarTitle.流日,
+                  PillarTitle.流时,
+                ]);
               } else {
                 triggerPillarDataShow(true, [
                   PillarTitle.大运,
@@ -577,12 +682,83 @@ const DaYunLiuNian: FC<{
               <TouchableOpacity
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
                 onPress={() => {
+                  const newLsData = paipan.getLiuShi(
+                    getLsDate({newLrIndex: index}),
+                  );
+                  setLsData(newLsData);
                   setActiveLrIndex(index);
+                  if (title_active) {
+                    triggerPillarDataShow(true);
+                  }
                 }}>
                 {/* <Text>{JQ_12[index]}</Text> */}
                 <Text style={[styles.itemText, {color}]}>
                   {`${item.mouth}/${item.day}`}
                 </Text>
+                <WuxingText disabled text={item.name[0]} size="mini" />
+                <WuxingText disabled text={item.name[1]} size="mini" />
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </View>
+    );
+  };
+
+  // 流时
+  const renderLiushi = () => {
+    const title_active = pillarShowData.find(i => i.title === PillarTitle.流时);
+
+    return (
+      <View style={styles.rowList}>
+        {lsData !== null && (
+          <TouchableOpacity
+            style={[styles.listTilte, title_active && styles.activeListTitle]}
+            onPress={() => {
+              if (title_active) {
+                triggerPillarDataShow(false, [PillarTitle.流时]);
+              } else {
+                triggerPillarDataShow(true);
+              }
+            }}>
+            <Text
+              style={[
+                styles.listTitleText,
+                title_active && styles.activeListTitle,
+              ]}>
+              {'流\n时'}
+            </Text>
+          </TouchableOpacity>
+        )}
+        <FlatList
+          ref={r => (refLists.current.ls = r)}
+          data={lsData === null ? [] : lsData}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={i => 'Liushi_' + i.name}
+          onScrollToIndexFailed={async info => {
+            // console.log('lr onScrollToIndexFailed', info);
+            await new Promise(resolve => setTimeout(resolve, 200));
+            refLists.current.ls?.scrollToIndex({
+              index: info.index,
+              animated: true,
+            });
+          }}
+          renderItem={({item, index}) => {
+            const isActive = activeLsIndex === index;
+            const color = isActive ? '#000' : '#404040';
+
+            return (
+              <TouchableOpacity
+                style={[styles.dayunItem, isActive && styles.dayunItemActive]}
+                onPress={() => {
+                  setActiveLsIndex(index);
+                  if (title_active) {
+                    triggerPillarDataShow(true);
+                  }
+                }}>
+                <Text style={[styles.itemText, {color}]}>{item.name[1]}时</Text>
+                <Text style={[styles.itemText, {color}]}>{item.time_text}</Text>
                 <WuxingText disabled text={item.name[0]} size="mini" />
                 <WuxingText disabled text={item.name[1]} size="mini" />
               </TouchableOpacity>
@@ -607,7 +783,10 @@ const DaYunLiuNian: FC<{
         <Row>
           <TouchableOpacity
             style={styles.toolNowBtn}
-            onPress={() => triggerPillarDataShow(false)}>
+            onPress={() => {
+              triggerPillarDataShow(false);
+              handleScrollToEnd();
+            }}>
             <Text style={styles.toolNowText}>关闭</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.toolNowBtn} onPress={handleNow}>
@@ -619,6 +798,7 @@ const DaYunLiuNian: FC<{
       {renderLiunian()}
       {renderLiuyue()}
       {renderLiuri()}
+      {renderLiushi()}
     </View>
   );
 };
@@ -650,13 +830,31 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLOR_THEME_COMMON,
   },
+  listTilte: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 8,
+    borderColor: COLOR_THEME_COMMON,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 4,
+
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    // elevation: 5,
+  },
   activeListTitle: {
     backgroundColor: COLOR_THEME_COMMON,
     color: '#fff',
   },
   listTitleText: {
     fontSize: 18,
-    // fontWeight: '400',
+    color: COLOR_THEME_COMMON,
+    fontWeight: 'bold',
   },
   dayunItem: {
     justifyContent: 'center',
