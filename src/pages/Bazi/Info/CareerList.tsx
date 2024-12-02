@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useMemo, useState} from 'react';
+import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -76,6 +76,14 @@ const CareerList: FC<{
       }),
     );
   }, [paipanInfo]);
+
+  // 页面滚动，更新页面后自动滚动回当前位置
+  const refScrollView = useRef<ScrollView>(null);
+  const handleScrollToEnd = () => {
+    setTimeout(() => {
+      refScrollView.current?.scrollToEnd({animated: false});
+    }, 50);
+  };
 
   // 阴阳历日期
   const renderDateText = (isYang = false) => {
@@ -269,7 +277,9 @@ const CareerList: FC<{
                 return (
                   <Col key={'ss_' + ss_text + index + y}>
                     {ss_text && (
-                      <TouchModal title={ss_text} text={Shensha.getDetails(ss_text)}>
+                      <TouchModal
+                        title={ss_text}
+                        text={Shensha.getDetails(ss_text)}>
                         <Text style={styles.shenshaText}>{ss_text}</Text>
                       </TouchModal>
                     )}
@@ -338,7 +348,7 @@ const CareerList: FC<{
   };
 
   return (
-    <ScrollView style={styles.pagesScrollView}>
+    <ScrollView ref={refScrollView} style={styles.pagesScrollView}>
       {/* 基础信息 */}
       <View style={styles.topInfo}>
         <Row>
@@ -363,7 +373,12 @@ const CareerList: FC<{
       {renderTgDzRelation()}
 
       {/* 大运表 */}
-      <DaYunLiuNian paipanInfo={paipanInfo} setPillarData={setPillarData} />
+      <DaYunLiuNian
+        paipanInfo={paipanInfo}
+        pillarShowData={pillarShowData}
+        setPillarData={setPillarData}
+        handleScrollToEnd={handleScrollToEnd}
+      />
 
       {/* <Text>{JSON.stringify(paipanInfo, null, 4)}</Text> */}
       {/* <Text>{JSON.stringify(pillarShowData, null, 4)}</Text> */}

@@ -7,18 +7,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
+import {Row} from '../../../../components/Layout';
+import WuxingText from '../../components/WuxingText';
+import {COLOR_THEME_COMMON} from '../../../../constant/UI';
 import {DZ, JQ_12, JZ_60, TG, TG_10} from '../../../../util/wuxing';
 import paipan, {PaipanInfo} from '../../../../util/paipan';
 import NaYin from '../../../../util/Nayin';
 import Shensha from '../../../../util/shensha';
-import WuxingText from '../../components/WuxingText';
 import {PillarItem, PillarTitle} from '..';
-import {COLOR_THEME_COMMON} from '../../../../constant/UI';
 
 const DaYunLiuNian: FC<{
   paipanInfo: PaipanInfo;
+  pillarShowData: PillarItem[];
   setPillarData: React.Dispatch<React.SetStateAction<PillarItem[]>>;
-}> = ({paipanInfo, setPillarData}) => {
+  handleScrollToEnd: () => void;
+}> = ({paipanInfo, pillarShowData, setPillarData, handleScrollToEnd}) => {
   // 当前的大运
   const [activeDyIndex, setActiveDyIndex] = useState(0);
   const [activeLnIndex, setActiveLnIndex] = useState(0);
@@ -258,8 +262,11 @@ const DaYunLiuNian: FC<{
     }
     setActiveLrIndex(newLrIndex);
 
-    // 全部显示大运流年
-    triggerPillarDataShow(true);
+    // 延迟50ms 等待列表数据先更新完再跳转到底部
+    setTimeout(() => {
+      // 全部显示大运流年
+      triggerPillarDataShow(true);
+    }, 50);
 
     // 自动跳转
     refLists.current.dy?.scrollToIndex?.({
@@ -311,84 +318,76 @@ const DaYunLiuNian: FC<{
       });
       return [...s];
     });
+    handleScrollToEnd();
   };
 
   // 大运
   const renderDayun = () => {
-    const activeDyData = paipanInfo.big.data[activeDyIndex];
+    const title_active = pillarShowData.find(i => i.title === PillarTitle.流年); // 为了兼容小运临时处理
 
     return (
-      <View style={styles.dayunGrid}>
-        <View style={styles.dayunTools}>
-          <Text>起运：出生后{paipanInfo.big.start_desc}</Text>
-          {activeDyData.years[activeLnIndex] && (
-            <Text>{`${
-              activeDyData.years[activeLnIndex].year - paipanInfo.yy
-            }岁`}</Text>
-          )}
-          <TouchableOpacity
-            style={styles.toolNowBtn}
-            onPress={() => triggerPillarDataShow(false)}>
-            <Text style={styles.toolNowText}>关闭</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.toolNowBtn} onPress={handleNow}>
-            <Text style={styles.toolNowText}>今</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.rowList}>
-          <View style={styles.dayunItem}>
-            <Text style={styles.listTitleText}>{'大\n运'}</Text>
-          </View>
-          <FlatList
-            ref={r => (refLists.current.dy = r)}
-            data={paipanInfo.big.data}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={i => 'dayun_' + i.name}
-            onScrollToIndexFailed={async info => {
-              // console.log('dy onScrollToIndexFailed', info);
-              refLists.current.ln?.scrollToIndex({
-                index: info.index,
-                animated: true,
-              });
-            }}
-            renderItem={({item, index}) => {
-              const isActive = activeDyIndex === index;
-              const color = isActive ? '#000' : '#404040';
-              const isXiaoYun = item.name === '小运';
-              return (
-                <TouchableOpacity
-                  style={[styles.dayunItem, isActive && styles.dayunItemActive]}
-                  onPress={() => {
-                    setActiveDyIndex(index);
-                    triggerPillarDataShow(true, [
-                      PillarTitle.大运,
-                      PillarTitle.流年,
-                    ]);
-                  }}>
-                  <Text style={[styles.itemText, {color}]}>
-                    {isXiaoYun ? paipanInfo.yy : item.start_time[0]}
-                  </Text>
-                  <Text style={[styles.itemText, {color}]}>
-                    {isXiaoYun
-                      ? `1~${item.years.length}`
-                      : item.start_time[0] - paipanInfo.yy + 1}
-                    岁
-                  </Text>
-                  <WuxingText disabled text={item.name[0]} size="mini">
-                    {/* {!isXiaoYun && (
+      <View style={styles.rowList}>
+        <TouchableOpacity
+          style={[styles.dayunItem, title_active && styles.activeListTitle]}
+          onPress={() => {
+            if (title_active) {
+              triggerPillarDataShow(false);
+            } else {
+              triggerPillarDataShow(true, [PillarTitle.大运, PillarTitle.流年]);
+            }
+          }}>
+          <Text
+            style={[
+              styles.listTitleText,
+              title_active && styles.activeListTitle,
+            ]}>
+            {'大\n运'}
+          </Text>
+        </TouchableOpacity>
+        <FlatList
+          ref={r => (refLists.current.dy = r)}
+          data={paipanInfo.big.data}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={i => 'dayun_' + i.name}
+          onScrollToIndexFailed={async info => {
+            // console.log('dy onScrollToIndexFailed', info);
+            refLists.current.ln?.scrollToIndex({
+              index: info.index,
+              animated: true,
+            });
+          }}
+          renderItem={({item, index}) => {
+            const isActive = activeDyIndex === index;
+            const color = isActive ? '#000' : '#404040';
+            const isXiaoYun = item.name === '小运';
+            return (
+              <TouchableOpacity
+                style={[styles.dayunItem, isActive && styles.dayunItemActive]}
+                onPress={() => {
+                  setActiveDyIndex(index);
+                }}>
+                <Text style={[styles.itemText, {color}]}>
+                  {isXiaoYun ? paipanInfo.yy : item.start_time[0]}
+                </Text>
+                <Text style={[styles.itemText, {color}]}>
+                  {isXiaoYun
+                    ? `1~${item.years.length}`
+                    : item.start_time[0] - paipanInfo.yy + 1}
+                  岁
+                </Text>
+                <WuxingText disabled text={item.name[0]} size="mini">
+                  {/* {!isXiaoYun && (
                     <Text style={{color: '#000'}}>
                       {paipan.}
                     </Text>
                   )} */}
-                  </WuxingText>
-                  <WuxingText disabled text={item.name[1]} size="mini" />
-                </TouchableOpacity>
-              );
-            }}
-          />
-        </View>
+                </WuxingText>
+                <WuxingText disabled text={item.name[1]} size="mini" />
+              </TouchableOpacity>
+            );
+          }}
+        />
       </View>
     );
   };
@@ -396,12 +395,31 @@ const DaYunLiuNian: FC<{
   // 流年
   const renderLiunian = () => {
     const activeDyData = paipanInfo.big.data[activeDyIndex];
+    const title_active = pillarShowData.find(i => i.title === PillarTitle.流年);
 
     return (
       <View style={styles.rowList}>
-        <View style={styles.dayunItem}>
-          <Text style={styles.listTitleText}>{'流\n年'}</Text>
-        </View>
+        <TouchableOpacity
+          style={[styles.dayunItem, title_active && styles.activeListTitle]}
+          onPress={() => {
+            if (title_active) {
+              triggerPillarDataShow(false);
+            } else {
+              triggerPillarDataShow(true, [PillarTitle.大运, PillarTitle.流年]);
+              // triggerPillarDataShow(false, [
+              //   PillarTitle.流月,
+              //   PillarTitle.流日,
+              // ]);
+            }
+          }}>
+          <Text
+            style={[
+              styles.listTitleText,
+              title_active && styles.activeListTitle,
+            ]}>
+            {'流\n年'}
+          </Text>
+        </TouchableOpacity>
         <FlatList
           ref={r => (refLists.current.ln = r)}
           data={activeDyData.years}
@@ -425,14 +443,6 @@ const DaYunLiuNian: FC<{
                 onPress={() => {
                   setLyData(paipan.getLiuYueByYear(item.year, item.name));
                   setActiveLnIndex(index);
-                  triggerPillarDataShow(true, [
-                    PillarTitle.大运,
-                    PillarTitle.流年,
-                  ]);
-                  triggerPillarDataShow(false, [
-                    PillarTitle.流月,
-                    PillarTitle.流日,
-                  ]);
                 }}>
                 <Text style={[styles.itemText, {color}]}>{item.year}</Text>
                 <WuxingText disabled text={item.name[0]} size="mini" />
@@ -447,12 +457,35 @@ const DaYunLiuNian: FC<{
 
   // 流月
   const renderLiuyue = () => {
+    const title_active = pillarShowData.find(i => i.title === PillarTitle.流月);
+
     return (
       <View style={styles.rowList}>
         {lyData !== null && (
-          <View style={styles.dayunItem}>
-            <Text style={styles.listTitleText}>{'流\n月'}</Text>
-          </View>
+          <TouchableOpacity
+            style={[styles.dayunItem, title_active && styles.activeListTitle]}
+            onPress={() => {
+              if (title_active) {
+                triggerPillarDataShow(false, [
+                  PillarTitle.流月,
+                  PillarTitle.流日,
+                ]);
+              } else {
+                triggerPillarDataShow(true, [
+                  PillarTitle.大运,
+                  PillarTitle.流年,
+                  PillarTitle.流月,
+                ]);
+              }
+            }}>
+            <Text
+              style={[
+                styles.listTitleText,
+                title_active && styles.activeListTitle,
+              ]}>
+              {'流\n月'}
+            </Text>
+          </TouchableOpacity>
         )}
         <FlatList
           ref={r => (refLists.current.ly = r)}
@@ -477,12 +510,6 @@ const DaYunLiuNian: FC<{
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
                 onPress={() => {
                   setActiveLyIndex(index);
-                  triggerPillarDataShow(true, [
-                    PillarTitle.大运,
-                    PillarTitle.流年,
-                    PillarTitle.流月,
-                  ]);
-                  triggerPillarDataShow(false, [PillarTitle.流日]);
                 }}>
                 <Text>{JQ_12[index]}</Text>
                 <Text style={[styles.itemText, {color}]}>
@@ -500,12 +527,33 @@ const DaYunLiuNian: FC<{
 
   // 流日
   const renderLiuri = () => {
+    const title_active = pillarShowData.find(i => i.title === PillarTitle.流日);
+
     return (
       <View style={styles.rowList}>
         {lyData !== null && (
-          <View style={styles.dayunItem}>
-            <Text style={styles.listTitleText}>{'流\n日'}</Text>
-          </View>
+          <TouchableOpacity
+            style={[styles.dayunItem, title_active && styles.activeListTitle]}
+            onPress={() => {
+              if (title_active) {
+                triggerPillarDataShow(false, [PillarTitle.流日]);
+              } else {
+                triggerPillarDataShow(true, [
+                  PillarTitle.大运,
+                  PillarTitle.流年,
+                  PillarTitle.流月,
+                  PillarTitle.流日,
+                ]);
+              }
+            }}>
+            <Text
+              style={[
+                styles.listTitleText,
+                title_active && styles.activeListTitle,
+              ]}>
+              {'流\n日'}
+            </Text>
+          </TouchableOpacity>
         )}
         <FlatList
           ref={r => (refLists.current.lr = r)}
@@ -530,7 +578,6 @@ const DaYunLiuNian: FC<{
                 style={[styles.dayunItem, isActive && styles.dayunItemActive]}
                 onPress={() => {
                   setActiveLrIndex(index);
-                  triggerPillarDataShow(true);
                 }}>
                 {/* <Text>{JQ_12[index]}</Text> */}
                 <Text style={[styles.itemText, {color}]}>
@@ -545,8 +592,29 @@ const DaYunLiuNian: FC<{
       </View>
     );
   };
+
+  const activeDyData = paipanInfo.big.data[activeDyIndex];
+
   return (
     <View style={styles.container}>
+      <View style={styles.tools}>
+        <Text>起运：出生后{paipanInfo.big.start_desc}</Text>
+        {activeDyData.years[activeLnIndex] && (
+          <Text>{`${
+            activeDyData.years[activeLnIndex].year - paipanInfo.yy
+          }岁`}</Text>
+        )}
+        <Row>
+          <TouchableOpacity
+            style={styles.toolNowBtn}
+            onPress={() => triggerPillarDataShow(false)}>
+            <Text style={styles.toolNowText}>关闭</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.toolNowBtn} onPress={handleNow}>
+            <Text style={styles.toolNowText}>今</Text>
+          </TouchableOpacity>
+        </Row>
+      </View>
       {renderDayun()}
       {renderLiunian()}
       {renderLiuyue()}
@@ -559,21 +627,20 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
   },
-  dayunGrid: {
+  tools: {
     marginTop: 12,
-  },
-  rowList: {
-    marginTop: 12,
-    flexDirection: 'row',
-  },
-  dayunTools: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: 4,
     paddingBottom: 16,
   },
+  rowList: {
+    marginTop: 12,
+    flexDirection: 'row',
+  },
   toolNowBtn: {
+    marginLeft: 8,
     padding: 8,
     borderRadius: 8,
     backgroundColor: '#fff',
@@ -582,6 +649,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: COLOR_THEME_COMMON,
+  },
+  activeListTitle: {
+    backgroundColor: COLOR_THEME_COMMON,
+    color: '#fff',
+  },
+  listTitleText: {
+    fontSize: 18,
+    // fontWeight: '400',
   },
   dayunItem: {
     justifyContent: 'center',
@@ -593,10 +668,6 @@ const styles = StyleSheet.create({
   itemText: {
     marginBottom: 4,
     fontSize: 14,
-  },
-  listTitleText: {
-    fontSize: 18,
-    // fontWeight: '400',
   },
   dayunItemActive: {
     backgroundColor: '#EEEEEE',
