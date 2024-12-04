@@ -253,6 +253,7 @@ enum DZ_GX {
   刑 = '刑',
   破 = '破',
   三刑 = '三刑',
+  三刑之二 = '三刑之二',
   三合 = '三合',
   三会 = '三会',
   拱合 = '拱合',
@@ -377,6 +378,9 @@ class WuXingClass {
     },
     get [DZ_GX.拱会]() {
       return this[DZ_GX.三会];
+    },
+    get [DZ_GX.三刑之二]() {
+      return this[DZ_GX.三刑];
     },
   };
 
@@ -640,7 +644,11 @@ class WuXingClass {
 
     for (let key in this.map_dzgx) {
       this.map_dzgx[key as DZ_GX].forEach((gxItems, index) => {
-        if (key === DZ_GX.拱会 || key === DZ_GX.拱合) {
+        if (
+          key === DZ_GX.拱会 ||
+          key === DZ_GX.拱合 ||
+          key === DZ_GX.三刑之二
+        ) {
           if (
             c === null &&
             a !== b &&
@@ -649,12 +657,19 @@ class WuXingClass {
           ) {
             const rest = gxItems.filter(i => i !== a && i !== b);
             if (!target.includes(rest[0])) {
-              // console.log(key, a, b, index);
-              res.push({
-                // text: `${a}${b}${key[0]}${rest[0]}半三${key[1]}${map_3he[index]}局`,
-                text: `${a}${b}拱${key[1]}${map_3he[index]}局`,
-                color: '',
-              });
+              if (key === DZ_GX.三刑之二) {
+                res.push({
+                  text: `${a}${b}相刑`,
+                  color: '',
+                });
+              } else {
+                // console.log(key, a, b, index);
+                res.push({
+                  // text: `${a}${b}${key[0]}${rest[0]}半三${key[1]}${map_3he[index]}局`,
+                  text: `${a}${b}拱${key[1]}${map_3he[index]}局`,
+                  color: '',
+                });
+              }
             }
           }
         } else if (
