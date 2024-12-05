@@ -57,12 +57,15 @@ const Paipan: FC<
     setIsShowHours(false);
   };
 
-  const onSubmit = async (isSave: boolean = true) => {
+  const onSubmit = async (
+    isSave: boolean = true,
+    targetDate = date.getTime(),
+  ) => {
     const newData = await loadStorage(BaziListKey, []);
     const newObj: RootStackParamList[StackPages.BaziInfo] = {
-      name: name === '' ? '未命名' : name,
+      name: isSave ? (name === '' ? '未命名' : name) : '即时局',
       gender: gender ? 0 : 1, // 保存时按照那边的规则 0 男 1 女
-      date: date.getTime(),
+      date: targetDate,
       id: Date.now() * Math.random(),
     };
     newData.unshift(newObj);
@@ -144,7 +147,7 @@ const Paipan: FC<
           <TouchableOpacity
             onPress={() => {
               setDate(new Date());
-              onSubmit(false);
+              onSubmit(false, Date.now());
             }}>
             <Text style={styles.setNow}>即时起局</Text>
           </TouchableOpacity>

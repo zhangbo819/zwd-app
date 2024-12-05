@@ -170,7 +170,7 @@ const BaseInfo: FC<{
         WuXing5.map(i => ({name: i, number: 0, ten2: ''})),
       );
 
-    console.log('wuxingCgNumber', wuxingCgNumber);
+    // console.log('wuxingCgNumber', wuxingCgNumber);
 
     const pageBazi = WuXing.getSiZhuDetails(infoBazi);
 
