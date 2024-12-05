@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import * as Progress from 'react-native-progress';
+import Icon5 from 'react-native-vector-icons/Ionicons';
 
 import ShowColors from '../../../components/ShowColors';
 import {Col, Row} from '../../../components/Layout';
@@ -47,6 +48,8 @@ export type PageDataType = {
   wuxingCgNumber: {name: WX; number: number; ten2: string}[];
   yueling: WX;
   bazi: sizhuDetailsItem[];
+  wu_numbs_text: string;
+  cg_numbs_text: string;
 };
 
 const BaseInfo: FC<{
@@ -65,6 +68,8 @@ const BaseInfo: FC<{
     // isDeLing: false,
     // isDedi: false,
     bazi: [],
+    wu_numbs_text: '',
+    cg_numbs_text: '',
   });
   const [ytgcgData, setYtgcgData] = useState({
     weight_text: '',
@@ -156,14 +161,16 @@ const BaseInfo: FC<{
           r.forEach(j => {
             if (j.name === WuXing.getWuxing(i)) {
               j.number++;
-              j.ten2 = wxTenMap[j.name];
             }
+            j.ten2 = wxTenMap[j.name];
           });
 
           return r;
         },
         WuXing5.map(i => ({name: i, number: 0, ten2: ''})),
       );
+
+    console.log('wuxingCgNumber', wuxingCgNumber);
 
     const pageBazi = WuXing.getSiZhuDetails(infoBazi);
 
@@ -181,6 +188,8 @@ const BaseInfo: FC<{
       // isDeLing: yuelingIndex === 0 || yuelingIndex === 1,
       // isDedi: pageBazi[2].tg_is_qg,
       bazi: pageBazi,
+      wu_numbs_text: _getWXNumbText(wuxingNumber),
+      cg_numbs_text: _getWXNumbText(wuxingCgNumber, true),
     });
   }, [paipanInfo]);
 
@@ -400,9 +409,23 @@ const BaseInfo: FC<{
               );
             },
           )}
-          <Text style={styles.hint}>
-            五行数量总数为8（8字4天干4地支本气，不加藏干）3个及以上为多，1个及以下为少。
-          </Text>
+          <TouchModal
+            text="五行数量总数为8（8字4天干4地支本气，不加藏干）3个及以上为多，1个及以下为少。"
+            title="提示">
+            <Row alignItems="center">
+              <Icon5
+                name="star"
+                style={{
+                  fontSize: 18,
+                  marginRight: 4,
+                  color: COLOR_THEME_COMMON,
+                }}
+              />
+              <Text style={[{color: '#000', fontSize: 18, fontWeight: 'bold'}]}>
+                {isShowDzcg ? pageData.cg_numbs_text : pageData.wu_numbs_text}
+              </Text>
+            </Row>
+          </TouchModal>
         </View>
 
         {/* <Text style={styles.wuxingTitle2}>二、五行力量</Text>
@@ -426,6 +449,11 @@ const BaseInfo: FC<{
 
         <Text style={styles.wuxingTitle2}>二、各柱力量</Text>
         <TabWuXingLi pageData={pageData} />
+
+        {/* <Text style={styles.wuxingTitle2}>三、格局</Text>
+        <View style={styles.wuxingView}>
+          <Text style={styles.commonText}>润下格</Text>
+        </View> */}
       </View>
 
       {/* 天干地支关系表 */}
@@ -438,6 +466,43 @@ const BaseInfo: FC<{
     </ScrollView>
   );
 };
+
+function _getWXNumbText(
+  wuxingNumber: PageDataType['wuxingNumber'],
+  isCg: boolean = false,
+) {
+  const bazi_wx = wuxingNumber.reduce<WX[]>((r, i) => {
+    if (i.number) {
+      new Array(i.number).fill(1).forEach(() => {
+        r.push(i.name);
+      });
+    }
+    return r;
+  }, []);
+  // console.log('bazi_wx', bazi_wx);
+  const {wu_numbs, arr_wu_nums} = WuXing.getWxNumbs(bazi_wx);
+
+  const attr = Object.keys(wu_numbs).every(key => wu_numbs[key as WX] > 0)
+    ? '五行俱全; '
+    : '';
+
+  const limit = isCg ? 4 : 3;
+
+  const wu_numbs_text = arr_wu_nums
+    .reduce((r, i, index) => {
+      if (i?.length) {
+        if (index === 0) {
+          r?.push('五行缺' + i?.join('、'));
+        } else if (index >= limit) {
+          r?.push(i?.join('、') + `${index === limit ? '较' : '过'}多`);
+        }
+      }
+      return r;
+    }, [])
+    ?.join('; ');
+
+  return attr + wu_numbs_text;
+}
 
 const styles = StyleSheet.create({
   contentContainer: {

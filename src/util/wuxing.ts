@@ -819,60 +819,67 @@ class WuXingClass {
     return res;
   }
 
-  // 地支力量
-  public getDzPower(bazi: JZ_60[], tenMap: Ten[]) {
-    const dzs = bazi.map(i => i[1] as DZ);
-    const wx_dz = dzs.map(i => this.getWuxing(i) as WX);
-
-    const wx_numb = wx_dz.reduce(
+  // 获取五行数量数组
+  public getWxNumbs(wxs: WX[]) {
+    const wu_numbs = wxs.reduce(
       (r, i) => {
         r[i]++;
         return r;
       },
       {[WX.金]: 0, [WX.木]: 0, [WX.水]: 0, [WX.火]: 0, [WX.土]: 0},
     );
-    const arr_wu_nums = Array(5)
+    const arr_wu_nums = Array(8)
       .fill(null)
       .map((_, index) => {
-        const active = Object.keys(wx_numb).filter(
-          key => wx_numb[key as WX] === index,
+        const active = Object.keys(wu_numbs).filter(
+          key => wu_numbs[key as WX] === index,
         );
         if (active.length) {
           return active;
         }
         return null;
       });
-    console.log('arr_wu_nums', arr_wu_nums);
+    // console.log('wu_numbs, arr_wu_nums', wu_numbs, arr_wu_nums);
+    return {arr_wu_nums, wu_numbs};
+  }
+
+  // 地支力量
+  public getDzPower(bazi: JZ_60[], _tenMap: Ten[]) {
+    const dzs = bazi.map(i => i[1] as DZ);
+    const wx_dz = dzs.map(i => this.getWuxing(i) as WX);
+    const {wu_numbs} = this.getWxNumbs(wx_dz);
+
     let max_num = 0;
     let max_wx = WX.金;
-    Object.keys(wx_numb).forEach(i => {
-      if (wx_numb[i as WX] > max_num) {
-        max_num = wx_numb[i as WX];
+    Object.keys(wu_numbs).forEach(i => {
+      if (wu_numbs[i as WX] > max_num) {
+        max_num = wu_numbs[i as WX];
         max_wx = i as WX;
       }
     });
-    console.log('wx_numb', wx_numb, max_wx);
+
+    console.log('wu_numbs', wu_numbs, max_wx);
 
     const [, [, yueling]] = bazi;
     const yueling_wuxing = this.getWuxing(yueling) as WX;
     // console.log('yueling_wuxing', yueling_wuxing);
 
-    console.log('tenMap', tenMap);
+    // console.log('tenMap', tenMap);
     const yuelingMap = YueLinByWuxing[yueling_wuxing];
     // console.log('yuelingMap', yuelingMap);
 
     const max_yue_index = yuelingMap.findIndex(i => i === yueling_wuxing);
     // console.log('yuelingMap', yuelingMap, max_yue_index);
 
-    if (wx_numb[max_wx] === 4) {
+    if (wu_numbs[max_wx] === 4) {
       // get
-    } else if (wx_numb[max_wx] === 3) {
+    } else if (wu_numbs[max_wx] === 3) {
       if (max_yue_index === 0) {
         // get
       } else {
         // this.map_dzgx[DZ_GX.三会]
       }
-    } else if (wx_numb[max_wx] === 2) {
+    } else if (wu_numbs[max_wx] === 2) {
       if (max_yue_index === 0) {
         // get
       } else {
@@ -884,3 +891,53 @@ class WuXingClass {
 }
 
 export const WuXing = new WuXingClass();
+
+// type Command = {
+//   monthBranch: string; // 月令地支
+//   timeBranch: string; // 时辰地支
+// };
+
+// const EARTHLY_BRANCHES = [
+//   '子',
+//   '丑',
+//   '寅',
+//   '卯',
+//   '辰',
+//   '巳',
+//   '午',
+//   '未',
+//   '申',
+//   '酉',
+//   '戌',
+//   '亥',
+// ];
+
+// /**
+//  * 根据月令和时辰推算命宫
+//  * @param command 月令和时辰地支
+//  * @returns 命宫的地支
+//  */
+// function calculateMingGongFromCommand(command: Command): string {
+//   const {monthBranch, timeBranch} = command;
+
+//   // 获取月令和时辰地支的索引
+//   const monthIndex = EARTHLY_BRANCHES.indexOf(monthBranch);
+//   const timeIndex = EARTHLY_BRANCHES.indexOf(timeBranch);
+
+//   if (monthIndex === -1 || timeIndex === -1) {
+//     throw new Error('输入的地支不正确，请检查');
+//   }
+
+//   // 计算命宫地支
+//   const mingGongIndex = (monthIndex + timeIndex) % 12;
+
+//   return EARTHLY_BRANCHES[mingGongIndex];
+// }
+
+// // 示例
+// const exampleCommand: Command = {
+//   monthBranch: '申',
+//   timeBranch: '卯',
+// };
+
+// console.log(calculateMingGongFromCommand(exampleCommand));
