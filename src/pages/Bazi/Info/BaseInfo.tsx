@@ -447,7 +447,7 @@ const BaseInfo: FC<{
           </Row>
         </View> */}
 
-        <Text style={styles.wuxingTitle2}>二、各柱力量</Text>
+        <Text style={styles.wuxingTitle2}>二、各柱天干</Text>
         <TabWuXingLi pageData={pageData} />
 
         {/* <Text style={styles.wuxingTitle2}>三、格局</Text>

@@ -293,6 +293,9 @@ export type sizhuDetailsItem = {
   // tg_power: TG_POWER_LEVEL; // 天干力量
   dz_level_text: string; // 地支透干等级
   tg_is_tougan: boolean; // 是否透干
+  isDeShi: boolean; // 是否得势
+  gen_dz: DZ | null; // 天干的根对应的地支，null为无根
+  deshi_text: string[];
 };
 
 function _exchangeGenqi(map: {
@@ -674,23 +677,24 @@ class WuXingClass {
           }
         } else if (
           gxItems.length === inputs.length &&
-          gxItems.sort((x, y) => x.charCodeAt(0) - y.charCodeAt(0)).join('') ===
-            inputs
+          [...gxItems]
+            .sort((x, y) => x.charCodeAt(0) - y.charCodeAt(0))
+            .join('') === inputs
         ) {
           switch (key) {
             // TODO use color
             case DZ_GX.合:
               const map_he = [WX.土, WX.木, WX.火, WX.金, WX.水, WX.土];
               res.push({
-                text: gxItems[0] + gxItems[1] + DZ_GX.合 + map_he[index],
+                text: gxItems.join('') + DZ_GX.合 + map_he[index],
                 color: '',
               });
               break;
             case DZ_GX.暗合:
-              res.push({text: gxItems[0] + gxItems[1] + DZ_GX.暗合, color: ''});
+              res.push({text: gxItems.join('') + DZ_GX.暗合, color: ''});
               break;
             case DZ_GX.冲:
-              res.push({text: gxItems[0] + gxItems[1] + DZ_GX.冲, color: ''});
+              res.push({text: gxItems.join('') + DZ_GX.冲, color: ''});
               break;
             case DZ_GX.穿:
               const map_chuan = [
@@ -715,27 +719,27 @@ class WuXingClass {
             case DZ_GX.刑:
               let text = '';
               if (a === b) {
-                text = gxItems[0] + gxItems[1] + '自刑';
+                text = gxItems.join('') + '自刑';
               } else {
-                text = gxItems[0] + gxItems[1] + '相刑';
+                text = gxItems.join('') + '相刑';
               }
               res.push({text, color: ''});
               break;
             case DZ_GX.破:
-              res.push({text: gxItems[0] + gxItems[1] + DZ_GX.破, color: ''});
+              res.push({text: gxItems.join('') + DZ_GX.破, color: ''});
               break;
             case DZ_GX.三刑:
-              res.push({text: a + b + c + DZ_GX.三刑, color: ''});
+              res.push({text: gxItems.join('') + DZ_GX.三刑, color: ''});
               break;
             case DZ_GX.三合:
               res.push({
-                text: a + b + c + DZ_GX.三合 + map_3he[index] + '局',
+                text: gxItems.join('') + DZ_GX.三合 + map_3he[index] + '局',
                 color: '',
               });
               break;
             case DZ_GX.三会:
               res.push({
-                text: a + b + c + DZ_GX.三会 + map_3he[index] + '局',
+                text: gxItems.join('') + DZ_GX.三会 + map_3he[index] + '局',
                 color: '',
               });
               break;
@@ -771,27 +775,35 @@ class WuXingClass {
       );
 
       // 根气情况
+      let tg_level = TG_LEVEL.无根气;
       let tg_level_text = TG_LEVEL[TG_LEVEL.无根气];
       let tg_opacity = 0.3;
       let tg_is_qg = false;
       const tg_genqi = this.map_tg_genqi[tg];
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      for (let key in tg_genqi) {
-        if (dzs.find(d => tg_genqi[TG_LEVEL.禄].includes(d))) {
-          tg_level_text = TG_LEVEL[TG_LEVEL.本气根];
-          tg_opacity = 1;
-          tg_is_qg = true;
-        } else if (dzs.find(d => tg_genqi[TG_LEVEL.刃].includes(d))) {
-          tg_level_text = TG_LEVEL[TG_LEVEL.本气根];
-          tg_opacity = 1;
-          tg_is_qg = true;
-        } else if (dzs.find(d => tg_genqi[TG_LEVEL.中气根].includes(d))) {
-          tg_level_text = TG_LEVEL[TG_LEVEL.中气根];
-          tg_opacity = 7;
-        } else if (dzs.find(d => tg_genqi[TG_LEVEL.余气根].includes(d))) {
-          tg_level_text = TG_LEVEL[TG_LEVEL.余气根];
-          tg_opacity = 0.5;
-        }
+      // console.log('tg_genqi', tg, tg_genqi,);
+      if (dzs.find(d => tg_genqi[TG_LEVEL.禄].includes(d))) {
+        tg_level = TG_LEVEL.禄;
+        tg_level_text = TG_LEVEL[TG_LEVEL.本气根];
+        tg_opacity = 1;
+        tg_is_qg = true;
+      } else if (dzs.find(d => tg_genqi[TG_LEVEL.刃].includes(d))) {
+        tg_level = TG_LEVEL.刃;
+        tg_level_text = TG_LEVEL[TG_LEVEL.本气根];
+        tg_opacity = 1;
+        tg_is_qg = true;
+      } else if (dzs.find(d => tg_genqi[TG_LEVEL.中气根].includes(d))) {
+        tg_level = TG_LEVEL.中气根;
+        tg_level_text = TG_LEVEL[tg_level];
+        tg_opacity = 7;
+      } else if (dzs.find(d => tg_genqi[TG_LEVEL.余气根].includes(d))) {
+        tg_level = TG_LEVEL.余气根;
+        tg_level_text = TG_LEVEL[tg_level];
+        tg_opacity = 0.5;
+      }
+
+      let gen_dz: null | DZ = null;
+      if (tg_level !== TG_LEVEL.无根气) {
+        gen_dz = dzs.find(d => tg_genqi[tg_level].includes(d)) || null;
       }
 
       let dz_level_text = DZ_LEVEL[DZ_LEVEL.未透干];
@@ -813,7 +825,43 @@ class WuXingClass {
         tg_color: WuXing.getColorByWuxing(tg),
         dz_level_text,
         tg_is_tougan,
+        gen_dz,
+        isDeShi: false,
+        deshi_text: [],
       };
+    });
+
+    // 得势情况
+    // 1. 地支关系
+    const dz_gx = this.getDzRelation(bazi.map(i => i[1] as DZ));
+    // console.log('dz_gx', JSON.stringify(dz_gx, null, 4));
+    dz_gx.forEach(i => {
+      i.relation.forEach(relation => {
+        if (
+          relation.text.includes(DZ_GX.三合) ||
+          relation.text.includes(DZ_GX.三会)
+        ) {
+          const zhongshen = res.find(j => j.gen_dz === relation.text[1]); // TODO 1
+          if (zhongshen) {
+            zhongshen.isDeShi = true;
+            zhongshen.deshi_text.push(relation.text);
+          }
+        }
+      });
+    });
+    // 2. 成众判断
+    const {wu_numbs} = this.getWxNumbs(
+      res.map(i => this.getWuxing(i.dz) as WX),
+    );
+    // console.log('wu_numbs', wu_numbs);
+    res.forEach(item => {
+      if (item.gen_dz) {
+        const wx = this.getWuxing(item.tg) as WX;
+        if (wu_numbs[wx] >= 2) {
+          item.isDeShi = true;
+          item.deshi_text.push(wx + '成众');
+        }
+      }
     });
 
     return res;

@@ -837,6 +837,7 @@ const styles = StyleSheet.create({
     borderColor: COLOR_THEME_COMMON,
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 4,
+    opacity: 0.8,
 
     // shadowColor: '#000',
     // shadowOffset: {
@@ -850,6 +851,7 @@ const styles = StyleSheet.create({
   activeListTitle: {
     backgroundColor: COLOR_THEME_COMMON,
     color: '#fff',
+    opacity: 1,
   },
   listTitleText: {
     fontSize: 18,

@@ -152,7 +152,9 @@ const TabWuXingLi: FC<{
             <Text style={styles.commonText}>
               通根情况:{' '}
               <Text style={styles.bold}>
-                {activeZhu?.tg_is_qg ? '有强根' : '无强根'}
+                {`${activeZhu?.tg_is_qg ? '有强根' : '无强根'}(${
+                  activeZhu.tg_level_text
+                })`}
               </Text>
             </Text>
             {/* <Text style={styles.commonText}>
@@ -180,6 +182,14 @@ const TabWuXingLi: FC<{
           </Text> */}
       </View>
       {/* 得势 三合三会 */}
+      <View style={styles.wuxingView}>
+        <Text style={styles.commonText}>
+          得势情况：
+          <Text style={styles.bold}>
+            {activeZhu?.isDeShi ? `得势(${activeZhu.deshi_text})` : '未得势'}
+          </Text>
+        </Text>
+      </View>
     </View>
   );
 };
