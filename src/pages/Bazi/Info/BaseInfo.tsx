@@ -483,7 +483,7 @@ function _getWXNumbText(
   const {wu_numbs, arr_wu_nums} = WuXing.getWxNumbs(bazi_wx);
 
   const attr = Object.keys(wu_numbs).every(key => wu_numbs[key as WX] > 0)
-    ? '五行俱全; '
+    ? '五行俱全；'
     : '';
 
   const limit = isCg ? 4 : 3;
@@ -499,7 +499,7 @@ function _getWXNumbText(
       }
       return r;
     }, [])
-    ?.join('; ');
+    ?.join('；');
 
   return attr + wu_numbs_text;
 }
