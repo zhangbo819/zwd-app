@@ -841,7 +841,7 @@ class WuXingClass {
           relation.text.includes(DZ_GX.三合) ||
           relation.text.includes(DZ_GX.三会)
         ) {
-          const zhongshen = res.find(j => j.gen_dz === relation.text[1]); // TODO 1
+          const zhongshen = res.find(j => j.gen_dz === relation.text[1]); // TODO index 1
           if (zhongshen) {
             zhongshen.isDeShi = true;
             zhongshen.deshi_text.push(relation.text);

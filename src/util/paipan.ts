@@ -1398,8 +1398,13 @@ class Paipan {
     const days: number[][] = [];
     const rest_days: number[][] = [];
     GetPureJQsinceSpring(yy).forEach(i => {
-      const [y, m, ddd, hhh, mtt, sss] = Julian2Solar(i);
-      const r = this.GetGanZhi(y, m, ddd, hhh, mtt, sss + 1);
+      let [y, m, ddd, hhh, mtt, sss] = Julian2Solar(i);
+      if (++sss && sss === 60) {
+        // 辰月特殊处理一下
+        sss = 0;
+        mtt++;
+      }
+      const r = this.GetGanZhi(y, m, ddd, hhh, mtt, sss);
       // console.log('r', r.ix, Julian2Solar(r.jq[r.ix]))
       if (this.ctg[r.tg[0]] + this.cdz[r.dz[0]] === tgdz) {
         // console.log(
@@ -1510,7 +1515,7 @@ class Paipan {
       const new_hh = hh + i * 2 - 1;
       const time_text = `${i === 0 ? 23 : new_hh}-${new_hh + 2}`;
       res.push({
-        name: this.ctg[tg_item] + this.cdz[dz_item] as JZ_60,
+        name: (this.ctg[tg_item] + this.cdz[dz_item]) as JZ_60,
         hh: new_hh,
         time_text,
       });

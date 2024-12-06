@@ -58,6 +58,11 @@ const DaYunLiuNian: FC<{
     ls: null,
   });
 
+  const refLyLsData = useRef({ly_Data: lyData, ls_Data: lsData});
+  useEffect(() => {
+    refLyLsData.current = {ly_Data: lyData, ls_Data: lsData};
+  }, [lyData, lsData]);
+
   // 大运流年流月等切换后自动更新四柱表
   useEffect(() => {
     // 初始化时不展示大运流年表
@@ -151,14 +156,15 @@ const DaYunLiuNian: FC<{
         LnItem.isShow = s[LnIndex].isShow;
         s[LnIndex] = LnItem;
       }
+      const {ly_Data, ls_Data} = refLyLsData.current;
       // 流月
-      if (lyData) {
-        const activeLyData = lyData[activeLyIndex];
-        const activeLrData = activeLyData.days[activeLrIndex];
+      if (ly_Data) {
+        const activeLyData = ly_Data[activeLyIndex];
+        const activeLrData = activeLyData.days[activeLrIndex]; // TODO err activeLrIndex
         const ly_tgdz = activeLyData.name;
         const lr_tgdz = activeLrData?.name;
         const ls_tgdz =
-          lsData === null ? JZ_60.甲子 : lsData[activeLsIndex]?.name;
+          ls_Data === null ? JZ_60.甲子 : ls_Data[activeLsIndex]?.name;
 
         const {dzcg: lyr_dzcg, dzcg_text: lyr_dzcg_text} = paipan.getDzcgText(
           [ly_tgdz, lr_tgdz, ls_tgdz].map(item =>
@@ -257,8 +263,6 @@ const DaYunLiuNian: FC<{
     activeLrIndex,
     activeLsIndex,
     activeLyIndex,
-    lsData,
-    lyData,
     paipanInfo,
     setPillarData,
   ]);
