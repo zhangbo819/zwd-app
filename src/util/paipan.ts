@@ -10,6 +10,7 @@
  */
 
 import {DZ_12, JZ_60, Ten, TG, TG_10, WuXing5} from './wuxing';
+import {XZ, XZ_12} from './XingZuo';
 
 /**
  * 均值朔望月長(mean length of synodic month)
@@ -785,20 +786,7 @@ class Paipan {
    * 十二星座
    * @var array
    */
-  cxz = [
-    '水瓶座',
-    '双鱼座',
-    '白羊座',
-    '金牛座',
-    '双子座',
-    '巨蟹座',
-    '狮子座',
-    '处女座',
-    '天秤座',
-    '天蝎座',
-    '射手座',
-    '摩羯座',
-  ]; //char of XingZuo
+  cxz = XZ_12.slice(10).concat(XZ_12.slice(0, -2)); //char of XingZuo
   /**
    * 星期
    * @var array
@@ -1276,7 +1264,7 @@ class Paipan {
         data: [],
       },
       bazi: [],
-      xz: '',
+      xz: XZ.白羊座,
       sx: '',
       yinli: [],
       yangli: [],
@@ -1683,7 +1671,7 @@ export type PaipanInfo = {
     }[];
   };
   bazi: [JZ_60, JZ_60, JZ_60, JZ_60]; // 八字文字形式
-  xz: string; // 星座
+  xz: XZ; // 星座
   sx: string; // 属相
   yinli: number[]; // 阴历
   yangli: (string | number)[]; // 阳历

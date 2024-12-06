@@ -30,6 +30,7 @@ import {
   COLOR_THEME_COMMON,
   viewportWidth,
 } from '../../../constant/UI';
+import XingZuo, {XingZuoGetDataRes} from '../../../util/XingZuo';
 import TabWuXingLi from './components/TabWuXingLi';
 import {TouchModal} from './components/BaziModal';
 
@@ -41,6 +42,7 @@ const SHOW_DZ_12 = [
 ];
 
 export type PageDataType = {
+  xz: XingZuoGetDataRes | null;
   dzcg: number[][];
   dzcg_text: string[][];
   rizhuWuxing: WX;
@@ -59,6 +61,7 @@ const BaseInfo: FC<{
   const {paipanInfo} = props;
 
   const [pageData, setPageData] = useState<PageDataType>({
+    xz: null,
     dzcg: [],
     dzcg_text: [],
     rizhuWuxing: WX.土,
@@ -179,6 +182,7 @@ const BaseInfo: FC<{
     // console.log(JSON.stringify(pageBazi, null, 4))
 
     setPageData({
+      xz: XingZuo.getData(paipanInfo.xz),
       dzcg,
       dzcg_text,
       rizhuWuxing,
@@ -356,14 +360,32 @@ const BaseInfo: FC<{
             <Text style={styles.commonText}>属相：{paipanInfo.sx}</Text>
           </Col>
           <Col>
-            <Text style={styles.commonText}>星座：{paipanInfo.xz}</Text>
+            <Text style={[styles.commonText]}>
+              阴阳：
+              <Text>{paipanInfo.tg[2] % 2 === 0 ? '阳' : '阴'}</Text>
+            </Text>
+          </Col>
+        </Row>
+        <View style={[styles.wuxingView, {paddingBottom: 0}]} />
+        <Row>
+          <Col>
+            <Text style={styles.commonText}>星座：{pageData.xz?.xz}</Text>
+          </Col>
+          <Col>
+            <Text style={styles.commonText}>对宫：{pageData.xz?.duigong}</Text>
           </Col>
         </Row>
         <Row>
-          <Text style={[styles.commonText]}>
-            阴阳：
-            <Text>{paipanInfo.tg[2] % 2 === 0 ? '阳' : '阴'}</Text>
-          </Text>
+          <Col>
+            <Text style={styles.commonText}>
+              四系：{pageData.xz?.class_four}
+            </Text>
+          </Col>
+          <Col>
+            <Text style={styles.commonText}>
+              三宫：{pageData.xz?.palace_three}
+            </Text>
+          </Col>
         </Row>
       </View>
 
