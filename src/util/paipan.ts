@@ -1417,7 +1417,12 @@ class Paipan {
       }
     });
     // console.log('days', days);
-    const days_JZ_60: {name: JZ_60; year: number, mouth: number; day: number}[][] = [];
+    const days_JZ_60: {
+      name: JZ_60;
+      year: number;
+      mouth: number;
+      day: number;
+    }[][] = [];
     // const days_JZ_60: JZ_60[][] = [];
     for (let i = 0; i < days.length; i++) {
       const start = days[i];
@@ -1512,7 +1517,7 @@ class Paipan {
     let dz_item = dz[3];
     const res = [];
 
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i <= 12; i++) {
       if (i !== 0) {
         tg_item++;
         dz_item++;
@@ -1524,7 +1529,11 @@ class Paipan {
         }
       }
       const new_hh = hh + i * 2 - 1;
-      const time_text = `${i === 0 ? 23 : new_hh}-${new_hh + 2}`;
+      let end_hh = new_hh + 2;
+      if (end_hh > 24) {
+        end_hh = 1;
+      }
+      const time_text = `${i === 0 ? 23 : new_hh}-${end_hh}`;
       res.push({
         name: (this.ctg[tg_item] + this.cdz[dz_item]) as JZ_60,
         hh: new_hh,
@@ -1538,7 +1547,7 @@ class Paipan {
 
   // 79 710 711, 80 81 - 811, - , 611, 70, 71, 72, 73
   private _getJZ60SByStartEnd(start: number[], end: number[]) {
-    const res: {name: JZ_60; year: number, mouth: number; day: number}[] = [];
+    const res: {name: JZ_60; year: number; mouth: number; day: number}[] = [];
     // const res: JZ_60[] = [];
     const [startX, startY] = start;
     const [endX, endY] = end;
