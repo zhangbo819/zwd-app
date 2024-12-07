@@ -316,6 +316,7 @@ const DaYunLiuNian: FC<{
     const newLyIndex = newLiuYueData.findIndex(i => {
       const last_day = i.days[i.days.length - 1];
       const mouth_max = new Date();
+      mouth_max.setFullYear(last_day.year);
       mouth_max.setMonth(last_day.mouth - 1);
       mouth_max.setDate(last_day.day);
       mouth_max.setHours(23, 59, 59);
@@ -666,7 +667,11 @@ const DaYunLiuNian: FC<{
         )}
         <FlatList
           ref={r => (refLists.current.lr = r)}
-          data={lyData === null ? [] : lyData[activeLyIndex].days}
+          data={
+            lyData === null || !lyData[activeLyIndex]
+              ? []
+              : lyData[activeLyIndex].days
+          }
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={i => 'Liuri_' + i.mouth + i.day + i.name}

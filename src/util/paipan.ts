@@ -1380,7 +1380,7 @@ class Paipan {
       year: number;
       mouth: number;
       day: number;
-      days: {name: JZ_60; mouth: number; day: number}[];
+      days: {name: JZ_60; year: number; mouth: number; day: number}[];
       // days: JZ_60[];
     }[] = [];
     const days: number[][] = [];
@@ -1397,7 +1397,11 @@ class Paipan {
       if (this.ctg[r.tg[0]] + this.cdz[r.dz[0]] === tgdz) {
         // console.log(
         //   'GetPureJQsinceSpring',
-        //   y,m,ddd,
+        //   y,
+        //   m,
+        //   ddd,
+        //   mtt,
+        //   sss,
         //   r.tg.map((_, j) => this.ctg[r.tg[j]] + this.cdz[r.dz[j]]),
         // );
         res.push({
@@ -1413,7 +1417,7 @@ class Paipan {
       }
     });
     // console.log('days', days);
-    const days_JZ_60: {name: JZ_60; mouth: number; day: number}[][] = [];
+    const days_JZ_60: {name: JZ_60; year: number, mouth: number; day: number}[][] = [];
     // const days_JZ_60: JZ_60[][] = [];
     for (let i = 0; i < days.length; i++) {
       const start = days[i];
@@ -1441,19 +1445,38 @@ class Paipan {
     };
 
     res.forEach((i, index) => {
-      let day = i.day;
+      let year = yy;
       let mouth = i.mouth;
+      let day = i.day;
+      // console.log('mouth, day', mouth, day);
       i.days = days_JZ_60[index].map((j, k) => {
         // console.log(j.name, i.day, k);
         if (k !== 0) {
           day++;
+        } else {
+          // 当下一天也和第一天一样，则用下一天的日期。这种情况发生在月份交替在处于公历一天中间时
+          const next_day_r = this.GetGanZhi(yy, mouth, day + 1, 1, 1, 1);
+          // console.log('next_day_r', next_day_r);
+          const [, , next_day_rizhu] = next_day_r.tg.map(
+            (_, next_day_r_i) =>
+              this.ctg[next_day_r.tg[next_day_r_i]] +
+              this.cdz[next_day_r.dz[next_day_r_i]],
+          );
+          if (next_day_rizhu === j.name) {
+            day++;
+          }
         }
 
         if (day > max_map[mouth]) {
           mouth++;
+          if (mouth >= 13) {
+            mouth = 1;
+            year++;
+          }
           day = 1;
         }
 
+        j.year = year;
         j.mouth = mouth;
         j.day = day;
 
@@ -1515,7 +1538,7 @@ class Paipan {
 
   // 79 710 711, 80 81 - 811, - , 611, 70, 71, 72, 73
   private _getJZ60SByStartEnd(start: number[], end: number[]) {
-    const res: {name: JZ_60; mouth: number; day: number}[] = [];
+    const res: {name: JZ_60; year: number, mouth: number; day: number}[] = [];
     // const res: JZ_60[] = [];
     const [startX, startY] = start;
     const [endX, endY] = end;
@@ -1528,6 +1551,7 @@ class Paipan {
         // res.push((TG_10[nowX] + DZ_12[nowY]) as JZ_60);
         res.push({
           name: (TG_10[nowX] + DZ_12[nowY]) as JZ_60,
+          year: 0,
           mouth: 0,
           day: 0,
         });
