@@ -540,9 +540,10 @@ const DaYunLiuNian: FC<{
                   setLyData(paipan.getLiuYueByYear(item.year, item.name));
                   setActiveLnIndex(index);
                   setLsData(null);
-                  if (title_active) {
-                    triggerPillarDataShow(true);
-                    triggerPillarDataShow(false, [PillarTitle.流时]);
+                  if (title_active || !lyData) {
+                    handleScrollToEnd();
+                    // triggerPillarDataShow(true);
+                    // triggerPillarDataShow(false, [PillarTitle.流时]);
                   }
                 }}>
                 <Text style={[styles.itemText, {color}]}>{item.year}</Text>
@@ -614,8 +615,9 @@ const DaYunLiuNian: FC<{
                   setActiveLyIndex(index);
                   setLsData(null);
                   if (title_active) {
-                    triggerPillarDataShow(true);
-                    triggerPillarDataShow(false, [PillarTitle.流时]);
+                    handleScrollToEnd();
+                    // triggerPillarDataShow(true);
+                    // triggerPillarDataShow(false, [PillarTitle.流时]);
                   }
                 }}>
                 <Text>{JQ_12[index]}</Text>
@@ -696,8 +698,9 @@ const DaYunLiuNian: FC<{
                   );
                   setLsData(newLsData);
                   setActiveLrIndex(index);
-                  if (title_active) {
-                    triggerPillarDataShow(true);
+                  if (title_active || !lsData) {
+                    handleScrollToEnd();
+                    // triggerPillarDataShow(true);
                   }
                 }}>
                 {/* <Text>{JQ_12[index]}</Text> */}
@@ -763,7 +766,8 @@ const DaYunLiuNian: FC<{
                 onPress={() => {
                   setActiveLsIndex(index);
                   if (title_active) {
-                    triggerPillarDataShow(true);
+                    handleScrollToEnd();
+                    // triggerPillarDataShow(true);
                   }
                 }}>
                 <Text style={[styles.itemText, {color}]}>{item.name[1]}时</Text>
