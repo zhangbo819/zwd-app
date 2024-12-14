@@ -1,5 +1,14 @@
-import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   Text,
@@ -79,9 +88,19 @@ const CareerList: FC<{
 
   // 页面滚动，更新页面后自动滚动回当前位置
   const refScrollView = useRef<ScrollView>(null);
+  const refScrollContentOffsetY = useRef(0);
+  const onScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) =>
+      (refScrollContentOffsetY.current = e.nativeEvent.contentOffset.y),
+    [],
+  );
   const handleScrollToEnd = () => {
+    const y = refScrollContentOffsetY.current;
     setTimeout(() => {
-      refScrollView.current?.scrollToEnd({animated: false});
+      // 如何在等待中用户主动滑动了，则放弃这次的返回底部操作
+      if (y === refScrollContentOffsetY.current) {
+        refScrollView.current?.scrollToEnd({animated: false});
+      }
     }, 50);
   };
 
@@ -348,7 +367,10 @@ const CareerList: FC<{
   };
 
   return (
-    <ScrollView ref={refScrollView} style={styles.pagesScrollView}>
+    <ScrollView
+      ref={refScrollView}
+      onScroll={onScroll}
+      style={styles.pagesScrollView}>
       {/* 基础信息 */}
       <View style={styles.topInfo}>
         <Row>

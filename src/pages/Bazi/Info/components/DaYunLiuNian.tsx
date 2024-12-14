@@ -32,7 +32,7 @@ const getListDataItem = (
 
   const dyItem = {
     title,
-    isShow: true,
+    isShow: false,
     zhuxing: paipanInfo.tenMap[dyZhuxingIndex],
     tg: name[0] as TG,
     dz: name[1] as DZ,
@@ -458,7 +458,7 @@ const DaYunLiuNian: FC<{
           keyExtractor={i => 'liunian_' + i.year}
           onScrollToIndexFailed={async info => {
             // console.log('ln onScrollToIndexFailed', info);
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 200));
             refLists.current.ln?.scrollToIndex({
               index: info.index,
               animated: true,
