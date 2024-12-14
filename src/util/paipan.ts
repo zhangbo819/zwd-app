@@ -1263,7 +1263,7 @@ class Paipan {
         // xiaoyun: [],
         data: [],
       },
-      bazi: [],
+      bazi: [JZ_60.甲子, JZ_60.甲子, JZ_60.甲子, JZ_60.甲子],
       xz: XZ.白羊座,
       sx: '',
       yinli: [],
@@ -1275,6 +1275,11 @@ class Paipan {
     const gd = gender === 0 ? 0 : 1; // 非男即女
 
     const {tg, dz, jd, jq, ix} = this.GetGanZhi(yy, mm, dd, hh, mt, ss);
+
+    // 四柱
+    for (var i = 0; i <= 3; i++) {
+      res.bazi[i] = (this.ctg[tg[i]] + this.cdz[dz[i]]) as JZ_60;
+    }
 
     const pn = tg[0] % 2; // 起大运.阴阳年干:0阳年 1阴年
 
@@ -1355,17 +1360,26 @@ class Paipan {
         res.big.data[index].years = year;
       }
     });
-    // console.log('xiaoyun', xiaoyun);
+
     // 小运
-    res.big.data.unshift({name: '小运', start_time: [], years: xiaoyun});
+    res.big.data.unshift({
+      name: '小运',
+      xiaoyuns: xiaoyun.map((_, index) => {
+        // 小运以时柱为始，每年向后增加
+        const shizhu_next_tg = res.tg[3] + 1 + index;
+        const shizhu_next_dz = res.dz[3] + 1 + index;
+        const [nextName] = this._getJZ60SByStartEnd(
+          [shizhu_next_tg, shizhu_next_dz],
+          [shizhu_next_tg + 1, shizhu_next_dz + 1],
+        );
+        return nextName;
+      }),
+      years: xiaoyun,
+    });
+    // console.log('xiaoyun', res.big.data[0]);
 
     res.xz = this.cxz[this.GetZodiac(mm, dd)]; // 星座
     res.sx = this.csa[dz[0]]; // 生肖
-
-    // 四柱
-    for (var i = 0; i <= 3; i++) {
-      res.bazi.push((this.ctg[tg[i]] + this.cdz[dz[i]]) as JZ_60);
-    }
 
     // 十神对应关系表
     res.tenMap = this.getTenGodMap(res.bazi[2][0]);
@@ -1431,7 +1445,14 @@ class Paipan {
         // 最后一个月特殊处理
         end = rest_days[0];
       }
-      days_JZ_60.push(this._getJZ60SByStartEnd(start, end));
+      days_JZ_60.push(
+        this._getJZ60SByStartEnd(start, end).map(n => ({
+          name: n,
+          year: 0,
+          mouth: 0,
+          day: 0,
+        })),
+      );
     }
 
     const max_map: Record<number, number> = {
@@ -1545,32 +1566,35 @@ class Paipan {
     return res;
   }
 
+  // 分别以一个六十甲子索引为始，另一个为终，拿到中间的所有天干地支组合
   // 79 710 711, 80 81 - 811, - , 611, 70, 71, 72, 73
   private _getJZ60SByStartEnd(start: number[], end: number[]) {
-    const res: {name: JZ_60; year: number; mouth: number; day: number}[] = [];
+    // const res: {name: JZ_60; year: number; mouth: number; day: number}[] = [];
+    const res: JZ_60[] = [];
     // const res: JZ_60[] = [];
     const [startX, startY] = start;
     const [endX, endY] = end;
-    let nowX = startX,
-      nowY = startY;
+    let nowX = startX % 10,
+      nowY = startY % 12;
     for (let i = 1; i <= 60; i++) {
       if (nowX === endX && nowY === endY) {
         break;
       } else {
         // res.push((TG_10[nowX] + DZ_12[nowY]) as JZ_60);
-        res.push({
-          name: (TG_10[nowX] + DZ_12[nowY]) as JZ_60,
-          year: 0,
-          mouth: 0,
-          day: 0,
-        });
+        res.push((TG_10[nowX] + DZ_12[nowY]) as JZ_60);
+        // res.push({
+        //   name: (TG_10[nowX] + DZ_12[nowY]) as JZ_60,
+        //   year: 0,
+        //   mouth: 0,
+        //   day: 0,
+        // });
         ++nowX;
         ++nowY;
-        if (nowY > 11) {
-          nowY = 0;
-        }
         if (nowX > 9) {
-          nowX = 0;
+          nowX = nowX % 10;
+        }
+        if (nowY > 11) {
+          nowY = nowY % 12;
         }
       }
     }
@@ -1697,11 +1721,18 @@ export type PaipanInfo = {
     start_desc: string; // 第几天起大运的文字描述
     start_time: any[]; // 大运开始时间的公历形式
     // xiaoyun: {name: string; year: number}[]; // 小运
-    data: {
-      name: JZ_60 | '小运'; // 天干地支
-      start_time: number[]; // 开始时间
-      years: {name: JZ_60; year: number}[]; // 每步大运中所有流年
-    }[];
+    data: (
+      | {
+          name: JZ_60; // 天干地支
+          start_time: number[]; // 开始时间
+          years: {name: JZ_60; year: number}[]; // 每步大运中所有流年
+        }
+      | {
+          name: '小运';
+          xiaoyuns: JZ_60[];
+          years: {name: JZ_60; year: number}[]; // 每步大运中所有流年
+        }
+    )[];
   };
   bazi: [JZ_60, JZ_60, JZ_60, JZ_60]; // 八字文字形式
   xz: XZ; // 星座

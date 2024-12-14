@@ -17,6 +17,40 @@ import NaYin from '../../../../util/Nayin';
 import Shensha from '../../../../util/shensha';
 import {PillarItem, PillarTitle} from '..';
 
+const getListDataItem = (
+  name: JZ_60,
+  title: PillarTitle,
+  paipanInfo: PaipanInfo,
+) => {
+  const {dzcg, dzcg_text} = paipan.getDzcgText(
+    [name].map(item => {
+      const i = paipan.cdz.findIndex(j => j === item?.[1]);
+      return i;
+    }),
+  );
+  const dyZhuxingIndex = TG_10.findIndex(j => j === name[0]);
+
+  const dyItem = {
+    title,
+    isShow: true,
+    zhuxing: paipanInfo.tenMap[dyZhuxingIndex],
+    tg: name[0] as TG,
+    dz: name[1] as DZ,
+    dzcg: dzcg_text[0],
+    fx: dzcg[0],
+    xingyun: NaYin.getXingYun(name, paipanInfo.bazi[2][0] as TG),
+    zizuo: NaYin.getXingYun(name, name[0] as TG),
+    nayin: NaYin.getNayin(name),
+    ss: Shensha.getData(
+      paipanInfo.bazi,
+      name,
+      paipanInfo.yinli,
+      paipanInfo.gender,
+    ),
+  };
+  return dyItem;
+};
+
 const DaYunLiuNian: FC<{
   paipanInfo: PaipanInfo;
   pillarShowData: PillarItem[];
@@ -74,55 +108,28 @@ const DaYunLiuNian: FC<{
     const dy = paipanInfo.big.data[activeDyIndex];
     let ln = dy.years[activeLnIndex];
     if (!ln) {
-      // 这种情况一般是点到了小运
-      const lnIndex = 0;
-      ln = dy.years[lnIndex];
-      setActiveLnIndex(lnIndex);
-      if (!ln) {
-        // 这种情况一般是出生不到一年就起大运，无小运
-        Alert.alert('该命主无小运');
-        return;
+      if (activeLnIndex !== 0) {
+        const lnIndex = 0;
+        ln = dy.years[lnIndex];
+        setActiveLnIndex(lnIndex);
+      } else {
+        // 变成0仍然没有, 这种情况一般是点到了小运
+        if (!ln) {
+          // 这种情况一般是出生不到一年就起大运，无小运
+          Alert.alert('该命主无小运');
+        }
       }
+      return;
     }
-
-    const {dzcg, dzcg_text} = paipan.getDzcgText(
-      [dy.name, ln.name].map(item => {
-        const i = paipan.cdz.findIndex(j => j === item?.[1]);
-        return i;
-      }),
-    );
 
     setPillarData(s => {
       // 大运
       const dyIndex = s.findIndex(i => i.title === PillarTitle.大运);
-      const dyZhuxingIndex = TG_10.findIndex(j => j === dy.name[0]);
-      const dyItem = {
-        title: PillarTitle.大运,
-        isShow: true,
-        zhuxing: paipanInfo.tenMap[dyZhuxingIndex],
-        tg: dy.name[0] as TG,
-        dz: dy.name[1] as DZ,
-        dzcg: dzcg_text[0],
-        fx: dzcg[0],
-        xingyun:
-          dy.name === '小运'
-            ? null
-            : NaYin.getXingYun(dy.name, paipanInfo.bazi[2][0] as TG),
-        zizuo:
-          dy.name === '小运'
-            ? null
-            : NaYin.getXingYun(dy.name, dy.name[0] as TG),
-        nayin: dy.name === '小运' ? '' : NaYin.getNayin(dy.name),
-        ss:
-          dy.name === '小运'
-            ? []
-            : Shensha.getData(
-                paipanInfo.bazi,
-                dy.name,
-                paipanInfo.yinli,
-                paipanInfo.gender,
-              ),
-      };
+      const dyItem = getListDataItem(
+        dy.name === '小运' ? dy.xiaoyuns[activeLnIndex] : dy.name,
+        PillarTitle.大运,
+        paipanInfo,
+      );
       if (dyIndex < 0) {
         s.push(dyItem);
       } else {
@@ -131,25 +138,8 @@ const DaYunLiuNian: FC<{
       }
       // 流年
       const LnIndex = s.findIndex(i => i.title === PillarTitle.流年);
-      const LnZhuxingIndex = TG_10.findIndex(j => j === ln.name[0]);
-      const LnItem = {
-        title: PillarTitle.流年,
-        isShow: true,
-        zhuxing: paipanInfo.tenMap[LnZhuxingIndex],
-        tg: ln.name[0] as TG,
-        dz: ln.name[1] as DZ,
-        dzcg: dzcg_text[1],
-        fx: dzcg[1],
-        xingyun: NaYin.getXingYun(ln.name, paipanInfo.bazi[2][0] as TG),
-        zizuo: NaYin.getXingYun(ln.name, ln.name[0] as TG),
-        nayin: NaYin.getNayin(ln.name),
-        ss: Shensha.getData(
-          paipanInfo.bazi,
-          ln.name,
-          paipanInfo.yinli,
-          paipanInfo.gender,
-        ),
-      };
+      const LnItem = getListDataItem(ln.name, PillarTitle.流年, paipanInfo);
+
       if (LnIndex < 0) {
         s.push(LnItem);
       } else {
@@ -161,64 +151,22 @@ const DaYunLiuNian: FC<{
       if (ly_Data) {
         const activeLyData = ly_Data[activeLyIndex];
         const activeLrData = activeLyData.days[activeLrIndex]; // TODO err activeLrIndex
-        const ly_tgdz = activeLyData.name;
-        const lr_tgdz = activeLrData?.name;
-        const ls_tgdz =
-          ls_Data === null ? JZ_60.甲子 : ls_Data[activeLsIndex]?.name;
 
-        const {dzcg: lyr_dzcg, dzcg_text: lyr_dzcg_text} = paipan.getDzcgText(
-          [ly_tgdz, lr_tgdz, ls_tgdz].map(item =>
-            paipan.cdz.findIndex(j => j === item?.[1]),
-          ),
-        );
         // 流月
+        const ly_tgdz = activeLyData.name;
         const lyIndex = s.findIndex(i => i.title === PillarTitle.流月);
-        const LyZhuxingIndex = TG_10.findIndex(j => j === ly_tgdz[0]);
-        const lyItem = {
-          title: PillarTitle.流月,
-          isShow: true,
-          zhuxing: paipanInfo.tenMap[LyZhuxingIndex],
-          tg: ly_tgdz[0] as TG,
-          dz: ly_tgdz[1] as DZ,
-          dzcg: lyr_dzcg_text[0],
-          fx: lyr_dzcg[0],
-          xingyun: NaYin.getXingYun(ly_tgdz, paipanInfo.bazi[2][0] as TG),
-          zizuo: NaYin.getXingYun(ly_tgdz, ly_tgdz[0] as TG),
-          nayin: NaYin.getNayin(ly_tgdz),
-          ss: Shensha.getData(
-            paipanInfo.bazi,
-            ly_tgdz,
-            paipanInfo.yinli,
-            paipanInfo.gender,
-          ),
-        };
+        const lyItem = getListDataItem(ly_tgdz, PillarTitle.流月, paipanInfo);
         if (lyIndex < 0) {
           s.push(lyItem);
         } else {
           lyItem.isShow = s[lyIndex].isShow;
           s[lyIndex] = lyItem;
         }
+
         // 流日
+        const lr_tgdz = activeLrData?.name;
         const lrIndex = s.findIndex(i => i.title === PillarTitle.流日);
-        const LrZhuxingIndex = TG_10.findIndex(j => j === lr_tgdz[0]);
-        const lrItem = {
-          title: PillarTitle.流日,
-          isShow: true,
-          zhuxing: paipanInfo.tenMap[LrZhuxingIndex],
-          tg: lr_tgdz[0] as TG,
-          dz: lr_tgdz[1] as DZ,
-          dzcg: lyr_dzcg_text[1],
-          fx: lyr_dzcg[1],
-          xingyun: NaYin.getXingYun(lr_tgdz, paipanInfo.bazi[2][0] as TG),
-          zizuo: NaYin.getXingYun(lr_tgdz, lr_tgdz[0] as TG),
-          nayin: NaYin.getNayin(lr_tgdz),
-          ss: Shensha.getData(
-            paipanInfo.bazi,
-            lr_tgdz,
-            paipanInfo.yinli,
-            paipanInfo.gender,
-          ),
-        };
+        const lrItem = getListDataItem(lr_tgdz, PillarTitle.流日, paipanInfo);
         if (lrIndex < 0) {
           s.push(lrItem);
         } else {
@@ -227,26 +175,11 @@ const DaYunLiuNian: FC<{
         }
 
         // 流时
+        const ls_tgdz =
+          ls_Data === null ? JZ_60.甲子 : ls_Data[activeLsIndex]?.name;
         const lsIndex = s.findIndex(i => i.title === PillarTitle.流时);
-        const LsZhuxingIndex = TG_10.findIndex(j => j === ls_tgdz[0]);
-        const lsItem = {
-          title: PillarTitle.流时,
-          isShow: true,
-          zhuxing: paipanInfo.tenMap[LsZhuxingIndex],
-          tg: ls_tgdz[0] as TG,
-          dz: ls_tgdz[1] as DZ,
-          dzcg: lyr_dzcg_text[2],
-          fx: lyr_dzcg[2],
-          xingyun: NaYin.getXingYun(ls_tgdz, paipanInfo.bazi[2][0] as TG),
-          zizuo: NaYin.getXingYun(ls_tgdz, ls_tgdz[0] as TG),
-          nayin: NaYin.getNayin(ls_tgdz),
-          ss: Shensha.getData(
-            paipanInfo.bazi,
-            ls_tgdz,
-            paipanInfo.yinli,
-            paipanInfo.gender,
-          ),
-        };
+        const lsItem = getListDataItem(ls_tgdz, PillarTitle.流时, paipanInfo);
+
         if (lrIndex < 0) {
           s.push(lsItem);
         } else {
@@ -466,6 +399,7 @@ const DaYunLiuNian: FC<{
                   }
                   setLyData(null);
                   setLsData(null);
+                  handleScrollToEnd();
                 }}>
                 <Text style={[styles.itemText, {color}]}>
                   {isXiaoYun ? paipanInfo.yy : item.start_time[0]}
