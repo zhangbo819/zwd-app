@@ -52,7 +52,13 @@ const TgDzRelationModal: FC<{
                         style={{flex: end - start + 1}}>
                         <Row style={styles.relationItemRow}>
                           <Col alignItems="center">
-                            <Text style={styles.relationItem}>{i.name}</Text>
+                            <Text
+                              style={[
+                                styles.relationItem,
+                                {color: WuXing.getColorByWuxing(i.name)},
+                              ]}>
+                              {i.name}
+                            </Text>
                             {renderLeftRightLine(false, true)}
                           </Col>
                           {new Array(end - start - 1).fill(1).map((_, j) => (
@@ -61,7 +67,13 @@ const TgDzRelationModal: FC<{
                             </Col>
                           ))}
                           <Col alignItems="center">
-                            <Text style={styles.relationItem}>{item.name}</Text>
+                            <Text
+                              style={[
+                                styles.relationItem,
+                                {color: WuXing.getColorByWuxing(item.name)},
+                              ]}>
+                              {item.name}
+                            </Text>
                             {renderLeftRightLine(true, false)}
                           </Col>
                         </Row>
@@ -110,7 +122,15 @@ const TgDzRelationModal: FC<{
                             if (text_index !== -1) {
                               return (
                                 <Col key={'dz_text' + j} alignItems="center">
-                                  <Text style={styles.relationItem}>
+                                  <Text
+                                    style={[
+                                      styles.relationItem,
+                                      {
+                                        color: WuXing.getColorByWuxing(
+                                          relation.name[text_index],
+                                        ),
+                                      },
+                                    ]}>
                                     {relation.name[text_index]}
                                   </Text>
                                   {renderLeftRightLine(j !== 0)}
@@ -126,7 +146,13 @@ const TgDzRelationModal: FC<{
                             );
                           })}
                           <Col alignItems="center">
-                            <Text style={styles.relationItem}>{item.name}</Text>
+                            <Text
+                              style={[
+                                styles.relationItem,
+                                {color: WuXing.getColorByWuxing(item.name)},
+                              ]}>
+                              {item.name}
+                            </Text>
                             {renderLeftRightLine(true, false)}
                           </Col>
                         </Row>
