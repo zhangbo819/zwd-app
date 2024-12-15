@@ -313,6 +313,15 @@ function _exchangeGenqi(map: {
   };
 }
 
+type DZ_RELATION_ITEM = {
+  name: DZ[];
+  index: number[];
+  start: number;
+  key: DZ_GX;
+  text: string;
+  color: string;
+};
+
 class WuXingClass {
   map_dzgx = {
     [DZ_GX.合]: [
@@ -567,34 +576,23 @@ class WuXingClass {
       name: DZ;
       index: number;
       end: number;
-      relation: {
-        name: DZ[];
-        index: number[];
-        start: number;
-        text: string;
-        color: string;
-      }[];
+      relation: DZ_RELATION_ITEM[];
     }[] = [];
 
     // 从后向前
     for (let i = target.length - 1; i >= 0; i--) {
-      const relation: {
-        name: DZ[];
-        index: number[];
-        start: number;
-        text: string;
-        color: string;
-      }[] = [];
+      const relation: DZ_RELATION_ITEM[] = [];
       for (let j = i - 1; j >= 0; j--) {
         // console.log(target[i], target[j]);
         // 2
         const gx = this.checkDZRelation(target[i], target[j], null, target);
         if (gx.length) {
-          gx.forEach(({text, color}) => {
+          gx.forEach(({text, key, color}) => {
             relation.push({
               name: [target[j]],
               index: [j],
               start: j,
+              key: key as DZ_GX,
               text,
               color,
             });
@@ -609,11 +607,12 @@ class WuXingClass {
             target,
           );
           if (gx3.length) {
-            gx3.forEach(({text, color}) => {
+            gx3.forEach(({text, key, color}) => {
               relation.push({
                 name: [target[k], target[j]],
                 start: Math.min(j, k),
                 index: [k, j],
+                key: key as DZ_GX,
                 text,
                 color,
               });
@@ -645,6 +644,7 @@ class WuXingClass {
                   name: [target[k], target[j], target[k], target[p]],
                   start: Math.min(j, k, p),
                   index: [p, k, j],
+                  key: DZ_GX.四合,
                   text:
                     this.map_dzgx[DZ_GX.四合][0].join('') + DZ_GX.四合 + '土局',
                   color: '',
@@ -674,7 +674,7 @@ class WuXingClass {
     c: DZ | null = null,
     target: DZ[] = [],
   ) {
-    const res: {text: string; color: string}[] = [];
+    const res: {text: string; key: string; color: string}[] = [];
     const inputs = (c === null ? [a, b] : [a, b, c])
       .sort((x, y) => x.charCodeAt(0) - y.charCodeAt(0))
       .join('');
@@ -697,12 +697,14 @@ class WuXingClass {
             if (!target.includes(rest[0])) {
               if (key === DZ_GX.三刑之二) {
                 res.push({
+                  key,
                   text: `${a}${b}相刑`,
                   color: '',
                 });
               } else {
                 // console.log(key, a, b, index);
                 res.push({
+                  key,
                   // text: `${a}${b}${key[0]}${rest[0]}半三${key[1]}${map_3he[index]}局`,
                   text: `${a}${b}拱${key[1]}${map_3he[index]}局`,
                   color: '',
@@ -721,15 +723,16 @@ class WuXingClass {
             case DZ_GX.合:
               const map_he = [WX.土, WX.木, WX.火, WX.金, WX.水, WX.土];
               res.push({
+                key,
                 text: gxItems.join('') + DZ_GX.合 + map_he[index],
                 color: '',
               });
               break;
             case DZ_GX.暗合:
-              res.push({text: gxItems.join('') + DZ_GX.暗合, color: ''});
+              res.push({key, text: gxItems.join('') + DZ_GX.暗合, color: ''});
               break;
             case DZ_GX.冲:
-              res.push({text: gxItems.join('') + DZ_GX.冲, color: ''});
+              res.push({key, text: gxItems.join('') + DZ_GX.冲, color: ''});
               break;
             case DZ_GX.穿:
               const map_chuan = [
@@ -741,6 +744,7 @@ class WuXingClass {
                 '丁火克辛金',
               ];
               res.push({
+                key,
                 text:
                   gxItems[0] +
                   DZ_GX.穿 +
@@ -758,22 +762,24 @@ class WuXingClass {
               } else {
                 text = gxItems.join('') + '相刑';
               }
-              res.push({text, color: ''});
+              res.push({key, text, color: ''});
               break;
             case DZ_GX.破:
-              res.push({text: gxItems.join('') + DZ_GX.破, color: ''});
+              res.push({key, text: gxItems.join('') + DZ_GX.破, color: ''});
               break;
             case DZ_GX.三刑:
-              res.push({text: gxItems.join('') + DZ_GX.三刑, color: ''});
+              res.push({key, text: gxItems.join('') + DZ_GX.三刑, color: ''});
               break;
             case DZ_GX.三合:
               res.push({
+                key,
                 text: gxItems.join('') + DZ_GX.三合 + map_3he[index] + '局',
                 color: '',
               });
               break;
             case DZ_GX.三会:
               res.push({
+                key,
                 text: gxItems.join('') + DZ_GX.三会 + map_3he[index] + '局',
                 color: '',
               });
@@ -957,13 +963,18 @@ class WuXingClass {
     const max_yue_index = yuelingMap.findIndex(i => i === yueling_wuxing);
     // console.log('yuelingMap', yuelingMap, max_yue_index);
 
+    // const dz_gx = this.getDzRelation(bazi.map(i => i[1] as DZ));
+    // console.log('dz_gx', JSON.stringify(dz_gx, null, 4));
+
     if (wu_numbs[max_wx] === 4) {
       // get
     } else if (wu_numbs[max_wx] === 3) {
-      if (max_yue_index === 0) {
+      if (max_yue_index === 0 || max_yue_index === 1) {
         // get
       } else {
-        // this.map_dzgx[DZ_GX.三会]
+        // const other = bazi.find(i => this.getWuxing(i[1]) !== max_wx)
+        // 午 亥 巳 午
+        // 子 卯 子 子
       }
     } else if (wu_numbs[max_wx] === 2) {
       if (max_yue_index === 0) {

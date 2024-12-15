@@ -410,7 +410,6 @@ const BaseInfo: FC<{
               return (
                 <Row key={'wuxingNumber_' + i.name} alignItems="center">
                   <WuxingText
-                    disabled
                     size="mid"
                     fontWeight="bold"
                     text={i.name}
