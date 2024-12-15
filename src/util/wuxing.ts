@@ -255,6 +255,7 @@ enum DZ_GX {
   三刑 = '三刑',
   三刑之二 = '三刑之二',
   三合 = '三合',
+  四合 = '四合',
   三会 = '三会',
   拱合 = '拱合',
   拱会 = '拱会',
@@ -370,6 +371,7 @@ class WuXingClass {
       [DZ.巳, DZ.酉, DZ.丑],
       [DZ.亥, DZ.卯, DZ.未],
     ],
+    [DZ_GX.四合]: [[DZ.辰, DZ.戌, DZ.未, DZ.丑]],
     [DZ_GX.三会]: [
       [DZ.巳, DZ.午, DZ.未],
       [DZ.亥, DZ.子, DZ.丑],
@@ -610,12 +612,45 @@ class WuXingClass {
             gx3.forEach(({text, color}) => {
               relation.push({
                 name: [target[k], target[j]],
-                start: j > k ? k : j,
+                start: Math.min(j, k),
                 index: [k, j],
                 text,
                 color,
               });
             });
+          }
+
+          const four = this.map_dzgx[DZ_GX.四合][0];
+
+          if (
+            four.includes(target[i]) &&
+            four.includes(target[j]) &&
+            four.includes(target[k])
+          ) {
+            const i_index = four.findIndex(fourItem => fourItem === target[i]);
+            const j_index = four.findIndex(fourItem => fourItem === target[j]);
+            const k_index = four.findIndex(fourItem => fourItem === target[k]);
+            if (
+              i_index === j_index ||
+              j_index === k_index ||
+              i_index === k_index
+            ) {
+              continue;
+            }
+            const other_index = 6 - i_index - j_index - k_index;
+            const other = four[other_index];
+            for (let p = k - 1; p >= 0; p--) {
+              if (target[p] === other) {
+                relation.push({
+                  name: [target[k], target[j], target[k], target[p]],
+                  start: Math.min(j, k, p),
+                  index: [p, k, j],
+                  text:
+                    this.map_dzgx[DZ_GX.四合][0].join('') + DZ_GX.四合 + '土局',
+                  color: '',
+                });
+              }
+            }
           }
         }
       }
@@ -742,6 +777,8 @@ class WuXingClass {
                 text: gxItems.join('') + DZ_GX.三会 + map_3he[index] + '局',
                 color: '',
               });
+              break;
+            case DZ_GX.四合:
               break;
           }
         }
