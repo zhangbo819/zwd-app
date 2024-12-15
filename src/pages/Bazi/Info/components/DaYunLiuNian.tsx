@@ -70,7 +70,7 @@ const DaYunLiuNian: FC<{
         year: number;
         mouth: number;
         day: number;
-        days: {name: JZ_60; mouth: number; day: number}[];
+        days: {name: JZ_60; mouth: number; day: number; week: string}[];
       }[]
   >(null);
   const [lsData, setLsData] = useState<
@@ -637,7 +637,7 @@ const DaYunLiuNian: FC<{
                     // triggerPillarDataShow(true);
                   }
                 }}>
-                {/* <Text>{JQ_12[index]}</Text> */}
+                <Text>{item.week}</Text>
                 <Text style={[styles.itemText, {color}]}>
                   {`${item.mouth}/${item.day}`}
                 </Text>

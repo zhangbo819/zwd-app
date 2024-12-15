@@ -1394,7 +1394,13 @@ class Paipan {
       year: number;
       mouth: number;
       day: number;
-      days: {name: JZ_60; year: number; mouth: number; day: number}[];
+      days: {
+        name: JZ_60;
+        year: number;
+        mouth: number;
+        day: number;
+        week: string;
+      }[];
       // days: JZ_60[];
     }[] = [];
     const days: number[][] = [];
@@ -1436,6 +1442,7 @@ class Paipan {
       year: number;
       mouth: number;
       day: number;
+      week: string;
     }[][] = [];
     // const days_JZ_60: JZ_60[][] = [];
     for (let i = 0; i < days.length; i++) {
@@ -1451,6 +1458,7 @@ class Paipan {
           year: 0,
           mouth: 0,
           day: 0,
+          week: '',
         })),
       );
     }
@@ -1507,6 +1515,20 @@ class Paipan {
         j.day = day;
 
         return j;
+      });
+    });
+
+    // 流日星期补充
+    const WEEKS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    res.forEach(i => {
+      let last_day: number | null = null;
+      i.days.forEach(item => {
+        if (last_day === null) {
+          last_day = new Date(item.year, item.mouth - 1, item.day).getDay();
+        } else {
+          last_day = ++last_day % 7;
+        }
+        item.week = WEEKS[last_day];
       });
     });
 

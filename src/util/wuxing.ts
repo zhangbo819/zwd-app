@@ -876,7 +876,8 @@ class WuXingClass {
       i.relation.forEach(relation => {
         if (
           relation.text.includes(DZ_GX.三合) ||
-          relation.text.includes(DZ_GX.三会)
+          relation.text.includes(DZ_GX.三会) ||
+          relation.text.includes(DZ_GX.四合)
         ) {
           const zhongshen = res.find(j => j.gen_dz === relation.text[1]); // TODO index 1
           if (zhongshen) {
