@@ -1433,7 +1433,10 @@ class Paipan {
         });
         days.push([r.tg[2], r.dz[2]]);
       } else {
-        rest_days.push([r.tg[2], r.dz[2]]);
+        // 排除掉前一年，仅保留后一年
+        const tg_index = this.ctg.findIndex(t => t === tgdz[0]);
+        const next_tg_index = (tg_index + 1) % 10;
+        r.tg[0] === next_tg_index && rest_days.push([r.tg[2], r.dz[2]]);
       }
     });
     // console.log('days', days);
