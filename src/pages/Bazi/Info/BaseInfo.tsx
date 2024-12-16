@@ -42,16 +42,17 @@ const SHOW_DZ_12 = [
 ];
 
 export type PageDataType = {
-  xz: XingZuoGetDataRes | null;
-  dzcg: number[][];
-  dzcg_text: string[][];
-  rizhuWuxing: WX;
-  wuxingNumber: {name: WX; number: number; ten2: string}[];
-  wuxingCgNumber: {name: WX; number: number; ten2: string}[];
-  yueling: WX;
-  bazi: sizhuDetailsItem[];
-  wu_numbs_text: string;
-  cg_numbs_text: string;
+  xz: XingZuoGetDataRes | null; // 星座
+  dzcg: number[][]; // 藏干 index
+  dzcg_text: string[][]; // 藏干文字
+  wuxingNumber: {name: WX; number: number; ten2: string}[]; // 五行数量
+  wuxingCgNumber: {name: WX; number: number; ten2: string}[]; // 藏干五行数量
+  rizhuWuxing: WX; // 日主五行
+  yueling: WX; // 月令
+  bazi: sizhuDetailsItem[]; // 强化版四柱
+  wu_numbs_text: string; // 五行数量描述文字
+  cg_numbs_text: string; // 藏干五行数量描述文字
+  ally: number; // 同党
 };
 
 const BaseInfo: FC<{
@@ -73,6 +74,7 @@ const BaseInfo: FC<{
     bazi: [],
     wu_numbs_text: '',
     cg_numbs_text: '',
+    ally: 0,
   });
   const [ytgcgData, setYtgcgData] = useState({
     weight_text: '',
@@ -173,6 +175,46 @@ const BaseInfo: FC<{
         WuXing5.map(i => ({name: i, number: 0, ten2: ''})),
       );
 
+    function isAlly(target: any) {
+      return [Ten.比肩, Ten.劫财, Ten.正印, Ten.偏印, Ten.食神].includes(
+        paipanInfo.tenMap[target],
+      );
+    }
+
+    // 同党
+    const ally = paipanInfo.dzcg
+      .concat(paipanInfo.tg)
+      .reduce((r: number, i: any, index: number) => {
+        if (index < 4) {
+          const dz_weight = [1, 3, 1, 2];
+          let size = 0;
+          if (i.length === 1) {
+            size = isAlly(i[0]) ? 1 : 0;
+          } else if (i.length === 2) {
+            size = (isAlly(i[0]) ? 0.7 : 0) + (isAlly(i[1]) ? 0.3 : 0);
+          } else if (i.length === 3) {
+            size =
+              (isAlly(i[0]) ? 0.7 : 0) +
+              (isAlly(i[1]) ? 0.2 : 0) +
+              (isAlly(i[1]) ? 0.1 : 0);
+          }
+          r +=
+            (size * dz_weight[index]) /
+            dz_weight.reduce((w_r, w_i) => (w_r += w_i), 0) /
+            2;
+        } else {
+          const tg_weight = [0.8, 1.2, 1, 2];
+          if (isAlly(i)) {
+            r +=
+              tg_weight[index - 4] /
+              tg_weight.reduce((w_r, w_i) => (w_r += w_i), 0) /
+              2;
+          }
+        }
+
+        return r;
+      }, 0);
+
     // console.log('wuxingCgNumber', wuxingCgNumber);
 
     const pageBazi = WuXing.getSiZhuDetails(infoBazi);
@@ -194,6 +236,7 @@ const BaseInfo: FC<{
       bazi: pageBazi,
       wu_numbs_text: _getWXNumbText(wuxingNumber),
       cg_numbs_text: _getWXNumbText(wuxingCgNumber, true),
+      ally,
     });
   }, [paipanInfo]);
 
@@ -445,26 +488,32 @@ const BaseInfo: FC<{
           </TouchModal>
         </View>
 
-        {/* <Text style={styles.wuxingTitle2}>二、五行力量</Text>
+        <Text style={styles.wuxingTitle2}>二、五行力量</Text>
         <View style={styles.wuxingView}>
           <Row>
-            <Text>同党</Text>
+            <Text>
+              同党{'\n'}
+              {Number(pageData.ally * 100).toFixed(1)}%
+            </Text>
             <Col alignItems="center" justifyContent="center">
               <Progress.Bar
                 // style={{flex:1,backgroundColor:'blue'}}
                 width={viewportWidth - 116}
-                progress={0.9}
+                progress={pageData.ally}
                 height={8}
-                color={'red'}
-                unfilledColor={'blue'}
+                color={WuXing.getColorByWuxing(pageData.rizhuWuxing)}
+                unfilledColor={'#999'}
                 borderColor="#fff"
               />
             </Col>
-            <Text>异党</Text>
+            <Text>
+              异党{'\n'}
+              {Number((1 - pageData.ally) * 100).toFixed(1)}%
+            </Text>
           </Row>
-        </View> */}
+        </View>
 
-        <Text style={styles.wuxingTitle2}>二、各柱天干</Text>
+        <Text style={styles.wuxingTitle2}>三、各柱天干</Text>
         <TabWuXingLi pageData={pageData} />
 
         {/* <Text style={styles.wuxingTitle2}>三、格局</Text>
