@@ -136,10 +136,10 @@ const BaseInfo: FC<{
     const wuxingNumber = infoBazi.reduce(
       (r, i) => {
         r.forEach(j => {
-          if (
-            j.name === WuXing.getWuxing(i[0]) ||
-            j.name === WuXing.getWuxing(i[1])
-          ) {
+          if (j.name === WuXing.getWuxing(i[0])) {
+            j.number++;
+          }
+          if (j.name === WuXing.getWuxing(i[1])) {
             j.number++;
           }
           j.ten2 = wxTenMap[j.name];
@@ -409,11 +409,7 @@ const BaseInfo: FC<{
               const nowWuxingColor = WuXing.getColorByWuxing(i.name);
               return (
                 <Row key={'wuxingNumber_' + i.name} alignItems="center">
-                  <WuxingText
-                    size="mid"
-                    fontWeight="bold"
-                    text={i.name}
-                  />
+                  <WuxingText size="mid" fontWeight="bold" text={i.name} />
                   <Col style={{marginHorizontal: 4}}>
                     <Progress.Bar
                       progress={i.number / 8}
@@ -507,7 +503,7 @@ function _getWXNumbText(
     ? '五行俱全；'
     : '';
 
-  const limit = isCg ? 4 : 3;
+  const limit = isCg ? 5 : 4;
 
   const wu_numbs_text = arr_wu_nums
     .reduce((r, i, index) => {
