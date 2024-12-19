@@ -122,6 +122,23 @@ const DaYunLiuNian: FC<{
       return;
     }
 
+    const {ly_Data, ls_Data} = refLyLsData.current;
+    const activeLyData = ly_Data?.[activeLyIndex];
+    if (!activeLyData) {
+      setActiveLyIndex(0);
+      return;
+    }
+    const activeLrData = activeLyData.days[activeLrIndex];
+    if (!activeLrData) {
+      setActiveLrIndex(0);
+      return;
+    }
+    const activeLsData = ls_Data?.[activeLsIndex];
+    if (!activeLsData) {
+      setActiveLsIndex(0);
+      return;
+    }
+
     setPillarData(s => {
       // 大运
       const dyIndex = s.findIndex(i => i.title === PillarTitle.大运);
@@ -146,12 +163,9 @@ const DaYunLiuNian: FC<{
         LnItem.isShow = s[LnIndex].isShow;
         s[LnIndex] = LnItem;
       }
-      const {ly_Data, ls_Data} = refLyLsData.current;
+
       // 流月
       if (ly_Data) {
-        const activeLyData = ly_Data[activeLyIndex];
-        const activeLrData = activeLyData.days[activeLrIndex]; // TODO err activeLrIndex
-
         // 流月
         const ly_tgdz = activeLyData.name;
         const lyIndex = s.findIndex(i => i.title === PillarTitle.流月);
@@ -175,16 +189,17 @@ const DaYunLiuNian: FC<{
         }
 
         // 流时
-        const ls_tgdz =
-          ls_Data === null ? JZ_60.甲子 : ls_Data[activeLsIndex]?.name;
-        const lsIndex = s.findIndex(i => i.title === PillarTitle.流时);
-        const lsItem = getListDataItem(ls_tgdz, PillarTitle.流时, paipanInfo);
+        if (ls_Data) {
+          const ls_tgdz = ls_Data[activeLsIndex]?.name;
+          const lsIndex = s.findIndex(i => i.title === PillarTitle.流时);
+          const lsItem = getListDataItem(ls_tgdz, PillarTitle.流时, paipanInfo);
 
-        if (lrIndex < 0) {
-          s.push(lsItem);
-        } else {
-          lsItem.isShow = s[lsIndex].isShow;
-          s[lsIndex] = lsItem;
+          if (lrIndex < 0) {
+            s.push(lsItem);
+          } else {
+            lsItem.isShow = s[lsIndex].isShow;
+            s[lsIndex] = lsItem;
+          }
         }
       }
 
@@ -246,7 +261,7 @@ const DaYunLiuNian: FC<{
     const ln_item = paipanInfo.big.data[newDyIndex].years[newlnIndex];
     const newLiuYueData = paipan.getLiuYueByYear(ln_item.year, ln_item.name);
     setLyData(newLiuYueData);
-    const newLyIndex = newLiuYueData.findIndex(i => {
+    let newLyIndex = newLiuYueData.findIndex(i => {
       const last_day = i.days[i.days.length - 1];
       const mouth_max = new Date();
       mouth_max.setFullYear(last_day.year);
@@ -255,9 +270,12 @@ const DaYunLiuNian: FC<{
       mouth_max.setHours(23, 59, 59);
       return mouth_max.getTime() > new Date().getTime();
     });
+    newLyIndex = newLyIndex === -1 ? 0 : newLyIndex;
     setActiveLyIndex(newLyIndex);
 
+    // console.log('newLiuYueData', newLiuYueData, newLyIndex);
     // 流日
+    // TODO 23点时就到下一天了
     let newLrIndex = newLiuYueData[newLyIndex].days.findIndex(
       i =>
         i.mouth === new Date().getMonth() + 1 && i.day === new Date().getDate(),

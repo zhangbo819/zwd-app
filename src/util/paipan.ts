@@ -1220,6 +1220,24 @@ class Paipan {
     return {tg, dz, jd, jq, ix};
   }
 
+  // 获取某一年年中的天干地支
+  private getYearMidTgDz(y: number) {
+    const dateObj = new Date(y, 6, 1); // 取年中
+    // console.log('dateObj', dateObj.toLocaleString());
+
+    const [yy, mm, dd, hh, mt, ss] = [
+      dateObj.getFullYear(),
+      dateObj.getMonth() + 1,
+      dateObj.getDate(),
+      dateObj.getHours(),
+      dateObj.getMinutes(),
+      dateObj.getSeconds(),
+    ];
+    const {tg, dz} = this.GetGanZhi(yy, mm, dd, hh, mt, ss);
+
+    return [tg[0], dz[0]];
+  }
+
   /**
    * 根据公历年月日排盘
    * @param int gd 0男1女
@@ -1335,11 +1353,12 @@ class Paipan {
     const years = [];
     const xiaoyun: {name: JZ_60; year: number}[] = [];
     let arr = [];
+    let [start_tg, start_dz] = this.getYearMidTgDz(yy); // 以年中为起点，防止生于两年之间导致第一年错误的问题
     for (let i = 0; i <= 130; i++) {
-      const t = (tg[0] + i) % 10;
-      const d = (dz[0] + i) % 12;
+      const t = (start_tg + i) % 10;
+      const d = (start_dz + i) % 12;
       const tgdz_text = (this.ctg[t] + this.cdz[d]) as JZ_60;
-      const item = {name: tgdz_text, year: res.yinli[0] + i};
+      const item = {name: tgdz_text, year: yy + i};
 
       if (res.yinli[0] + i < res.big.start_time[0]) {
         // 还没到起运年, 起小运
