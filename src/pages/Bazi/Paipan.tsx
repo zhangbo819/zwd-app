@@ -134,6 +134,7 @@ const Paipan: FC<
             农历：{nowPaipan.yinli[0]}年{nowPaipan.yinli[1]}月
             {nowPaipan.yinli[2]}日 {nowPaipan.bazi[3][1]}时
           </Text>
+          <Text style={styles.nowText}>节气：{nowPaipan.jq_text}</Text>
           <View style={styles.zhuRow}>
             {nowPaipan.bazi.map((zhu, index) => {
               return (

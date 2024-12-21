@@ -400,6 +400,11 @@ const BaseInfo: FC<{
         {renderDateText(true)}
         <Row>
           <Col>
+            <Text style={styles.commonText}>节气：{paipanInfo.jq_text}</Text>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
             <Text style={styles.commonText}>属相：{paipanInfo.sx}</Text>
           </Col>
           <Col>

@@ -9,7 +9,7 @@
  * 儒略日历(Julian day),以西元前4713年(或-4712年)1月1日12時為起點,方便各历法间的转换
  */
 
-import {DZ_12, JZ_60, Ten, TG, TG_10, WuXing5} from './wuxing';
+import {DZ_12, JQ_24, JZ_60, Ten, TG, TG_10, WuXing5} from './wuxing';
 import {XZ, XZ_12} from './XingZuo';
 
 /**
@@ -796,32 +796,7 @@ class Paipan {
    * 廿四节气(从春分开始)
    * @var array
    */
-  jq = [
-    '春分',
-    '清明',
-    '谷雨',
-    '立夏',
-    '小满',
-    '芒种',
-    '夏至',
-    '小暑',
-    '大暑',
-    '立秋',
-    '处暑',
-    '白露',
-    '秋分',
-    '寒露',
-    '霜降',
-    '立冬',
-    '小雪',
-    '大雪',
-    '冬至',
-    '小寒',
-    '大寒',
-    '立春',
-    '雨水',
-    '惊蛰',
-  ]; // 24节气
+  jq = [...JQ_24]; // 24节气
 
   /**
    * 获取公历某个月有多少天
@@ -1133,15 +1108,15 @@ class Paipan {
    * @param int yy
    * @return array jq[(k+21)%24]
    */
-  Get24JieQi(yy: number) {
+  public Get24JieQi(yy: number) {
     var jq = [];
 
     var dj = GetAdjustedJQ(yy - 1, 21, 23); //求出含指定年立春開始之3個節氣JD值,以前一年的年值代入
     for (var k in dj) {
-      if (k < 21) {
+      if (+k < 21) {
         continue;
       }
-      if (k > 23) {
+      if (+k > 23) {
         continue;
       }
       jq.push(Julian2Solar(dj[k])); //21立春;22雨水;23惊蛰
@@ -1154,6 +1129,39 @@ class Paipan {
 
     return jq;
   }
+
+  // 根据传入时间找到对应的24节气
+  public Get24JieQiText(dateObj: Date) {
+    const yy = dateObj.getFullYear();
+    let jqs = this.Get24JieQi(yy);
+
+    // 小于立春时，用前一年的
+    if (
+      dateObj.getTime() <
+      new Date(
+        jqs[0][0],
+        jqs[0][1] - 1,
+        jqs[0][2],
+        jqs[0][3],
+        jqs[0][4],
+        jqs[0][5],
+      ).getTime()
+    ) {
+      jqs = this.Get24JieQi(yy - 1);
+    }
+    const jq_text = jqs.reduce((r, i, index) => {
+      const times =
+        dateObj.getTime() -
+        new Date(i[0], i[1] - 1, i[2], i[3], i[4], i[5]).getTime();
+      if (times > 0) {
+        const dayNums = Math.floor(times / (24 * 3600 * 1000));
+        r = this.jq[index] + (dayNums <= 0 ? '' : `(之后${dayNums}天)`);
+      }
+      return r;
+    }, '');
+    return jq_text;
+  }
+
   /**
    * 四柱計算,分早子时晚子时,传公历
    * @param int yy
@@ -1287,6 +1295,7 @@ class Paipan {
       yinli: [],
       yangli: [],
       tenMap: [],
+      jq_text: '',
     };
     const big_tg = [];
     const big_dz = []; // 大运
@@ -1402,6 +1411,9 @@ class Paipan {
 
     // 十神对应关系表
     res.tenMap = this.getTenGodMap(res.bazi[2][0]);
+
+    // 24节气
+    res.jq_text = this.Get24JieQiText(dateObj);
 
     return res;
   }
@@ -1784,4 +1796,5 @@ export type PaipanInfo = {
   yinli: number[]; // 阴历
   yangli: (string | number)[]; // 阳历
   tenMap: Ten[]; // 十神关系对应表
+  jq_text: string; // 24节气
 };

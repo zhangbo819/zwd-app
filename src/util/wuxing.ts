@@ -171,7 +171,7 @@ export const ZhangSheng12 = [
   ZhangSheng.养,
 ];
 
-export const JQ_12 = [
+export const JQ_24 = [
   '立春',
   '雨水',
   '惊蛰',
@@ -196,7 +196,8 @@ export const JQ_12 = [
   '冬至',
   '小寒',
   '大寒',
-].reduce((r, i, index) => {
+]
+export const JQ_12 = JQ_24.reduce((r, i, index) => {
   if (index % 2 === 0) {
     r.push(i);
   }
