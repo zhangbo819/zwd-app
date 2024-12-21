@@ -124,17 +124,22 @@ const DaYunLiuNian: FC<{
 
     const {ly_Data, ls_Data} = refLyLsData.current;
     const activeLyData = ly_Data?.[activeLyIndex];
-    if (!activeLyData) {
-      setActiveLyIndex(0);
-      return;
-    }
-    const activeLrData = activeLyData.days[activeLrIndex];
-    if (!activeLrData) {
-      setActiveLrIndex(0);
-      return;
+    const activeLrData = activeLyData?.days?.[activeLrIndex];
+    if (ly_Data) {
+      if (!activeLyData) {
+        // console.log('activeLyData', activeLyData);
+        setActiveLyIndex(0);
+        return;
+      }
+      if (!activeLrData) {
+        // console.log('activeLrData', activeLrData);
+        setActiveLrIndex(0);
+        return;
+      }
     }
     const activeLsData = ls_Data?.[activeLsIndex];
-    if (!activeLsData) {
+    if (ls_Data && !activeLsData) {
+      // console.log('activeLsData', activeLsData);
       setActiveLsIndex(0);
       return;
     }
@@ -167,7 +172,7 @@ const DaYunLiuNian: FC<{
       // 流月
       if (ly_Data) {
         // 流月
-        const ly_tgdz = activeLyData.name;
+        const ly_tgdz = activeLyData!.name;
         const lyIndex = s.findIndex(i => i.title === PillarTitle.流月);
         const lyItem = getListDataItem(ly_tgdz, PillarTitle.流月, paipanInfo);
         if (lyIndex < 0) {
@@ -178,7 +183,7 @@ const DaYunLiuNian: FC<{
         }
 
         // 流日
-        const lr_tgdz = activeLrData?.name;
+        const lr_tgdz = activeLrData!.name;
         const lrIndex = s.findIndex(i => i.title === PillarTitle.流日);
         const lrItem = getListDataItem(lr_tgdz, PillarTitle.流日, paipanInfo);
         if (lrIndex < 0) {

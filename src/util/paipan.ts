@@ -1563,7 +1563,7 @@ class Paipan {
     return res;
   }
 
-  // 根据当前时间获取流日
+  // 根据当前时间获取流时
   public getLiuShi(date: number) {
     const dateObj = new Date(date);
 
