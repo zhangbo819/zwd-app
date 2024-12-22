@@ -1155,7 +1155,10 @@ class Paipan {
         new Date(i[0], i[1] - 1, i[2], i[3], i[4], i[5]).getTime();
       if (times > 0) {
         const dayNums = Math.floor(times / (24 * 3600 * 1000));
-        r = this.jq[index] + (dayNums <= 0 ? '' : `(之后${dayNums}天)`);
+        const hours = Math.floor((times % (24 * 3600 * 1000)) / (3600 * 1000));
+        r =
+          this.jq[index] +
+          `(之后${dayNums <= 0 ? '' : dayNums + '天'}${hours}小时)`;
       }
       return r;
     }, '');
