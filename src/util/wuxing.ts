@@ -1,3 +1,5 @@
+import {DH_MAP} from './Tiaohou';
+
 export enum TG {
   甲 = '甲',
   乙 = '乙',
@@ -171,6 +173,7 @@ export const ZhangSheng12 = [
   ZhangSheng.养,
 ];
 
+//　TODO 春分，夏至，秋分，冬至，的前一日离日。立春，立夏，立秋，立冬，前一日绝日。
 export const JQ_24 = [
   '立春',
   '雨水',
@@ -196,7 +199,7 @@ export const JQ_24 = [
   '冬至',
   '小寒',
   '大寒',
-]
+];
 export const JQ_12 = JQ_24.reduce((r, i, index) => {
   if (index % 2 === 0) {
     r.push(i);
@@ -792,6 +795,14 @@ class WuXingClass {
       });
     }
     return res;
+  }
+
+  // 调侯
+  public getTiaohou(bazi: JZ_60[]) {
+    const [, yuezhu, rizhu] = bazi;
+
+    const info = DH_MAP[rizhu[0] as TG][yuezhu[1] as DZ];
+    return info.text;
   }
 
   // 根据原始四柱拿到更全的四柱数据

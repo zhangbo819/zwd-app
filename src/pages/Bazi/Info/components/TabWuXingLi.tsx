@@ -190,6 +190,12 @@ const TabWuXingLi: FC<{
           </Text>
         </Text>
       </View>
+
+      <View style={styles.wuxingView}>
+        <Text style={styles.hint}>
+          日主得令、通根、得势三项得其二即可视为身强，皆有则极强、皆无则极弱。中间状态需再细究十神及地支关系。
+        </Text>
+      </View>
     </View>
   );
 };

@@ -48,6 +48,7 @@ export type PageDataType = {
   wuxingNumber: {name: WX; number: number; ten2: string}[]; // 五行数量
   wuxingCgNumber: {name: WX; number: number; ten2: string}[]; // 藏干五行数量
   rizhuWuxing: WX; // 日主五行
+  tiaohou: string; // 调侯
   yueling: WX; // 月令
   bazi: sizhuDetailsItem[]; // 强化版四柱
   wu_numbs_text: string; // 五行数量描述文字
@@ -66,6 +67,7 @@ const BaseInfo: FC<{
     dzcg: [],
     dzcg_text: [],
     rizhuWuxing: WX.土,
+    tiaohou: '',
     wuxingNumber: [],
     wuxingCgNumber: [],
     yueling: WX.土,
@@ -223,11 +225,14 @@ const BaseInfo: FC<{
 
     // console.log(JSON.stringify(pageBazi, null, 4))
 
+    const tiaohou = WuXing.getTiaohou(infoBazi);
+
     setPageData({
       xz: XingZuo.getData(paipanInfo.xz),
       dzcg,
       dzcg_text,
       rizhuWuxing,
+      tiaohou,
       wuxingNumber,
       wuxingCgNumber,
       yueling,
@@ -435,6 +440,13 @@ const BaseInfo: FC<{
             </Text>
           </Col>
         </Row>
+      </View>
+
+      <View style={styles.topInfo}>
+        <Text style={styles.wuxingTitle1}>调侯用神</Text>
+        <View style={styles.wuxingView}>
+          <Text style={styles.commonText}>{pageData.tiaohou}</Text>
+        </View>
       </View>
 
       <View style={styles.topInfo}>

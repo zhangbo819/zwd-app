@@ -1153,6 +1153,7 @@ class Paipan {
       const times =
         dateObj.getTime() -
         new Date(i[0], i[1] - 1, i[2], i[3], i[4], i[5]).getTime();
+      // console.log(yy, this.jq[index], new Date(i[0], i[1] - 1, i[2], i[3], i[4], i[5]).toLocaleString())
       if (times > 0) {
         const dayNums = Math.floor(times / (24 * 3600 * 1000));
         const hours = Math.floor((times % (24 * 3600 * 1000)) / (3600 * 1000));
