@@ -8,19 +8,19 @@ import WuxingText from '../../components/WuxingText';
 import {Col, Row} from '../../../../components/Layout';
 import {WuXing, YueClass5, YueLinByWuxing} from '../../../../util/wuxing';
 import {COLOR_LINEGRAY} from '../../../../constant/UI';
-import {Sizhu} from '..';
+// import {Sizhu} from '..';
 
 const TabWuXingLi: FC<{
   pageData: PageDataType;
 }> = ({pageData}) => {
   const [activeTab, setActiveTab] = useState(2);
 
-  const activeZhu = pageData.bazi?.[activeTab];
+  const activeZhu = pageData.wx_info?.[activeTab];
 
   return (
     <View style={styles.contentContainer}>
       <Tabs
-        data={pageData.bazi}
+        data={pageData.wx_info}
         initIndex={activeTab}
         onActiveChange={setActiveTab}
         // disabled
@@ -31,24 +31,27 @@ const TabWuXingLi: FC<{
                 style={[
                   styles.bold,
                   {
-                    color: WuXing.getColorByWuxing(i.tg),
-                    opacity: i.tg_opacity,
+                    color: WuXing.getColorByWuxing(i.wx),
+                    opacity: i.wx_opacity,
                   },
                 ]}>
                 {i.tg_level_text}
               </Text>
+              <Text>{i.isDeLing ? '得令' : '不得令'}</Text>
+              <Text>{i.isDeShi ? '得势' : '未得势'}</Text>
               <WuxingText
-                style={{opacity: i.tg_opacity}}
+                style={{opacity: i.wx_opacity}}
                 disabled
                 margin={2}
-                text={i.tg}
+                text={i.wx}
               />
-              <WuxingText disabled margin={2} text={i.dz} />
+              {/* <WuxingText disabled margin={2} text={i.dz} /> */}
               <Text
                 style={[
-                  styles.bold,
+                  i.is_tougan && styles.bold,
                   {
-                    color: WuXing.getColorByWuxing(i.dz),
+                    color: WuXing.getColorByWuxing(i.wx),
+                    opacity: i.wx_opacity,
                   },
                 ]}>
                 {i.dz_level_text}
@@ -59,7 +62,7 @@ const TabWuXingLi: FC<{
       />
       {/* 月令 */}
       <View style={styles.wuxingView}>
-        <Row>
+        {/* <Row>
           <Col>
             <Text style={[styles.commonText]}>
               所选干支：
@@ -78,7 +81,7 @@ const TabWuXingLi: FC<{
               )}
             </Row>
           </Col>
-          {/* <Col>
+          <Col>
             <Row alignItems="center" margin={0}>
               <Text style={[styles.commonText]}>地支：</Text>
               {activeZhu && (
@@ -89,8 +92,8 @@ const TabWuXingLi: FC<{
                 />
               )}
             </Row>
-          </Col> */}
-        </Row>
+          </Col>
+        </Row> */}
         <Row>
           {YueClass5.map((item, index) => {
             const map = YueLinByWuxing[pageData.yueling];
@@ -117,7 +120,7 @@ const TabWuXingLi: FC<{
                 <WuxingText
                   style={styles.wuxingText}
                   size="mini"
-                  text={WuXing.getWuxing(activeZhu.tg)}
+                  text={activeZhu.wx}
                 />
               )}
             </Row>
@@ -147,7 +150,7 @@ const TabWuXingLi: FC<{
 
       {/* 得地 各五行通根 天干虚浮 地支无透 */}
       <View style={styles.wuxingView}>
-        {pageData.bazi.length ? (
+        {pageData.wx_info.length ? (
           <>
             <Text style={styles.commonText}>
               通根情况:{' '}
@@ -172,7 +175,7 @@ const TabWuXingLi: FC<{
           天干：有本气根代表天干有力，有强根，其余皆为无强根
         </Text>
         {/* <Text style={styles.commonText}>
-            透干地支: {pageData.bazi.filter(i => i.tg_is_tougan).map(i => i.dz)}
+            透干地支: {pageData.bazi.filter(i => i.is_tougan).map(i => i.dz)}
           </Text>
           <Text style={styles.hint}>
             地支：透出天干代表可以成格成像，但不透干也不影响其在地支的强度

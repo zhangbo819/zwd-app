@@ -50,7 +50,7 @@ export type PageDataType = {
   rizhuWuxing: WX; // 日主五行
   tiaohou: string; // 调侯
   yueling: WX; // 月令
-  bazi: sizhuDetailsItem[]; // 强化版四柱
+  wx_info: sizhuDetailsItem[]; // 五行详细信息
   wu_numbs_text: string; // 五行数量描述文字
   cg_numbs_text: string; // 藏干五行数量描述文字
   ally: number; // 同党
@@ -71,9 +71,7 @@ const BaseInfo: FC<{
     wuxingNumber: [],
     wuxingCgNumber: [],
     yueling: WX.土,
-    // isDeLing: false,
-    // isDedi: false,
-    bazi: [],
+    wx_info: [],
     wu_numbs_text: '',
     cg_numbs_text: '',
     ally: 0,
@@ -219,11 +217,11 @@ const BaseInfo: FC<{
 
     // console.log('wuxingCgNumber', wuxingCgNumber);
 
-    const pageBazi = WuXing.getSiZhuDetails(infoBazi);
+    const wx_info = WuXing.getWxPower(infoBazi);
 
     // WuXing.getDzPower(infoBazi, paipanInfo.tenMap);
 
-    // console.log(JSON.stringify(pageBazi, null, 4))
+    // console.log(JSON.stringify(wx_info, null, 4))
 
     const tiaohou = WuXing.getTiaohou(infoBazi);
 
@@ -236,9 +234,7 @@ const BaseInfo: FC<{
       wuxingNumber,
       wuxingCgNumber,
       yueling,
-      // isDeLing: yuelingIndex === 0 || yuelingIndex === 1,
-      // isDedi: pageBazi[2].tg_is_qg,
-      bazi: pageBazi,
+      wx_info,
       wu_numbs_text: _getWXNumbText(wuxingNumber),
       cg_numbs_text: _getWXNumbText(wuxingCgNumber, true),
       ally,
@@ -254,7 +250,7 @@ const BaseInfo: FC<{
     let res = `${isYang ? '阳历' : '阴历'}：${arr[0]}年${arr[1]}月${arr[2]}日 `;
     res += isYang
       ? `${paipanInfo.hh}:${paipanInfo.mt}`
-      : `${pageData.bazi[3]?.dz}时`;
+      : `${paipanInfo.bazi[3]?.[1]}时`;
     return (
       <Row>
         <Text style={styles.commonText}>{res}</Text>
@@ -264,7 +260,7 @@ const BaseInfo: FC<{
 
   // 天干地支关系表
   const renderTgDzModlue = () => {
-    const rizhu_tg = pageData.bazi[2]?.tg;
+    const rizhu_tg = paipanInfo.bazi[2]?.[1];
     const color_rizhu = WuXing.getColorByWuxing(rizhu_tg);
     return (
       <View style={styles.topInfo}>

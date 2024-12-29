@@ -270,8 +270,8 @@ enum TG_LEVEL {
   '余气根',
   '中气根',
   '本气根',
-  '刃',
-  '禄',
+  // '刃',
+  // '禄',
 }
 enum DZ_LEVEL {
   '透干',
@@ -287,35 +287,34 @@ enum DZ_LEVEL {
 // }
 
 export type sizhuDetailsItem = {
-  tgdz: JZ_60;
-  tg: TG;
-  dz: DZ;
+  wx: WX;
   isDeLing: boolean; // 是否得令
   tg_is_qg: boolean; // 是否有强根
   tg_level_text: string; // 强根等级文字
-  tg_opacity: number;
-  tg_color: string;
+  wx_opacity: number;
+  // tg_color: string;
   // tg_power: TG_POWER_LEVEL; // 天干力量
+  tg_level: TG_LEVEL;
   dz_level_text: string; // 地支透干等级
-  tg_is_tougan: boolean; // 是否透干
+  is_tougan: boolean; // 是否透干
   isDeShi: boolean; // 是否得势
-  gen_dz: DZ | null; // 天干的根对应的地支，null为无根
+  gen_dz: DZ[]; // 天干的根对应的地支，空为无根
   deshi_text: string[];
 };
 
-function _exchangeGenqi(map: {
-  [TG_LEVEL.禄]: DZ[];
-  [TG_LEVEL.刃]: DZ[];
-  [TG_LEVEL.中气根]: DZ[];
-  [TG_LEVEL.余气根]: DZ[];
-}) {
-  const temp = map[TG_LEVEL.刃];
-  return {
-    ...map,
-    [TG_LEVEL.禄]: temp,
-    [TG_LEVEL.刃]: map[TG_LEVEL.禄],
-  };
-}
+// function _exchangeGenqi(map: {
+//   [TG_LEVEL.禄]: DZ[];
+//   [TG_LEVEL.刃]: DZ[];
+//   [TG_LEVEL.中气根]: DZ[];
+//   [TG_LEVEL.余气根]: DZ[];
+// }) {
+//   const temp = map[TG_LEVEL.刃];
+//   return {
+//     ...map,
+//     [TG_LEVEL.禄]: temp,
+//     [TG_LEVEL.刃]: map[TG_LEVEL.禄],
+//   };
+// }
 
 type DZ_RELATION_ITEM = {
   name: DZ[];
@@ -402,51 +401,180 @@ class WuXingClass {
     },
   };
 
-  map_tg_genqi = {
-    [TG.甲]: {
-      [TG_LEVEL.禄]: [DZ.寅],
-      [TG_LEVEL.刃]: [DZ.卯],
+  // map_tg_genqi = {
+  //   [TG.甲]: {
+  //     [TG_LEVEL.禄]: [DZ.寅],
+  //     [TG_LEVEL.刃]: [DZ.卯],
+  //     [TG_LEVEL.中气根]: [DZ.亥, DZ.辰],
+  //     [TG_LEVEL.余气根]: [DZ.未],
+  //   },
+  //   get [TG.乙]() {
+  //     return _exchangeGenqi(this[TG.甲]);
+  //   },
+  //   [TG.丙]: {
+  //     [TG_LEVEL.禄]: [DZ.巳],
+  //     [TG_LEVEL.刃]: [DZ.午],
+  //     [TG_LEVEL.中气根]: [DZ.寅, DZ.未],
+  //     [TG_LEVEL.余气根]: [DZ.戌],
+  //   },
+  //   get [TG.丁]() {
+  //     return _exchangeGenqi(this[TG.丙]);
+  //   },
+  //   [TG.戊]: {
+  //     [TG_LEVEL.禄]: [DZ.戌, DZ.辰],
+  //     [TG_LEVEL.刃]: [DZ.丑, DZ.未],
+  //     [TG_LEVEL.中气根]: [DZ.巳],
+  //     [TG_LEVEL.余气根]: [DZ.寅, DZ.申],
+  //   },
+  //   get [TG.己]() {
+  //     return _exchangeGenqi(this[TG.戊]);
+  //   },
+  //   [TG.庚]: {
+  //     [TG_LEVEL.禄]: [DZ.申],
+  //     [TG_LEVEL.刃]: [DZ.酉],
+  //     [TG_LEVEL.中气根]: [DZ.戌],
+  //     [TG_LEVEL.余气根]: [DZ.丑, DZ.巳],
+  //   },
+  //   get [TG.辛]() {
+  //     return _exchangeGenqi(this[TG.庚]);
+  //   },
+  //   [TG.壬]: {
+  //     [TG_LEVEL.禄]: [DZ.亥],
+  //     [TG_LEVEL.刃]: [DZ.子],
+  //     [TG_LEVEL.中气根]: [DZ.丑, DZ.申],
+  //     [TG_LEVEL.余气根]: [DZ.辰],
+  //   },
+  //   get [TG.癸]() {
+  //     return _exchangeGenqi(this[TG.壬]);
+  //   },
+  // };
+  map_wx_genqi = {
+    [WX.木]: {
+      [TG_LEVEL.本气根]: [DZ.寅, DZ.卯],
       [TG_LEVEL.中气根]: [DZ.亥, DZ.辰],
       [TG_LEVEL.余气根]: [DZ.未],
     },
-    get [TG.乙]() {
-      return _exchangeGenqi(this[TG.甲]);
-    },
-    [TG.丙]: {
-      [TG_LEVEL.禄]: [DZ.巳],
-      [TG_LEVEL.刃]: [DZ.午],
+    [WX.火]: {
+      [TG_LEVEL.本气根]: [DZ.巳, DZ.午],
       [TG_LEVEL.中气根]: [DZ.寅, DZ.未],
       [TG_LEVEL.余气根]: [DZ.戌],
     },
-    get [TG.丁]() {
-      return _exchangeGenqi(this[TG.丙]);
-    },
-    [TG.戊]: {
-      [TG_LEVEL.禄]: [DZ.戌, DZ.辰],
-      [TG_LEVEL.刃]: [DZ.丑, DZ.未],
-      [TG_LEVEL.中气根]: [DZ.巳],
+    [WX.土]: {
+      [TG_LEVEL.本气根]: [DZ.辰, DZ.戌, DZ.丑, DZ.未],
+      [TG_LEVEL.中气根]: [DZ.巳, DZ.午],
       [TG_LEVEL.余气根]: [DZ.寅, DZ.申],
     },
-    get [TG.己]() {
-      return _exchangeGenqi(this[TG.戊]);
-    },
-    [TG.庚]: {
-      [TG_LEVEL.禄]: [DZ.申],
-      [TG_LEVEL.刃]: [DZ.酉],
+    [WX.金]: {
+      [TG_LEVEL.本气根]: [DZ.申, DZ.酉],
       [TG_LEVEL.中气根]: [DZ.戌],
       [TG_LEVEL.余气根]: [DZ.丑, DZ.巳],
     },
-    get [TG.辛]() {
-      return _exchangeGenqi(this[TG.庚]);
-    },
-    [TG.壬]: {
-      [TG_LEVEL.禄]: [DZ.亥],
-      [TG_LEVEL.刃]: [DZ.子],
+    [WX.水]: {
+      [TG_LEVEL.本气根]: [DZ.亥, DZ.子],
       [TG_LEVEL.中气根]: [DZ.丑, DZ.申],
       [TG_LEVEL.余气根]: [DZ.辰],
     },
-    get [TG.癸]() {
-      return _exchangeGenqi(this[TG.壬]);
+  };
+
+  map_dz_wx: Record<DZ, Record<string, number>> = {
+    [DZ.子]: {[WX.水]: 1},
+    [DZ.丑]: {[WX.土]: 0.6, [WX.水]: 0.3, [WX.金]: 0.1},
+    [DZ.寅]: {[WX.木]: 0.6, [WX.火]: 0.3, [WX.土]: 0.1},
+    [DZ.卯]: {[WX.木]: 1},
+    [DZ.辰]: {[WX.土]: 0.6, [WX.木]: 0.3, [WX.水]: 0.1},
+    [DZ.巳]: {[WX.火]: 0.6, [WX.土]: 0.3, [WX.金]: 0.1},
+    [DZ.午]: {[WX.火]: 0.7, [WX.土]: 0.3},
+    [DZ.未]: {[WX.土]: 0.6, [WX.火]: 0.3, [WX.木]: 0.1},
+    [DZ.申]: {[WX.金]: 0.6, [WX.水]: 0.3, [WX.土]: 0.1},
+    [DZ.酉]: {[WX.金]: 1},
+    [DZ.戌]: {[WX.土]: 0.6, [WX.金]: 0.3, [WX.火]: 0.1},
+    [DZ.亥]: {[WX.水]: 0.7, [WX.木]: 0.3},
+  };
+
+  map_a = {
+    [DZ.子]: {
+      [DZ.子]: {[WX.水]: 1}, //
+      [DZ.丑]: {[WX.水]: 0.8}, // 被合
+      [DZ.寅]: {[WX.水]: 0.9}, // 生寅木
+      [DZ.卯]: {[WX.水]: 1}, // 刑
+      [DZ.辰]: {[WX.水]: 1.5}, // 半合水
+      [DZ.巳]: {[WX.水]: 0.8}, // 水被耗
+      [DZ.午]: {[WX.水]: 0.7}, // 冲
+      [DZ.未]: {[WX.水]: 0.4}, // 被穿被克
+      [DZ.申]: {[WX.水]: 1.5}, // 半合水
+      [DZ.酉]: {[WX.水]: 1}, // 酉不生子
+      [DZ.戌]: {[WX.水]: 0.6}, // 被克
+      [DZ.亥]: {[WX.水]: 1.5}, // 半会
+    },
+    [DZ.丑]: {
+      [DZ.子]: {[WX.土]: 1.2, [WX.水]: 0.8, [WX.金]: 1}, // 合子
+      [DZ.丑]: {[WX.土]: 1, [WX.水]: 1, [WX.金]: 1}, // 无
+      [DZ.寅]: {[WX.土]: 1.1, [WX.水]: 0.8, [WX.金]: 0.9}, // 暗合
+      [DZ.卯]: {[WX.土]: 0.5, [WX.水]: 1, [WX.金]: 0.8}, // 被克
+      [DZ.辰]: {[WX.土]: 1, [WX.水]: 0.8, [WX.金]: 0.8}, // 破、辛金消耗
+      [DZ.巳]: {[WX.土]: 1, [WX.水]: 0.8, [WX.金]: 1.5}, // 拱金
+      [DZ.午]: {[WX.土]: 1.2, [WX.水]: 0.8, [WX.金]: 1}, // 穿 癸水克丁火
+      [DZ.未]: {[WX.土]: 1.5, [WX.水]: 0.1, [WX.金]: 0.5}, // 冲 本气冲旺藏干互毁
+      [DZ.申]: {[WX.土]: 0.8, [WX.水]: 1, [WX.金]: 1.5}, // 半会
+      [DZ.酉]: {[WX.土]: 0.8, [WX.水]: 1, [WX.金]: 1.5}, // 半合
+      [DZ.戌]: {[WX.土]: 1.5, [WX.水]: 0.5, [WX.金]: 0.3}, // 刑
+      [DZ.亥]: {[WX.土]: 1, [WX.水]: 1.5, [WX.金]: 1}, // 半会
+    },
+    [DZ.寅]: {
+      [DZ.子]: {[WX.木]: 1.2, [WX.火]: 1.2, [WX.土]: 1}, // 癸水生甲木
+      [DZ.丑]: {[WX.木]: 0.8, [WX.火]: 0.8, [WX.土]: 0.9}, // 暗合
+      [DZ.寅]: {[WX.木]: 1, [WX.火]: 1, [WX.土]: 1}, //
+      [DZ.卯]: {[WX.木]: 1.5, [WX.火]: 0.8, [WX.土]: 0.8}, // 半会
+      [DZ.辰]: {[WX.木]: 1.5, [WX.火]: 0.8, [WX.土]: 0.5}, // 半会
+      [DZ.巳]: {[WX.木]: 0.5, [WX.火]: 1.2, [WX.土]: 1.2}, // 穿 庚金克甲木
+      [DZ.午]: {[WX.木]: 0.8, [WX.火]: 1.5, [WX.土]: 1.5}, // 半合
+      [DZ.未]: {[WX.木]: 0.9, [WX.火]: 1.2, [WX.土]: 0.8}, // 正财耗
+      [DZ.申]: {[WX.木]: 0.1, [WX.火]: 0.5, [WX.土]: 0.8}, // 被冲
+      [DZ.酉]: {[WX.木]: 0.8, [WX.火]: 0.9, [WX.土]: 1}, // 正官克
+      [DZ.戌]: {[WX.木]: 0.7, [WX.火]: 1.5, [WX.土]: 1}, // 拱午
+      [DZ.亥]: {[WX.木]: 1.4, [WX.火]: 0.8, [WX.土]: 0.9}, // 合木
+    },
+    [DZ.卯]: {
+      [DZ.子]: {[WX.木]: 1}, // 刑，子水不生卯木
+      [DZ.丑]: {[WX.木]: 0.9}, // 偏财克
+      [DZ.寅]: {[WX.木]: 1.5}, // 半会
+      [DZ.卯]: {[WX.木]: 1}, //
+      [DZ.辰]: {[WX.木]: 0.9}, // 穿 木克土
+      [DZ.巳]: {[WX.木]: 0.8}, // 生伤官
+      [DZ.午]: {[WX.木]: 0.7}, // 破
+      [DZ.未]: {[WX.木]: 1.5}, // 半合
+      [DZ.申]: {[WX.木]: 0.8}, // 暗合
+      [DZ.酉]: {[WX.木]: 0.1}, // 被冲
+      [DZ.戌]: {[WX.木]: 0.7}, // 合火
+      [DZ.亥]: {[WX.木]: 1.5}, // 半合
+    },
+    [DZ.辰]: {
+      [DZ.子]: {[WX.土]: 0.8, [WX.木]: 1, [WX.水]: 1.2}, // 半合
+      [DZ.丑]: {[WX.土]: 1.2, [WX.木]: 0.1, [WX.水]: 0.8}, // 破
+      [DZ.寅]: {[WX.土]: 0.5, [WX.木]: 1.2, [WX.水]: 1}, // 半会
+      [DZ.卯]: {[WX.土]: 0.1, [WX.木]: 1.2, [WX.水]: 1}, // 被穿 木克土 半会
+      [DZ.辰]: {[WX.土]: 1.5, [WX.木]: 0.3, [WX.水]: 0.3}, // 自刑
+      [DZ.巳]: {[WX.土]: 1.1, [WX.木]: 0.7, [WX.水]: 0.9}, // 被生
+      [DZ.午]: {[WX.土]: 1.2, [WX.木]: 0.8, [WX.水]: 0.5}, // 被生
+      [DZ.未]: {[WX.土]: 1.1, [WX.木]: 1, [WX.水]: 0.8}, //
+      [DZ.申]: {[WX.土]: 0.8, [WX.木]: 0.8, [WX.水]: 1.5}, // 拱子
+      [DZ.酉]: {[WX.土]: 1, [WX.木]: 0.8, [WX.水]: 1.1}, // 合金
+      [DZ.戌]: {[WX.土]: 1.5, [WX.木]: 0.1, [WX.水]: 0.3}, // 冲
+      [DZ.亥]: {[WX.土]: 0.5, [WX.木]: 1.2, [WX.水]: 1.5}, // 开水库、克水
+    },
+    [DZ.巳]: {
+      // [DZ.子]: {[WX.火]: 1.2, [WX.土]: 1.2, [WX.金]: 1}, // 癸水生甲木
+      // [DZ.丑]: {[WX.火]: 0.8, [WX.土]: 0.8, [WX.金]: 0.9}, // 暗合
+      // [DZ.寅]: {[WX.火]: 1, [WX.土]: 1, [WX.金]: 1}, //
+      // [DZ.卯]: {[WX.火]: 1.5, [WX.土]: 0.8, [WX.金]: 0.8}, // 半会
+      // [DZ.辰]: {[WX.火]: 1.5, [WX.土]: 0.8, [WX.金]: 0.5}, // 半会
+      // [DZ.巳]: {[WX.火]: 0.5, [WX.土]: 1.2, [WX.金]: 1.2}, // 穿 庚金克甲木
+      // [DZ.午]: {[WX.火]: 0.8, [WX.土]: 1.5, [WX.金]: 1.5}, // 半合
+      // [DZ.未]: {[WX.火]: 0.9, [WX.土]: 1.2, [WX.金]: 0.8}, // 正财耗
+      // [DZ.申]: {[WX.火]: 0.1, [WX.土]: 0.5, [WX.金]: 0.8}, // 被冲
+      // [DZ.酉]: {[WX.火]: 0.8, [WX.土]: 0.9, [WX.金]: 1}, // 正官克
+      // [DZ.戌]: {[WX.火]: 0.7, [WX.土]: 1.5, [WX.金]: 1}, // 拱午
+      // [DZ.亥]: {[WX.火]: 1.4, [WX.土]: 0.8, [WX.金]: 0.9}, // 合木
     },
   };
 
@@ -805,8 +933,8 @@ class WuXingClass {
     return info.text;
   }
 
-  // 根据原始四柱拿到更全的四柱数据
-  public getSiZhuDetails(bazi: JZ_60[]) {
+  // 拿到各个五行的力量
+  public getWxPower(bazi: JZ_60[]) {
     // console.log('bazi', bazi);
     const {tgs, dzs} = bazi.reduce(
       (r, i) => {
@@ -819,77 +947,64 @@ class WuXingClass {
 
     // console.log('tgs, dzs', tgs, dzs);
 
-    const res: sizhuDetailsItem[] = bazi.map((i, index) => {
-      const tg = i[0] as TG;
-      const dz = i[1] as DZ;
+    const yueling = WuXing.getWuxing(bazi[1][1]) as WX;
+    const yueMap = YueLinByWuxing[yueling];
 
-      const yueling = WuXing.getWuxing(bazi[1][1]) as WX;
-      const nowTgWuxing = WuXing.getWuxing(bazi[index][0]) as WX;
-      const yuelingIndex = YueLinByWuxing[yueling].findIndex(
-        j => j === nowTgWuxing,
-      );
+    const res: sizhuDetailsItem[] = WuXing5.map(i => {
+      const yuelingIndex = yueMap.findIndex(j => j === i);
 
       // 根气情况
       let tg_level = TG_LEVEL.无根气;
-      let tg_level_text = TG_LEVEL[TG_LEVEL.无根气];
-      let tg_opacity = 0.3;
-      let tg_is_qg = false;
-      const tg_genqi = this.map_tg_genqi[tg];
-      // console.log('tg_genqi', tg, tg_genqi,);
-      if (dzs.find(d => tg_genqi[TG_LEVEL.禄].includes(d))) {
-        tg_level = TG_LEVEL.禄;
-        tg_level_text = TG_LEVEL[TG_LEVEL.本气根];
-        tg_opacity = 1;
-        tg_is_qg = true;
-      } else if (dzs.find(d => tg_genqi[TG_LEVEL.刃].includes(d))) {
-        tg_level = TG_LEVEL.刃;
-        tg_level_text = TG_LEVEL[TG_LEVEL.本气根];
-        tg_opacity = 1;
-        tg_is_qg = true;
-      } else if (dzs.find(d => tg_genqi[TG_LEVEL.中气根].includes(d))) {
+      let wx_opacity = 0.3;
+      const now_genqi = this.map_wx_genqi[i];
+      if (dzs.find(d => now_genqi[TG_LEVEL.本气根].includes(d))) {
+        tg_level = TG_LEVEL.本气根;
+        wx_opacity = 1;
+      } else if (dzs.find(d => now_genqi[TG_LEVEL.中气根].includes(d))) {
         tg_level = TG_LEVEL.中气根;
-        tg_level_text = TG_LEVEL[tg_level];
-        tg_opacity = 7;
-      } else if (dzs.find(d => tg_genqi[TG_LEVEL.余气根].includes(d))) {
+        wx_opacity = 0.7;
+      } else if (dzs.find(d => now_genqi[TG_LEVEL.余气根].includes(d))) {
         tg_level = TG_LEVEL.余气根;
-        tg_level_text = TG_LEVEL[tg_level];
-        tg_opacity = 0.5;
+        wx_opacity = 0.4;
       }
 
-      let gen_dz: null | DZ = null;
+      let gen_dz: DZ[] = [];
       if (tg_level !== TG_LEVEL.无根气) {
-        gen_dz = dzs.find(d => tg_genqi[tg_level].includes(d)) || null;
+        gen_dz = dzs
+          .filter(d => now_genqi[TG_LEVEL.本气根].includes(d))
+          .concat(dzs.filter(d => now_genqi[TG_LEVEL.中气根].includes(d)))
+          .concat(dzs.filter(d => now_genqi[TG_LEVEL.余气根].includes(d)));
       }
 
       let dz_level_text = DZ_LEVEL[DZ_LEVEL.未透干];
-      let tg_is_tougan = false;
 
-      if (tgs.find(t => this.getWuxing(t) === this.getWuxing(dz))) {
+      if (tgs.find(t => this.getWuxing(t) === i)) {
         dz_level_text = DZ_LEVEL[DZ_LEVEL.透干];
-        tg_is_tougan = true;
       }
 
       return {
-        tgdz: i,
-        tg,
-        dz,
+        wx: i,
+        // tg,
+        // dz,
         isDeLing: yuelingIndex === 0 || yuelingIndex === 1,
-        tg_level_text,
-        tg_opacity,
-        tg_is_qg,
-        tg_color: WuXing.getColorByWuxing(tg),
+        tg_level,
+        tg_level_text: TG_LEVEL[tg_level],
+        wx_opacity,
+        tg_is_qg: tg_level === TG_LEVEL.本气根,
+        // tg_color: WuXing.getColorByWuxing(tg),
         dz_level_text,
-        tg_is_tougan,
+        is_tougan: dz_level_text === DZ_LEVEL[DZ_LEVEL.透干],
         gen_dz,
         isDeShi: false,
         deshi_text: [],
       };
     });
+    // console.log(JSON.stringify(res, null, 4));
 
     // 得势情况
     // 1. 地支关系
     const dz_gx = this.getDzRelation(bazi.map(i => i[1] as DZ));
-    // console.log('dz_gx', JSON.stringify(dz_gx, null, 4));
+    console.log('dz_gx', JSON.stringify(dz_gx, null, 4));
     dz_gx.forEach(i => {
       i.relation.forEach(relation => {
         if (
@@ -897,7 +1012,9 @@ class WuXingClass {
           relation.text.includes(DZ_GX.三会) ||
           relation.text.includes(DZ_GX.四合)
         ) {
-          const zhongshen = res.find(j => j.gen_dz === relation.text[1]); // TODO index 1
+          const zhongshen = res.find(
+            j => j.gen_dz.includes(relation.text[1] as DZ), // TODO index 1
+          );
           if (zhongshen) {
             zhongshen.isDeShi = true;
             zhongshen.deshi_text.push(relation.text);
@@ -906,21 +1023,214 @@ class WuXingClass {
       });
     });
     // 2. 成众判断
-    const {wu_numbs} = this.getWxNumbs(
-      res.map(i => this.getWuxing(i.dz) as WX),
-    );
-    // console.log('wu_numbs', wu_numbs);
+    let {wu_numbs} = this.getWxNumbs(bazi.map(i => this.getWuxing(i[1]) as WX));
+    // // arr_wu_nums = arr_wu_nums.filter(i => i);
+    // // console.log('arr_wu_nums', arr_wu_nums);
+    // // console.log('wu_numbs', wu_numbs);
     res.forEach(item => {
       if (item.gen_dz) {
-        const wx = this.getWuxing(item.tg) as WX;
-        if (wu_numbs[wx] >= 2) {
+        if (wu_numbs[item.wx] >= 2) {
           item.isDeShi = true;
-          item.deshi_text.push(wx + '成众');
+          item.deshi_text.push(item.wx + '成众');
         }
       }
     });
 
+    // console.log('yueMap', yueMap);
+    // const max_wx: WX[] = [];
+    // // 简易排序
+    // arr_wu_nums.forEach(i => {
+    //   if (i === null) {
+    //   } else if (i?.length >= 2) {
+    //     // console.log(i);
+    //     const r: number[] = [];
+    //     i.forEach(j => {
+    //       const index = yueMap.findIndex(k => k === j);
+    //       r.push(index);
+    //     });
+    //     r.sort((a, b) => b - a);
+
+    //     r.forEach(j => {
+    //       max_wx.push(yueMap[j]);
+    //     });
+    //   } else {
+    //     i && max_wx.push(i?.[0] as WX);
+    //   }
+    // });
+    // console.log('max_wx', max_wx);
+    console.log('res', JSON.stringify(res, null, 4));
+
+    // 五行依次单独分析打分、最终再对比五个的分数得出各个的强度
+    // 在给单个五行打分时，只需要关注自己，不需要考虑其他五行强弱状态对自身的影响
+    res.forEach(i => {
+      this.getWxSingleScore(i.wx, bazi, res);
+    });
+
     return res;
+  }
+
+  // 获取单个五行的分数
+  private getWxSingleScore(wx: WX, bazi: JZ_60[], res: sizhuDetailsItem[]) {
+    const getWuxing = this.getWuxing;
+    // 1 月令
+    function getYuelingScore() {
+      const yueling = WuXing.getWuxing(bazi[1][1]) as WX;
+      const yueMap = YueLinByWuxing[yueling];
+
+      const index = yueMap.findIndex(i => i === wx);
+      const map = [100, 80, 60, 40, 20];
+      return map[index];
+    }
+    const yuelingScore = getYuelingScore();
+
+    // 2 结党、三合三会
+    const dz_gx = this.getDzRelation(bazi.map(i => i[1] as DZ));
+    // console.log('dz_gx', JSON.stringify(dz_gx, null, 4));
+    let {wu_numbs} = this.getWxNumbs(bazi.map(i => this.getWuxing(i[1]) as WX));
+    function getDeshiScore() {
+      let score = 0;
+      let has3 = false;
+      // 1. 三合三会
+      dz_gx.forEach(i => {
+        i.relation.forEach(relation => {
+          if (
+            relation.text.includes(DZ_GX.三合) ||
+            relation.text.includes(DZ_GX.三会)
+          ) {
+            const zhongshen = res.find(
+              j => j.gen_dz.includes(relation.text[1] as DZ), // TODO index 1
+            );
+            if (zhongshen?.wx === wx) {
+              has3 = true;
+            }
+          }
+        });
+      });
+      // 2. 成众
+      const wxNumbs = wu_numbs[wx];
+      if (wxNumbs === 4) {
+        score = 100;
+      } else {
+        if (has3) {
+          score = wxNumbs >= 2 ? 100 : 90;
+        } else {
+          if (wxNumbs === 3) {
+            score = 90;
+          } else if (wxNumbs === 2) {
+            score = 50;
+          } else if (wxNumbs === 1) {
+            score = 25;
+          } else {
+            const item = res.find(i => i.wx === wx);
+            score =
+              item?.tg_level === TG_LEVEL.中气根
+                ? 7.5
+                : item?.tg_level === TG_LEVEL.余气根
+                ? 2.5
+                : 0;
+          }
+        }
+      }
+      return score;
+    }
+    const deshiScore = getDeshiScore();
+
+    // 3 天干关系、生克制化
+    const tgs = bazi.map(i => i[0] as TG);
+    const tg_gx = this.getTgRelation(tgs).reduce<[TG, TG][]>((r, i) => {
+      i.relation.forEach(j => {
+        if (j.text.includes('合')) {
+          r.push([i.name, j.name]);
+        }
+      });
+      return r;
+    }, []);
+    // console.log(JSON.stringify(tg_gx, null, 4));
+    function getTgScore() {
+      let score = 0;
+      const same_tgs = tgs.filter(i => getWuxing(i) === wx);
+      const ke_map = [WX.金, WX.火, WX.水, WX.土, WX.木];
+      const ke_wx =
+        ke_map[(ke_map.findIndex(i => i === wx) + 1) % ke_map.length];
+      const sheng_map = [WX.金, WX.土, WX.火, WX.木, WX.水];
+      const sheng_wx =
+        sheng_map[(sheng_map.findIndex(i => i === wx) + 1) % sheng_map.length];
+      // console.log('ke_wx', wx, ke_wx, sheng_wx);
+      for (let i = 0; i < tgs.length; i++) {
+        const tg_wx = getWuxing(tgs[i]);
+
+        if (tg_wx === sheng_wx) {
+          // 生
+          score += 25;
+          // console.log('生', tgs[i]);
+        } else if (tg_gx.find(j => j.includes(tgs[i]))) {
+          // 天干五合
+          // console.log('天干五合', tgs[i]);
+          if (tg_wx === wx) {
+            if ([TG.乙, TG.丁, TG.辛, TG.癸].includes(tgs[i])) {
+              score += 20;
+            } else if (tgs[i] === TG.己) {
+              score += 25;
+            } else if (tgs[i] === TG.庚) {
+              score += 30;
+            } else {
+              score += 25;
+            }
+          }
+        } else if (tg_wx === ke_wx) {
+          // 克
+        } else if (tg_wx === wx) {
+          score += 25;
+          // 同
+          // console.log('同', tgs[i]);
+        }
+      }
+      if (same_tgs.length === 0) {
+        score = Math.floor(score / 2);
+      }
+      // console.log('length', length)
+      return score;
+    }
+    const tgScore = getTgScore();
+    // 4 地支关系、刑冲合害
+    const map_dz_wx = this.map_dz_wx;
+    function getDzScore() {
+      let score = 0;
+
+      const dzs = bazi.map(i => i[1] as DZ);
+      const item = res.find(i => i.wx === wx);
+      for (let i = 0; i < dzs.length; i++) {
+        const target = dzs[i];
+        if (item?.gen_dz.includes(target)) {
+          // 是根气
+          const genqi_power = map_dz_wx[target][wx];
+          console.log(wx, target, genqi_power);
+
+          for (let j = 0; j < dzs.length; j++) {
+            if (i === j) continue;
+
+            // if (dzs[i])
+          }
+        }
+      }
+
+      return score;
+    }
+    const dzScore = getDzScore();
+    // 5 墓库
+    // 6 进气、退气
+
+    // 例子：甲木日主
+    // 中间态
+    //   强时失令、弱时得令
+    //   根气、结党情况。只有弱根、皆无三合三会、皆无结党或旗鼓相当
+    //   在地根气有损、但也有增强、或有强根被冲
+    //   在天有官杀有印或食伤、有财无官、有食伤有比劫、有印有财来坏
+    //   弱时有库、强时无库
+    //   额外项 弱时进气、强时退气
+
+    // 极强、强、不强不弱？、弱、极弱
+    console.log('score', wx, yuelingScore, deshiScore, tgScore, dzScore);
   }
 
   // 获取五行数量数组
@@ -932,7 +1242,7 @@ class WuXingClass {
       },
       {[WX.金]: 0, [WX.木]: 0, [WX.水]: 0, [WX.火]: 0, [WX.土]: 0},
     );
-    const arr_wu_nums = Array(8)
+    const arr_wu_nums = Array(wxs.length)
       .fill(null)
       .map((_, index) => {
         const active = Object.keys(wu_numbs).filter(
