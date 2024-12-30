@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   ListRenderItem,
@@ -12,6 +12,7 @@ interface TabsProps<T> {
   data: T[];
   renderItem: ListRenderItem<T>;
   initIndex?: number;
+  index?: number;
   disabled?: boolean;
   onActiveChange?: (v: number) => void;
 }
@@ -20,10 +21,17 @@ const Tabs = <T,>({
   data,
   renderItem,
   initIndex = 0,
+  index,
   disabled,
   onActiveChange,
 }: TabsProps<T>) => {
   const [activeIndex, setActiveIndex] = useState(initIndex);
+
+  useEffect(() => {
+    if (typeof index !== 'undefined') {
+      setActiveIndex(index);
+    }
+  }, [index]);
 
   return (
     <View style={styles.contentContainer}>

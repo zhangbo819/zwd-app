@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
 import Tabs from '../../../../components/Tabs';
@@ -13,7 +13,14 @@ import {COLOR_LINEGRAY} from '../../../../constant/UI';
 const TabWuXingLi: FC<{
   pageData: PageDataType;
 }> = ({pageData}) => {
-  const [activeTab, setActiveTab] = useState(2);
+  const [activeTab, setActiveTab] = useState(0);
+
+  useEffect(() => {
+    const index = pageData.wx_info.findIndex(
+      i => i.wx === pageData.rizhuWuxing,
+    );
+    index !== -1 && setActiveTab(index);
+  }, [pageData]);
 
   const activeZhu = pageData.wx_info?.[activeTab];
 
@@ -21,26 +28,28 @@ const TabWuXingLi: FC<{
     <View style={styles.contentContainer}>
       <Tabs
         data={pageData.wx_info}
-        initIndex={activeTab}
+        index={activeTab}
         onActiveChange={setActiveTab}
         // disabled
         renderItem={({item: i}) => {
+          const color = WuXing.getColorByWuxing(i.wx);
           return (
             <Col alignItems="center">
+              <Text style={{color}}>{i.power_number}%</Text>
               <Text
                 style={[
                   styles.bold,
                   {
-                    color: WuXing.getColorByWuxing(i.wx),
-                    opacity: i.wx_opacity,
+                    color,
+                    // opacity: i.wx_opacity,
                   },
                 ]}>
                 {i.tg_level_text}
               </Text>
-              <Text>{i.isDeLing ? '得令' : '不得令'}</Text>
-              <Text>{i.isDeShi ? '得势' : '未得势'}</Text>
+              {/* <Text>{i.isDeLing ? '得令' : '不得令'}</Text> */}
+              {/* <Text>{i.isDeShi ? '得势' : '未得势'}</Text> */}
               <WuxingText
-                style={{opacity: i.wx_opacity}}
+                // style={{opacity: i.wx_opacity}}
                 disabled
                 margin={2}
                 text={i.wx}
@@ -50,12 +59,21 @@ const TabWuXingLi: FC<{
                 style={[
                   i.is_tougan && styles.bold,
                   {
-                    color: WuXing.getColorByWuxing(i.wx),
-                    opacity: i.wx_opacity,
+                    color,
+                    // opacity: i.wx_opacity,
                   },
                 ]}>
                 {i.dz_level_text}
               </Text>
+              <View
+                style={[
+                  styles.scoreView,
+                  {
+                    height: `${Number(i.power_number)}%`,
+                    backgroundColor: color,
+                  },
+                ]}
+              />
             </Col>
           );
         }}
@@ -194,17 +212,29 @@ const TabWuXingLi: FC<{
         </Text>
       </View>
 
+      {/* 力量 */}
       <View style={styles.wuxingView}>
+        <Text style={styles.commonText}>
+          综合力量：
+          <Text
+            style={
+              styles.bold
+            }>{`${activeZhu?.power_number}%(${activeZhu?.power_text})`}</Text>
+        </Text>
+      </View>
+
+      {/* <View style={styles.wuxingView}>
         <Text style={styles.hint}>
           日主得令、通根、得势三项得其二即可视为身强，皆有则极强、皆无则极弱。中间状态需再细究十神及地支关系。
         </Text>
-      </View>
+      </View> */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   contentContainer: {
+    marginTop: 12,
     flex: 1,
   },
   title: {
@@ -237,6 +267,14 @@ const styles = StyleSheet.create({
   bold: {
     fontWeight: 'bold',
     color: '#000',
+  },
+  scoreView: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    bottom: 0,
+    opacity: 0.6,
+    // backgroundColor: '#f008',
   },
 });
 

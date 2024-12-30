@@ -300,6 +300,8 @@ export type sizhuDetailsItem = {
   isDeShi: boolean; // 是否得势
   gen_dz: DZ[]; // 天干的根对应的地支，空为无根
   deshi_text: string[];
+  power_number: string | number; // 五行力量数字
+  power_text: string; // 五行力量文字
 };
 
 // function _exchangeGenqi(map: {
@@ -491,7 +493,7 @@ class WuXingClass {
     [DZ.亥]: {[WX.水]: 0.7, [WX.木]: 0.3},
   };
 
-  map_a = {
+  map_dz_2_power: Record<DZ, Record<DZ, Record<string, number>>> = {
     [DZ.子]: {
       [DZ.子]: {[WX.水]: 1}, //
       [DZ.丑]: {[WX.水]: 0.8}, // 被合
@@ -499,7 +501,7 @@ class WuXingClass {
       [DZ.卯]: {[WX.水]: 1}, // 刑
       [DZ.辰]: {[WX.水]: 1.5}, // 半合水
       [DZ.巳]: {[WX.水]: 0.8}, // 水被耗
-      [DZ.午]: {[WX.水]: 0.7}, // 冲
+      [DZ.午]: {[WX.水]: 0.5}, // 冲
       [DZ.未]: {[WX.水]: 0.4}, // 被穿被克
       [DZ.申]: {[WX.水]: 1.5}, // 半合水
       [DZ.酉]: {[WX.水]: 1}, // 酉不生子
@@ -516,7 +518,7 @@ class WuXingClass {
       [DZ.午]: {[WX.土]: 1.2, [WX.水]: 0.8, [WX.金]: 1}, // 穿 癸水克丁火
       [DZ.未]: {[WX.土]: 1.5, [WX.水]: 0.1, [WX.金]: 0.5}, // 冲 本气冲旺藏干互毁
       [DZ.申]: {[WX.土]: 0.8, [WX.水]: 1, [WX.金]: 1.5}, // 半会
-      [DZ.酉]: {[WX.土]: 0.8, [WX.水]: 1, [WX.金]: 1.5}, // 半合
+      [DZ.酉]: {[WX.土]: 0.7, [WX.水]: 1, [WX.金]: 1.5}, // 半合
       [DZ.戌]: {[WX.土]: 1.5, [WX.水]: 0.5, [WX.金]: 0.3}, // 刑
       [DZ.亥]: {[WX.土]: 1, [WX.水]: 1.5, [WX.金]: 1}, // 半会
     },
@@ -527,7 +529,7 @@ class WuXingClass {
       [DZ.卯]: {[WX.木]: 1.5, [WX.火]: 0.8, [WX.土]: 0.8}, // 半会
       [DZ.辰]: {[WX.木]: 1.5, [WX.火]: 0.8, [WX.土]: 0.5}, // 半会
       [DZ.巳]: {[WX.木]: 0.5, [WX.火]: 1.2, [WX.土]: 1.2}, // 穿 庚金克甲木
-      [DZ.午]: {[WX.木]: 0.8, [WX.火]: 1.5, [WX.土]: 1.5}, // 半合
+      [DZ.午]: {[WX.木]: 0.7, [WX.火]: 1.5, [WX.土]: 1.5}, // 半合
       [DZ.未]: {[WX.木]: 0.9, [WX.火]: 1.2, [WX.土]: 0.8}, // 正财耗
       [DZ.申]: {[WX.木]: 0.1, [WX.火]: 0.5, [WX.土]: 0.8}, // 被冲
       [DZ.酉]: {[WX.木]: 0.8, [WX.火]: 0.9, [WX.土]: 1}, // 正官克
@@ -563,18 +565,102 @@ class WuXingClass {
       [DZ.亥]: {[WX.土]: 0.5, [WX.木]: 1.2, [WX.水]: 1.5}, // 开水库、克水
     },
     [DZ.巳]: {
-      // [DZ.子]: {[WX.火]: 1.2, [WX.土]: 1.2, [WX.金]: 1}, // 癸水生甲木
-      // [DZ.丑]: {[WX.火]: 0.8, [WX.土]: 0.8, [WX.金]: 0.9}, // 暗合
-      // [DZ.寅]: {[WX.火]: 1, [WX.土]: 1, [WX.金]: 1}, //
-      // [DZ.卯]: {[WX.火]: 1.5, [WX.土]: 0.8, [WX.金]: 0.8}, // 半会
-      // [DZ.辰]: {[WX.火]: 1.5, [WX.土]: 0.8, [WX.金]: 0.5}, // 半会
-      // [DZ.巳]: {[WX.火]: 0.5, [WX.土]: 1.2, [WX.金]: 1.2}, // 穿 庚金克甲木
-      // [DZ.午]: {[WX.火]: 0.8, [WX.土]: 1.5, [WX.金]: 1.5}, // 半合
-      // [DZ.未]: {[WX.火]: 0.9, [WX.土]: 1.2, [WX.金]: 0.8}, // 正财耗
-      // [DZ.申]: {[WX.火]: 0.1, [WX.土]: 0.5, [WX.金]: 0.8}, // 被冲
-      // [DZ.酉]: {[WX.火]: 0.8, [WX.土]: 0.9, [WX.金]: 1}, // 正官克
-      // [DZ.戌]: {[WX.火]: 0.7, [WX.土]: 1.5, [WX.金]: 1}, // 拱午
-      // [DZ.亥]: {[WX.火]: 1.4, [WX.土]: 0.8, [WX.金]: 0.9}, // 合木
+      [DZ.子]: {[WX.火]: 0.7, [WX.土]: 0.9, [WX.金]: 0.9}, // 被正官克
+      [DZ.丑]: {[WX.火]: 0.7, [WX.土]: 0.7, [WX.金]: 1.5}, // 拱酉金
+      [DZ.寅]: {[WX.火]: 1.2, [WX.土]: 0.8, [WX.金]: 0.8}, // 三刑 穿 庚金克甲木
+      [DZ.卯]: {[WX.火]: 1.2, [WX.土]: 0.8, [WX.金]: 1.2}, // 被正印生
+      [DZ.辰]: {[WX.火]: 0.8, [WX.土]: 0.8, [WX.金]: 0.8}, // 生食神
+      [DZ.巳]: {[WX.火]: 1, [WX.土]: 1, [WX.金]: 1}, //
+      [DZ.午]: {[WX.火]: 1.2, [WX.土]: 0.5, [WX.金]: 0.5}, // 半会
+      [DZ.未]: {[WX.火]: 1.2, [WX.土]: 1, [WX.金]: 0.9}, // 半会
+      [DZ.申]: {[WX.火]: 0.8, [WX.土]: 0.9, [WX.金]: 1.1}, // 合
+      [DZ.酉]: {[WX.火]: 0.7, [WX.土]: 0.9, [WX.金]: 1}, // 半合
+      [DZ.戌]: {[WX.火]: 1.2, [WX.土]: 1, [WX.金]: 0.7}, // 开火库
+      [DZ.亥]: {[WX.火]: 0.5, [WX.土]: 0.5, [WX.金]: 0.5}, // 被冲
+    },
+    [DZ.午]: {
+      [DZ.子]: {[WX.火]: 0.5, [WX.土]: 0.8}, // 被冲
+      [DZ.丑]: {[WX.火]: 0.5, [WX.土]: 0.8}, // 被穿 癸水克丁火
+      [DZ.寅]: {[WX.火]: 1.5, [WX.土]: 1.5}, // 半合
+      [DZ.卯]: {[WX.火]: 1.2, [WX.土]: 0.5}, // 被破
+      [DZ.辰]: {[WX.火]: 0.9, [WX.土]: 0.8}, // 生伤官
+      [DZ.巳]: {[WX.火]: 1.2, [WX.土]: 1.2}, // 半会
+      [DZ.午]: {[WX.火]: 1.5, [WX.土]: 0.5}, // 自刑
+      [DZ.未]: {[WX.火]: 0.9, [WX.土]: 1.2}, // 合土 半会
+      [DZ.申]: {[WX.火]: 0.9, [WX.土]: 0.9}, // 克正财
+      [DZ.酉]: {[WX.火]: 0.9, [WX.土]: 0.9}, // 刑
+      [DZ.戌]: {[WX.火]: 1.5, [WX.土]: 1.5}, // 半合
+      [DZ.亥]: {[WX.火]: 0.8, [WX.土]: 1.2}, // 暗合
+    },
+    [DZ.未]: {
+      [DZ.子]: {[WX.土]: 0.9, [WX.火]: 0.9, [WX.木]: 1}, // 穿 己土穿癸水
+      [DZ.丑]: {[WX.土]: 1.5, [WX.火]: 0.1, [WX.木]: 0.1}, // 冲
+      [DZ.寅]: {[WX.土]: 0.5, [WX.火]: 0.5, [WX.木]: 1.2}, // 开木库
+      [DZ.卯]: {[WX.土]: 0.5, [WX.火]: 0.8, [WX.木]: 1.2}, // 半合
+      [DZ.辰]: {[WX.土]: 1, [WX.火]: 1, [WX.木]: 1}, // 无
+      [DZ.巳]: {[WX.土]: 0.8, [WX.火]: 1.2, [WX.木]: 0.8}, // 半会
+      [DZ.午]: {[WX.土]: 1.2, [WX.火]: 1, [WX.木]: 1}, // 合土
+      [DZ.未]: {[WX.土]: 1, [WX.火]: 1, [WX.木]: 1}, //
+      [DZ.申]: {[WX.土]: 0.9, [WX.火]: 0.9, [WX.木]: 0.9}, // 生伤官
+      [DZ.酉]: {[WX.土]: 0.9, [WX.火]: 0.9, [WX.木]: 0.9}, // 生食神
+      [DZ.戌]: {[WX.土]: 1.5, [WX.火]: 0.9, [WX.木]: 0.5}, // 破 三刑
+      [DZ.亥]: {[WX.土]: 1, [WX.火]: 0.8, [WX.木]: 1.2}, // 克正财
+    },
+    [DZ.申]: {
+      [DZ.子]: {[WX.金]: 0.7, [WX.水]: 1.5, [WX.土]: 0.9}, // 半合
+      [DZ.丑]: {[WX.金]: 1.2, [WX.水]: 1.2, [WX.土]: 1}, // 开金库
+      [DZ.寅]: {[WX.金]: 0.7, [WX.水]: 0.5, [WX.土]: 0.5}, // 冲
+      [DZ.卯]: {[WX.金]: 1.2, [WX.水]: 0.8, [WX.土]: 0.8}, // 暗合
+      [DZ.辰]: {[WX.金]: 0.7, [WX.水]: 1.2, [WX.土]: 0.8}, // 拱子
+      [DZ.巳]: {[WX.金]: 0.7, [WX.水]: 1.1, [WX.土]: 0.8}, // 合化水 破
+      [DZ.午]: {[WX.金]: 0.8, [WX.水]: 0.7, [WX.土]: 1}, // 被正官克
+      [DZ.未]: {[WX.金]: 1.1, [WX.水]: 1, [WX.土]: 1}, // 被偏印生
+      [DZ.申]: {[WX.金]: 1, [WX.水]: 1, [WX.土]: 1}, //
+      [DZ.酉]: {[WX.金]: 1.5, [WX.水]: 0.5, [WX.土]: 0.5}, // 半会
+      [DZ.戌]: {[WX.金]: 1.5, [WX.水]: 0.5, [WX.土]: 0.7}, // 半会
+      [DZ.亥]: {[WX.金]: 0.9, [WX.水]: 1, [WX.土]: 1}, // 穿 庚金克甲木
+    },
+    [DZ.酉]: {
+      [DZ.子]: {[WX.金]: 1}, // 刑，破
+      [DZ.丑]: {[WX.金]: 1.5}, // 半合
+      [DZ.寅]: {[WX.金]: 0.9}, // 正财耗
+      [DZ.卯]: {[WX.金]: 0.8}, // 冲
+      [DZ.辰]: {[WX.金]: 1.2}, // 合金
+      [DZ.巳]: {[WX.金]: 1.5}, // 半合
+      [DZ.午]: {[WX.金]: 1}, //
+      [DZ.未]: {[WX.金]: 0.9}, //
+      [DZ.申]: {[WX.金]: 1.2}, // 半会
+      [DZ.酉]: {[WX.金]: 1.5}, // 自刑
+      [DZ.戌]: {[WX.金]: 0.5}, // 穿 丁火克辛金
+      [DZ.亥]: {[WX.金]: 0.8}, //
+    },
+    [DZ.戌]: {
+      [DZ.子]: {[WX.土]: 0.9, [WX.金]: 1, [WX.火]: 1.1}, // 克正财
+      [DZ.丑]: {[WX.土]: 1.5, [WX.金]: 1, [WX.火]: 0.8}, // 三刑
+      [DZ.寅]: {[WX.土]: 0.5, [WX.金]: 0.5, [WX.火]: 1.5}, // 拱午
+      [DZ.卯]: {[WX.土]: 0.8, [WX.金]: 0.8, [WX.火]: 1.2}, // 合火
+      [DZ.辰]: {[WX.土]: 1.5, [WX.金]: 0.9, [WX.火]: 0.1}, // 冲
+      [DZ.巳]: {[WX.土]: 0.8, [WX.金]: 0.7, [WX.火]: 1.2}, // 开火库
+      [DZ.午]: {[WX.土]: 0.8, [WX.金]: 0.5, [WX.火]: 1.5}, // 半合
+      [DZ.未]: {[WX.土]: 1.5, [WX.金]: 0.5, [WX.火]: 1.2}, // 三刑
+      [DZ.申]: {[WX.土]: 0.7, [WX.金]: 1.2, [WX.火]: 0.5}, // 半会
+      [DZ.酉]: {[WX.土]: 1, [WX.金]: 0.5, [WX.火]: 0.9}, // 半会 穿 丁火克辛金
+      [DZ.戌]: {[WX.土]: 1, [WX.金]: 1, [WX.火]: 1}, //
+      [DZ.亥]: {[WX.土]: 0.7, [WX.金]: 0.9, [WX.火]: 1}, // 克偏财
+    },
+    [DZ.亥]: {
+      [DZ.子]: {[WX.水]: 1.5, [WX.木]: 0.5}, // 半会
+      [DZ.丑]: {[WX.水]: 1.2, [WX.木]: 0.8}, // 半会
+      [DZ.寅]: {[WX.水]: 0.7, [WX.木]: 1.2}, // 合木
+      [DZ.卯]: {[WX.水]: 0.7, [WX.木]: 1.2}, // 半合
+      [DZ.辰]: {[WX.水]: 1.2, [WX.木]: 1.2}, // 开水库
+      [DZ.巳]: {[WX.水]: 0.5, [WX.木]: 0.1}, // 冲 本气藏干都受损
+      [DZ.午]: {[WX.水]: 0.9, [WX.木]: 1.1}, // 暗合
+      [DZ.未]: {[WX.水]: 0.5, [WX.木]: 1.5}, // 拱卯
+      [DZ.申]: {[WX.水]: 1.2, [WX.木]: 0.1}, // 穿 庚金克甲木
+      [DZ.酉]: {[WX.水]: 1.1, [WX.木]: 0.9}, // 偏印生
+      [DZ.戌]: {[WX.水]: 0.7, [WX.木]: 0.8}, // 被克
+      [DZ.亥]: {[WX.水]: 1.5, [WX.木]: 0.5}, // 自刑
     },
   };
 
@@ -997,6 +1083,8 @@ class WuXingClass {
         gen_dz,
         isDeShi: false,
         deshi_text: [],
+        power_number: 0,
+        power_text: '',
       };
     });
     // console.log(JSON.stringify(res, null, 4));
@@ -1060,10 +1148,28 @@ class WuXingClass {
     // console.log('max_wx', max_wx);
     console.log('res', JSON.stringify(res, null, 4));
 
+    // 详细力量计算
     // 五行依次单独分析打分、最终再对比五个的分数得出各个的强度
     // 在给单个五行打分时，只需要关注自己，不需要考虑其他五行强弱状态对自身的影响
+    let allScore = 0;
     res.forEach(i => {
-      this.getWxSingleScore(i.wx, bazi, res);
+      const score = this.getWxSingleScore(i.wx, bazi, res);
+      i.power_number = score;
+      allScore += score;
+    });
+    res.forEach(i => {
+      i.power_number = ((+i.power_number / allScore) * 100).toFixed(2);
+      i.power_text =
+        +i.power_number >= 40
+          ? '极强'
+          : +i.power_number >= 30
+          ? '较强'
+          : +i.power_number >= 20
+          ? '强'
+          : +i.power_number >= 10
+          ? '普通'
+          : '弱';
+      // console.log('', i.wx, i.score);
     });
 
     return res;
@@ -1078,7 +1184,7 @@ class WuXingClass {
       const yueMap = YueLinByWuxing[yueling];
 
       const index = yueMap.findIndex(i => i === wx);
-      const map = [100, 80, 60, 40, 20];
+      const map = [1.2, 1.1, 1, 0.75, 0.6];
       return map[index];
     }
     const yuelingScore = getYuelingScore();
@@ -1112,7 +1218,7 @@ class WuXingClass {
         score = 100;
       } else {
         if (has3) {
-          score = wxNumbs >= 2 ? 100 : 90;
+          score = wxNumbs >= 2 ? 100 : 75;
         } else {
           if (wxNumbs === 3) {
             score = 90;
@@ -1186,7 +1292,8 @@ class WuXingClass {
         }
       }
       if (same_tgs.length === 0) {
-        score = Math.floor(score / 2);
+        // score = Math.floor(score / 2);
+        score = 0;
       }
       // console.log('length', length)
       return score;
@@ -1194,6 +1301,7 @@ class WuXingClass {
     const tgScore = getTgScore();
     // 4 地支关系、刑冲合害
     const map_dz_wx = this.map_dz_wx;
+    const map_dz_2_power = this.map_dz_2_power;
     function getDzScore() {
       let score = 0;
 
@@ -1203,22 +1311,35 @@ class WuXingClass {
         const target = dzs[i];
         if (item?.gen_dz.includes(target)) {
           // 是根气
-          const genqi_power = map_dz_wx[target][wx];
-          console.log(wx, target, genqi_power);
+          const genqi_ratio = map_dz_wx[target][wx]; // 根据根气等级计算比例
+          let genqi_item_power = 0; // 当前根气在所有地支的实际力量
+          // console.log('wx, target, genqi_ratio', wx, target, genqi_ratio);
 
           for (let j = 0; j < dzs.length; j++) {
             if (i === j) continue;
 
-            // if (dzs[i])
+            const power = map_dz_2_power[target][dzs[j]][wx]; // 该五行在该地址的实际力量
+
+            if (power) {
+              genqi_item_power += power * 0.33;
+            }
           }
+          score += genqi_item_power * genqi_ratio; // 该五行的力量比例
+          // console.log('score, genqi_power', score, genqi_item_power, genqi_ratio);
         }
       }
+
+      score = Math.floor((score * 100) / 3);
 
       return score;
     }
     const dzScore = getDzScore();
     // 5 墓库
     // 6 进气、退气
+
+    const res_score = Math.round(
+      yuelingScore * (tgScore + deshiScore + dzScore),
+    );
 
     // 例子：甲木日主
     // 中间态
@@ -1229,8 +1350,14 @@ class WuXingClass {
     //   弱时有库、强时无库
     //   额外项 弱时进气、强时退气
 
-    // 极强、强、不强不弱？、弱、极弱
-    console.log('score', wx, yuelingScore, deshiScore, tgScore, dzScore);
+    console.log('score', wx, {
+      yuelingScore,
+      deshiScore,
+      tgScore,
+      dzScore,
+      res_score,
+    });
+    return res_score;
   }
 
   // 获取五行数量数组
@@ -1255,57 +1382,6 @@ class WuXingClass {
       });
     // console.log('wu_numbs, arr_wu_nums', wu_numbs, arr_wu_nums);
     return {arr_wu_nums, wu_numbs};
-  }
-
-  // 地支力量
-  public getDzPower(bazi: JZ_60[], _tenMap: Ten[]) {
-    const dzs = bazi.map(i => i[1] as DZ);
-    const wx_dz = dzs.map(i => this.getWuxing(i) as WX);
-    const {wu_numbs} = this.getWxNumbs(wx_dz);
-
-    let max_num = 0;
-    let max_wx = WX.金;
-    Object.keys(wu_numbs).forEach(i => {
-      if (wu_numbs[i as WX] > max_num) {
-        max_num = wu_numbs[i as WX];
-        max_wx = i as WX;
-      }
-    });
-
-    console.log('wu_numbs', wu_numbs, max_wx);
-
-    const [, [, yueling]] = bazi;
-    const yueling_wuxing = this.getWuxing(yueling) as WX;
-    // console.log('yueling_wuxing', yueling_wuxing);
-
-    // console.log('tenMap', tenMap);
-    const yuelingMap = YueLinByWuxing[yueling_wuxing];
-    // console.log('yuelingMap', yuelingMap);
-
-    const max_yue_index = yuelingMap.findIndex(i => i === yueling_wuxing);
-    // console.log('yuelingMap', yuelingMap, max_yue_index);
-
-    // const dz_gx = this.getDzRelation(bazi.map(i => i[1] as DZ));
-    // console.log('dz_gx', JSON.stringify(dz_gx, null, 4));
-
-    if (wu_numbs[max_wx] === 4) {
-      // get
-    } else if (wu_numbs[max_wx] === 3) {
-      if (max_yue_index === 0 || max_yue_index === 1) {
-        // get
-      } else {
-        // const other = bazi.find(i => this.getWuxing(i[1]) !== max_wx)
-        // 午 亥 巳 午
-        // 子 卯 子 子
-      }
-    } else if (wu_numbs[max_wx] === 2) {
-      if (max_yue_index === 0) {
-        // get
-      } else {
-        // this.map_dzgx[DZ_GX.三会]
-      }
-    } else {
-    }
   }
 }
 

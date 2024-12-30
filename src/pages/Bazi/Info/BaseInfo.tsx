@@ -219,8 +219,6 @@ const BaseInfo: FC<{
 
     const wx_info = WuXing.getWxPower(infoBazi);
 
-    // WuXing.getDzPower(infoBazi, paipanInfo.tenMap);
-
     // console.log(JSON.stringify(wx_info, null, 4))
 
     const tiaohou = WuXing.getTiaohou(infoBazi);
@@ -524,10 +522,10 @@ const BaseInfo: FC<{
               {Number((1 - pageData.ally) * 100).toFixed(1)}%
             </Text>
           </Row>
+          <TabWuXingLi pageData={pageData} />
         </View>
 
-        <Text style={styles.wuxingTitle2}>三、各柱天干</Text>
-        <TabWuXingLi pageData={pageData} />
+        {/* <Text style={styles.wuxingTitle2}>三、五行力量</Text> */}
 
         {/* <Text style={styles.wuxingTitle2}>三、格局</Text>
         <View style={styles.wuxingView}>
