@@ -180,8 +180,12 @@ const About: FC<
                   </Text>
                   {appVersionData.body ? (
                     <>
-                      {/* <Text style={styles.apkText}>更新内容：</Text> */}
-                      <Text style={styles.apkText}>{appVersionData.body}</Text>
+                      <Text style={styles.apkText}>更新内容：</Text>
+                      <ScrollView style={styles.versionbg}>
+                        <Text style={styles.apkText}>
+                          {appVersionData.body}
+                        </Text>
+                      </ScrollView>
                     </>
                   ) : null}
                   <TouchableOpacity
@@ -198,10 +202,12 @@ const About: FC<
             <>
               {appVersionData?.body ? (
                 <>
-                  {/* <Text style={styles.apkText}>更新内容：</Text> */}
-                  <Text style={[styles.apkText, styles.black]}>
-                    {appVersionData.body}
-                  </Text>
+                  <Text style={styles.apkText}>更新内容：</Text>
+                  <ScrollView style={styles.versionbg}>
+                    <Text style={[styles.apkText, styles.black]}>
+                      {appVersionData.body}
+                    </Text>
+                  </ScrollView>
                 </>
               ) : null}
               <Text style={styles.apkText}>当前已是最新版本，无需更新</Text>
@@ -247,6 +253,11 @@ const styles = StyleSheet.create({
     marginTop: 8,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  versionbg: {
+    maxHeight: 300,
+    paddingHorizontal: 12,
+    // backgroundColor:'#ff0'
   },
   apkText: {
     marginTop: 8,
