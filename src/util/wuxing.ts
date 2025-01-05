@@ -1146,7 +1146,7 @@ class WuXingClass {
     //   }
     // });
     // console.log('max_wx', max_wx);
-    console.log('res', JSON.stringify(res, null, 4));
+    // console.log('res', JSON.stringify(res, null, 4));
 
     // 详细力量计算
     // 五行依次单独分析打分、最终再对比五个的分数得出各个的强度
@@ -1180,11 +1180,19 @@ class WuXingClass {
     const getWuxing = this.getWuxing;
     // 1 月令
     function getYuelingScore() {
-      const yueling = WuXing.getWuxing(bazi[1][1]) as WX;
+      const yuezhi = bazi[1][1];
+      const yueling = WuXing.getWuxing(yuezhi) as WX;
       const yueMap = YueLinByWuxing[yueling];
+      const map = [1.2, 1.1, 1, 0.75, 0.6];
 
       const index = yueMap.findIndex(i => i === wx);
-      const map = [1.2, 1.1, 1, 0.75, 0.6];
+      if (
+        (DZ.丑 === yuezhi && wx === WX.水) ||
+        (DZ.未 === yuezhi && wx === WX.火) ||
+        (DZ.辰 === yuezhi && wx === WX.木)
+      ) {
+        return map[1];
+      }
       return map[index];
     }
     const yuelingScore = getYuelingScore();
