@@ -245,40 +245,71 @@ const DaYunLiuNian: FC<{
   // 点击当前
   const handleNow = () => {
     const data = paipanInfo.big.data;
-    const nowYears = new Date().getFullYear();
-    let newlnIndex = -1;
-    const newDyIndex = data.findIndex(i => {
-      return i.years.find((j, yearsIndex) => {
-        if (j.year === nowYears) {
-          newlnIndex = yearsIndex;
-          return true;
-        }
-        return false;
+
+    // 流年、流月
+    function _findYearMouthIndex(targetYear: number) {
+      let newlnIndex = -1;
+      let newDyIndex = data.findIndex(i => {
+        return i.years.find((j, yearsIndex) => {
+          if (j.year === targetYear) {
+            newlnIndex = yearsIndex;
+            return true;
+          }
+          return false;
+        });
       });
-    });
-    if (newDyIndex < 0 || newlnIndex < 0) {
+
+      // console.log('targetYear', targetYear);
+
+      if (newDyIndex < 0 || newlnIndex < 0) {
+        return null;
+      }
+
+      const ln_item = paipanInfo.big.data[newDyIndex].years[newlnIndex];
+      const newLiuYueData = paipan.getLiuYueByYear(ln_item.year, ln_item.name);
+      const nowTime = new Date().getTime();
+      let newLyIndex = newLiuYueData.findIndex(i => {
+        const last_day = i.days[i.days.length - 1];
+        const mouth_max = new Date();
+        mouth_max.setFullYear(last_day.year);
+        mouth_max.setMonth(last_day.mouth - 1);
+        mouth_max.setDate(last_day.day);
+        mouth_max.setHours(23, 59, 59);
+        return mouth_max.getTime() > nowTime;
+      });
+      if (newLyIndex === -1) {
+        newLyIndex = 0;
+      } else if (newLyIndex === 0) {
+        const first_day = newLiuYueData[0].days[0];
+        const mouth_max = new Date();
+        mouth_max.setFullYear(first_day.year);
+        mouth_max.setMonth(first_day.mouth - 1);
+        mouth_max.setDate(first_day.day);
+        mouth_max.setHours(0, 0, 0);
+        if (mouth_max.getTime() > nowTime) {
+          // 当前年的所有月份小于当前时间，则向前一年找
+          // 这种情况一般发生在公历1月至立春前之间
+          console.log('整体过大, 向前一年找', targetYear - 1);
+          return _findYearMouthIndex(targetYear - 1);
+        }
+      }
+
+      return {newDyIndex, newlnIndex, newLiuYueData, newLyIndex};
+    }
+
+    const YearMouthData = _findYearMouthIndex(new Date().getFullYear());
+    if (YearMouthData === null) {
       return;
     }
+    const {newDyIndex, newlnIndex, newLiuYueData, newLyIndex} = YearMouthData;
+
+    // console.log('newLiuYueData', JSON.stringify(newLiuYueData, null, 4), newLyIndex);
+
     setActiveDyIndex(newDyIndex);
     setActiveLnIndex(newlnIndex);
-
-    // 流月
-    const ln_item = paipanInfo.big.data[newDyIndex].years[newlnIndex];
-    const newLiuYueData = paipan.getLiuYueByYear(ln_item.year, ln_item.name);
     setLyData(newLiuYueData);
-    let newLyIndex = newLiuYueData.findIndex(i => {
-      const last_day = i.days[i.days.length - 1];
-      const mouth_max = new Date();
-      mouth_max.setFullYear(last_day.year);
-      mouth_max.setMonth(last_day.mouth - 1);
-      mouth_max.setDate(last_day.day);
-      mouth_max.setHours(23, 59, 59);
-      return mouth_max.getTime() > new Date().getTime();
-    });
-    newLyIndex = newLyIndex === -1 ? 0 : newLyIndex;
     setActiveLyIndex(newLyIndex);
 
-    // console.log('newLiuYueData', newLiuYueData, newLyIndex);
     // 流日
     // TODO 23点时就到下一天了
     let newLrIndex = newLiuYueData[newLyIndex].days.findIndex(

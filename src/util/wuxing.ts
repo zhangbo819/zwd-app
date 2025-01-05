@@ -1092,7 +1092,7 @@ class WuXingClass {
     // 得势情况
     // 1. 地支关系
     const dz_gx = this.getDzRelation(bazi.map(i => i[1] as DZ));
-    console.log('dz_gx', JSON.stringify(dz_gx, null, 4));
+    // console.log('dz_gx', JSON.stringify(dz_gx, null, 4));
     dz_gx.forEach(i => {
       i.relation.forEach(relation => {
         if (

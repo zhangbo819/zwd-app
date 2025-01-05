@@ -1366,12 +1366,13 @@ class Paipan {
     const years = [];
     const xiaoyun: {name: JZ_60; year: number}[] = [];
     let arr = [];
-    let [start_tg, start_dz] = this.getYearMidTgDz(yy); // 以年中为起点，防止生于两年之间导致第一年错误的问题
+    let start_yy = res.yinli[0]; // 开始年份，以阴历年计算。因为如果生在阳历当年的立春前，此时阴历实际还属于前一年
+    let [start_tg, start_dz] = this.getYearMidTgDz(start_yy); //  以年中为起点，防止生于两年之间导致第一年错误的问题
     for (let i = 0; i <= 130; i++) {
       const t = (start_tg + i) % 10;
       const d = (start_dz + i) % 12;
       const tgdz_text = (this.ctg[t] + this.cdz[d]) as JZ_60;
-      const item = {name: tgdz_text, year: yy + i};
+      const item = {name: tgdz_text, year: start_yy + i};
 
       if (res.yinli[0] + i < res.big.start_time[0]) {
         // 还没到起运年, 起小运
@@ -1400,6 +1401,7 @@ class Paipan {
         // 小运以时柱为始，每年向后增加
         const shizhu_next_tg = res.tg[3] + 1 + index;
         const shizhu_next_dz = res.dz[3] + 1 + index;
+        // TODO refactor 重新整理 _getJZ60SByStartEnd 方法
         const [nextName] = this._getJZ60SByStartEnd(
           [shizhu_next_tg, shizhu_next_dz],
           [shizhu_next_tg + 1, shizhu_next_dz + 1],
@@ -1517,7 +1519,7 @@ class Paipan {
     };
 
     res.forEach((i, index) => {
-      let year = yy;
+      let year = i.year;
       let mouth = i.mouth;
       let day = i.day;
       // console.log('mouth, day', mouth, day);
