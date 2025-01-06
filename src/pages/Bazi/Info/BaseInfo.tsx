@@ -111,28 +111,7 @@ const BaseInfo: FC<{
 
     // console.log(JSON.stringify(paipanInfo, null, 4));
     // 各五行对应十神关系
-    const wxTenMap = paipanInfo.tenMap.reduce((r, i, index) => {
-      const tg10Wuxing = [WX.木, WX.火, WX.土, WX.金, WX.水];
-      const halfIndex = Math.floor(index / 2);
-
-      const map = {
-        [Ten.正官]: '官杀',
-        [Ten.七杀]: '官杀',
-        [Ten.正印]: '印绶',
-        [Ten.偏印]: '印绶',
-        [Ten.正财]: '财才',
-        [Ten.偏财]: '财才',
-        [Ten.食神]: '食伤',
-        [Ten.伤官]: '食伤',
-        [Ten.比肩]: '比劫',
-        [Ten.劫财]: '比劫',
-        [Ten.元男]: '日元',
-        [Ten.元女]: '日元',
-      };
-
-      r[tg10Wuxing[halfIndex]] = map[i];
-      return r;
-    }, {} as Record<WX, string>);
+    const wxTenMap = WuXing.getTenMapByWX(paipanInfo.tenMap);
 
     // 五行数量
     const wuxingNumber = infoBazi.reduce(
@@ -217,7 +196,7 @@ const BaseInfo: FC<{
 
     // console.log('wuxingCgNumber', wuxingCgNumber);
 
-    const wx_info = WuXing.getWxPower(infoBazi);
+    const wx_info = WuXing.getWxPower(infoBazi, paipanInfo.tenMap);
 
     // console.log(JSON.stringify(wx_info, null, 4))
 

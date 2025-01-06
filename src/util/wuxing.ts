@@ -133,6 +133,15 @@ export enum Ten {
   元女 = '元女',
 }
 
+export enum Ten2 {
+  官杀 = '官杀',
+  印绶 = '印绶',
+  财才 = '财才',
+  食伤 = '食伤',
+  比劫 = '比劫',
+  日元 = '日元',
+}
+
 export enum WX {
   金 = '金',
   木 = '木',
@@ -302,6 +311,7 @@ export type sizhuDetailsItem = {
   deshi_text: string[];
   power_number: string | number; // 五行力量数字
   power_text: string; // 五行力量文字
+  shishen: Ten2;
 };
 
 // function _exchangeGenqi(map: {
@@ -1019,8 +1029,35 @@ class WuXingClass {
     return info.text;
   }
 
+  // 得到五行的十神关系
+  public getTenMapByWX(tenMap: Ten[]) {
+    const wxTenMap = tenMap.reduce((r, i, index) => {
+      const tg10Wuxing = [WX.木, WX.火, WX.土, WX.金, WX.水];
+      const halfIndex = Math.floor(index / 2);
+
+      const map = {
+        [Ten.正官]: Ten2.官杀,
+        [Ten.七杀]: Ten2.官杀,
+        [Ten.正印]: Ten2.印绶,
+        [Ten.偏印]: Ten2.印绶,
+        [Ten.正财]: Ten2.财才,
+        [Ten.偏财]: Ten2.财才,
+        [Ten.食神]: Ten2.食伤,
+        [Ten.伤官]: Ten2.食伤,
+        [Ten.比肩]: Ten2.比劫,
+        [Ten.劫财]: Ten2.比劫,
+        [Ten.元男]: Ten2.日元,
+        [Ten.元女]: Ten2.日元,
+      };
+
+      r[tg10Wuxing[halfIndex]] = map[i];
+      return r;
+    }, {} as Record<WX, Ten2>);
+    return wxTenMap;
+  }
+
   // 拿到各个五行的力量
-  public getWxPower(bazi: JZ_60[]) {
+  public getWxPower(bazi: JZ_60[], tenMap: Ten[]) {
     // console.log('bazi', bazi);
     const {tgs, dzs} = bazi.reduce(
       (r, i) => {
@@ -1085,6 +1122,7 @@ class WuXingClass {
         deshi_text: [],
         power_number: 0,
         power_text: '',
+        shishen: Ten2.日元,
       };
     });
     // console.log(JSON.stringify(res, null, 4));
@@ -1124,29 +1162,10 @@ class WuXingClass {
       }
     });
 
-    // console.log('yueMap', yueMap);
-    // const max_wx: WX[] = [];
-    // // 简易排序
-    // arr_wu_nums.forEach(i => {
-    //   if (i === null) {
-    //   } else if (i?.length >= 2) {
-    //     // console.log(i);
-    //     const r: number[] = [];
-    //     i.forEach(j => {
-    //       const index = yueMap.findIndex(k => k === j);
-    //       r.push(index);
-    //     });
-    //     r.sort((a, b) => b - a);
+    const wxTenMap = this.getTenMapByWX(tenMap);
 
-    //     r.forEach(j => {
-    //       max_wx.push(yueMap[j]);
-    //     });
-    //   } else {
-    //     i && max_wx.push(i?.[0] as WX);
-    //   }
-    // });
-    // console.log('max_wx', max_wx);
-    // console.log('res', JSON.stringify(res, null, 4));
+    // console.log('yueMap', yueMap);
+    console.log('res', JSON.stringify(res, null, 4));
 
     // 详细力量计算
     // 五行依次单独分析打分、最终再对比五个的分数得出各个的强度
@@ -1169,6 +1188,7 @@ class WuXingClass {
           : +i.power_number >= 10
           ? '普通'
           : '弱';
+      i.shishen = wxTenMap[i.wx];
       // console.log('', i.wx, i.score);
     });
 

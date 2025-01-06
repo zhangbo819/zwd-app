@@ -6,14 +6,16 @@ import Tabs from '../../../../components/Tabs';
 import {PageDataType} from '../BaseInfo';
 import WuxingText from '../../components/WuxingText';
 import {Col, Row} from '../../../../components/Layout';
-import {WuXing, YueClass5, YueLinByWuxing} from '../../../../util/wuxing';
+import {Ten2, WuXing, YueClass5, YueLinByWuxing} from '../../../../util/wuxing';
 import {COLOR_LINEGRAY} from '../../../../constant/UI';
+import {TouchModal} from './BaziModal';
 // import {Sizhu} from '..';
 
 const TabWuXingLi: FC<{
   pageData: PageDataType;
 }> = ({pageData}) => {
   const [activeTab, setActiveTab] = useState(0);
+  const [isStrong, setIsStrong] = useState(false);
 
   useEffect(() => {
     const index = pageData.wx_info.findIndex(
@@ -22,7 +24,18 @@ const TabWuXingLi: FC<{
     index !== -1 && setActiveTab(index);
   }, [pageData]);
 
+  useEffect(() => {
+    const tongPower = pageData.wx_info.reduce((r, i) => {
+      if ([Ten2.日元, Ten2.比劫, Ten2.印绶].includes(i.shishen)) {
+        r += Number(i.power_number);
+      }
+      return r;
+    }, 0);
+    setIsStrong(tongPower >= 50);
+  }, [pageData.wx_info]);
+
   const activeZhu = pageData.wx_info?.[activeTab];
+  // const isActiveRizhu = activeZhu?.wx === pageData.rizhuWuxing;
 
   return (
     <View style={styles.contentContainer}>
@@ -35,10 +48,11 @@ const TabWuXingLi: FC<{
           const color = WuXing.getColorByWuxing(i.wx);
           return (
             <Col alignItems="center">
+              <Text style={[styles.bold, {color}]}>{i.shishen}</Text>
               <Text style={{color}}>{i.power_number}%</Text>
               <Text
                 style={[
-                  styles.bold,
+                  // styles.bold,
                   {
                     color,
                     // opacity: i.wx_opacity,
@@ -57,7 +71,7 @@ const TabWuXingLi: FC<{
               {/* <WuxingText disabled margin={2} text={i.dz} /> */}
               <Text
                 style={[
-                  i.is_tougan && styles.bold,
+                  // i.is_tougan && styles.bold,
                   {
                     color,
                     // opacity: i.wx_opacity,
@@ -154,73 +168,55 @@ const TabWuXingLi: FC<{
             </Row>
           </Col>
         </Row>
-        <Text style={styles.commonText}>
-          月令情况：
-          <Text style={styles.bold}>
-            {activeZhu?.isDeLing ? '得令（得时）' : '失令（失时）'}{' '}
+        <TouchModal text={'得令情况'}>
+          <Text style={styles.commonText}>
+            月令情况：
+            <Text style={styles.bold}>
+              {activeZhu?.isDeLing ? '得令（得时）' : '失令（失时）'}{' '}
+            </Text>
           </Text>
-        </Text>
-        <Text style={styles.hint}>旺相为得令，休囚死为失令</Text>
-        <Text style={styles.hint}>
-          月令是判断五行力量的首要条件，但不是唯一条件，还要结合天干地支情况
-        </Text>
-      </View>
-
-      {/* 得地 各五行通根 天干虚浮 地支无透 */}
-      <View style={styles.wuxingView}>
+        </TouchModal>
+        {/* 得地 各五行通根 天干虚浮 地支无透 */}
         {pageData.wx_info.length ? (
-          <>
+          <TouchModal text="通根情况">
             <Text style={styles.commonText}>
-              通根情况:{' '}
+              通根情况：
               <Text style={styles.bold}>
                 {`${activeZhu?.tg_is_qg ? '有强根' : '无强根'}(${
                   activeZhu.tg_level_text
                 })`}
               </Text>
             </Text>
-            {/* <Text style={styles.commonText}>
-                其余有强根天干:{' '}
-                {pageData.bazi
-                  .filter((i, index) => i.tg_is_qg && index !== 2)
-                  .map(i => {
-                    const index = TG_10.findIndex(j => j === i.tg);
-                    return `${i.tg}(${paipanInfo.tenMap[index]})`;
-                  })}
-              </Text> */}
-          </>
+          </TouchModal>
         ) : null}
-        <Text style={styles.hint}>
-          天干：有本气根代表天干有力，有强根，其余皆为无强根
-        </Text>
-        {/* <Text style={styles.commonText}>
-            透干地支: {pageData.bazi.filter(i => i.is_tougan).map(i => i.dz)}
+        {/* 得势 三合三会 */}
+        <TouchModal text="得势情况">
+          <Text style={styles.commonText}>
+            得势情况：
+            <Text style={styles.bold}>
+              {activeZhu?.isDeShi ? `得势(${activeZhu.deshi_text})` : '未得势'}
+            </Text>
           </Text>
-          <Text style={styles.hint}>
-            地支：透出天干代表可以成格成像，但不透干也不影响其在地支的强度
-          </Text>
-          <Text style={styles.hint}>
-            天干为表，地支为里。天干为气，地支为质。天干决定上限，地支决定下限。
-          </Text> */}
-      </View>
-      {/* 得势 三合三会 */}
-      <View style={styles.wuxingView}>
-        <Text style={styles.commonText}>
-          得势情况：
-          <Text style={styles.bold}>
-            {activeZhu?.isDeShi ? `得势(${activeZhu.deshi_text})` : '未得势'}
-          </Text>
-        </Text>
+        </TouchModal>
       </View>
 
       {/* 力量 */}
       <View style={styles.wuxingView}>
-        <Text style={styles.commonText}>
-          综合力量：
-          <Text
-            style={
-              styles.bold
-            }>{`${activeZhu?.power_number}%(${activeZhu?.power_text})`}</Text>
-        </Text>
+        <TouchModal text="综合力量">
+          <Text style={styles.commonText}>
+            综合力量：
+            <Text
+              style={
+                styles.bold
+              }>{`${activeZhu?.power_number}% ${activeZhu?.power_text} (${activeZhu?.shishen}) `}</Text>
+          </Text>
+        </TouchModal>
+        <TouchModal text="日主旺衰">
+          <Text style={styles.commonText}>
+            日主旺衰：
+            <Text style={styles.bold}>{isStrong ? '身强' : '身弱'}</Text>
+          </Text>
+        </TouchModal>
       </View>
 
       {/* <View style={styles.wuxingView}>
