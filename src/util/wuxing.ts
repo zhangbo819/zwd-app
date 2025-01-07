@@ -1204,15 +1204,16 @@ class WuXingClass {
       allScore += score;
     });
     res.forEach(i => {
-      i.power_number = ((+i.power_number / allScore) * 100).toFixed(2);
+      const score = i.power_number
+      i.power_number = ((+score / allScore) * 100).toFixed(2);
       i.power_text =
-        +i.power_number >= 40
+        +score >= 180
           ? '极强'
-          : +i.power_number >= 30
-          ? '较强'
-          : +i.power_number >= 20
+          : +score >= 150
+          ? '强盛'
+          : +score >= 100
           ? '强'
-          : +i.power_number >= 10
+          : +score >= 50
           ? '普通'
           : '弱';
       i.shishen = wxTenMap[i.wx];
