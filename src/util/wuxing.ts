@@ -674,6 +674,33 @@ class WuXingClass {
     },
   };
 
+  map_muku = {
+    [WX.火]: {
+      mk: DZ.戌,
+      tg: [TG.丙, TG.丁],
+      dz: [DZ.巳, DZ.午, DZ.寅],
+      close: DZ.卯,
+    },
+    [WX.水]: {
+      mk: DZ.辰,
+      tg: [TG.壬, TG.癸],
+      dz: [DZ.亥, DZ.子, DZ.申],
+      close: DZ.酉,
+    },
+    [WX.金]: {
+      mk: DZ.丑,
+      tg: [TG.庚, TG.辛],
+      dz: [DZ.申, DZ.酉, DZ.巳],
+      close: DZ.子,
+    },
+    [WX.木]: {
+      mk: DZ.未,
+      tg: [TG.甲, TG.乙],
+      dz: [DZ.寅, DZ.卯, DZ.亥],
+      close: DZ.午,
+    },
+  };
+
   // 根据天干或地支得到对应的五行
   public getWuxing(text: TG | DZ | WX | string) {
     const wuxingArr = WuXing5;
@@ -1330,10 +1357,11 @@ class WuXingClass {
     // 4 地支关系、刑冲合害
     const map_dz_wx = this.map_dz_wx;
     const map_dz_2_power = this.map_dz_2_power;
+    const dzs = bazi.map(i => i[1] as DZ);
+
     function getDzScore() {
       let score = 0;
 
-      const dzs = bazi.map(i => i[1] as DZ);
       const item = res.find(i => i.wx === wx);
       for (let i = 0; i < dzs.length; i++) {
         const target = dzs[i];
@@ -1363,10 +1391,24 @@ class WuXingClass {
     }
     const dzScore = getDzScore();
     // 5 墓库
+    const map_muku = this.map_muku;
+    function getMkScore() {
+      let score = 0;
+      if (wx === WX.土) return score;
+      const {tg, dz, mk} = map_muku[wx];
+      if (dzs.includes(mk)) {
+        if (tg.find(t => tgs.includes(t)) && dz.find(d => dzs.includes(d))) {
+          // if (dz.find(d => close.includes(d))) {}
+          score = 100;
+        }
+      }
+      return score;
+    }
+    const mkScore = getMkScore();
     // 6 进气、退气
 
     const res_score = Math.round(
-      yuelingScore * (tgScore + deshiScore + dzScore),
+      yuelingScore * (tgScore + deshiScore + dzScore + mkScore / 4 / 2),
     );
 
     // 例子：甲木日主
@@ -1378,12 +1420,12 @@ class WuXingClass {
     //   弱时有库、强时无库
     //   额外项 弱时进气、强时退气
 
-    console.log('score', wx, {
+    console.log('score', wx, res_score, {
       yuelingScore,
       deshiScore,
       tgScore,
       dzScore,
-      res_score,
+      mkScore,
     });
     return res_score;
   }
