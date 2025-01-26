@@ -12,7 +12,7 @@ export type RootStackParamList = {
   [StackPages.Home]: undefined;
   [StackPages.About]: undefined;
   [StackPages.BaziInfo]: PaipanItem;
-  [StackPages.BaziBook]: undefined;
+  [StackPages.BaziBook]: {url: string};
 };
 
 // 底部 Tab

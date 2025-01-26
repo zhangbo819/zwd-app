@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useState} from 'react';
 import {
   Alert,
-  Button,
+  FlatList,
   ScrollView,
   StyleSheet,
   Switch,
@@ -36,6 +36,7 @@ import TabWuXingLi from './components/TabWuXingLi';
 import {TouchModal} from './components/BaziModal';
 import {RootStackParamList, StackPages} from '../../../types/interface';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {Books} from '../Book';
 
 const SHOW_DZ_12 = [
   [DZ_12[11]].concat(DZ_12.slice(0, 2)),
@@ -528,14 +529,25 @@ const BaseInfo: FC<{
 
       {/* 古籍 */}
       <View style={styles.topInfo}>
-        <Text style={[styles.wuxingTitle1]}>古籍</Text>
+        <Text style={[styles.wuxingTitle1]}>相关古籍</Text>
 
-        <Button
-          onPress={() => {
-            props.navigation.navigate(StackPages.BaziBook);
+        <FlatList
+          data={Books}
+          horizontal
+          keyExtractor={i => 'book_' + i.title}
+          renderItem={({item}) => {
+            return (
+              <TouchableOpacity
+                style={styles.bookItem}
+                onPress={() => {
+                  props.navigation.navigate(StackPages.BaziBook, {
+                    url: item.url,
+                  });
+                }}>
+                <Text style={styles.commonText}>{item.title}</Text>
+              </TouchableOpacity>
+            );
           }}
-          color={COLOR_THEME_COMMON}
-          title="滴天髓"
         />
       </View>
 
@@ -669,6 +681,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#4B4B4B',
     textAlign: 'center',
+  },
+
+  bookItem: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 12,
+    marginHorizontal: 6,
+    height: 100,
+    width: 80,
+    // borderWidth: 1,
+    borderRadius: 8,
+    backgroundColor: COLOR_THEME_COMMON,
   },
 });
 
