@@ -70,7 +70,11 @@ const BaziInfo: FC<
     const first = () => (
       <>
         {paipanInfo !== null && (
-          <BaseInfo name={props.route.params.name} paipanInfo={paipanInfo} />
+          <BaseInfo
+            name={props.route.params.name}
+            navigation={props.navigation}
+            paipanInfo={paipanInfo}
+          />
         )}
       </>
     );
@@ -85,7 +89,7 @@ const BaziInfo: FC<
       first: first,
       second: second,
     });
-  }, [paipanInfo, props.route.params.name]);
+  }, [paipanInfo, props.route.params.name, props.navigation]);
 
   return (
     <View style={styles.container}>

@@ -1,6 +1,7 @@
 import React, {FC, useEffect, useState} from 'react';
 import {
   Alert,
+  Button,
   ScrollView,
   StyleSheet,
   Switch,
@@ -33,6 +34,8 @@ import {
 import XingZuo, {XingZuoGetDataRes} from '../../../util/XingZuo';
 import TabWuXingLi from './components/TabWuXingLi';
 import {TouchModal} from './components/BaziModal';
+import {RootStackParamList, StackPages} from '../../../types/interface';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const SHOW_DZ_12 = [
   [DZ_12[11]].concat(DZ_12.slice(0, 2)),
@@ -59,6 +62,11 @@ export type PageDataType = {
 const BaseInfo: FC<{
   name: string;
   paipanInfo: PaipanInfo;
+  navigation: NativeStackNavigationProp<
+    RootStackParamList,
+    StackPages.BaziInfo,
+    undefined
+  >;
 }> = props => {
   const {paipanInfo} = props;
 
@@ -517,6 +525,19 @@ const BaseInfo: FC<{
 
       {/* 袁天罡称骨 */}
       {renderYtgcg()}
+
+      {/* 古籍 */}
+      <View style={styles.topInfo}>
+        <Text style={[styles.wuxingTitle1]}>古籍</Text>
+
+        <Button
+          onPress={() => {
+            props.navigation.navigate(StackPages.BaziBook);
+          }}
+          color={COLOR_THEME_COMMON}
+          title="滴天髓"
+        />
+      </View>
 
       <ShowColors />
     </ScrollView>

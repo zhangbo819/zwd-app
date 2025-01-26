@@ -9,6 +9,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {RootStackParamList, StackPages} from './types/interface';
 import About from './pages/Mine/About';
 import BaziInfo from './pages/Bazi/Info';
+import BaziBook from './pages/Bazi/Book';
 import MainTabNavigator from './Main';
 import {COLOR_THEME_COMMON} from './constant/UI';
 
@@ -57,6 +58,13 @@ export default function Root() {
           <Stack.Screen
             name={StackPages.BaziInfo}
             component={BaziInfo}
+            options={{
+              headerTitle: '',
+            }}
+          />
+          <Stack.Screen
+            name={StackPages.BaziBook}
+            component={BaziBook}
             options={{
               headerTitle: '',
             }}

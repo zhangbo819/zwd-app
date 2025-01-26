@@ -5,12 +5,14 @@ export enum StackPages {
   Home = 'Home',
   About = 'About',
   BaziInfo = 'BaziInfo',
+  BaziBook = 'BaziBook',
 }
 
 export type RootStackParamList = {
   [StackPages.Home]: undefined;
   [StackPages.About]: undefined;
   [StackPages.BaziInfo]: PaipanItem;
+  [StackPages.BaziBook]: undefined;
 };
 
 // 底部 Tab
