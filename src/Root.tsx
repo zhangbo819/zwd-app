@@ -9,7 +9,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {RootStackParamList, StackPages} from './types/interface';
 import About from './pages/Mine/About';
 import BaziInfo from './pages/Bazi/Info';
-import BaziBook from './pages/Bazi/Book';
+import BaziBook, { BookRight } from './pages/Bazi/Book';
 import MainTabNavigator from './Main';
 import {COLOR_THEME_COMMON} from './constant/UI';
 
@@ -67,6 +67,7 @@ export default function Root() {
             component={BaziBook}
             options={{
               headerTitle: '',
+              headerRight: BookRight,
             }}
           />
         </Stack.Navigator>
