@@ -544,7 +544,9 @@ const BaseInfo: FC<{
                     url: item.url,
                   });
                 }}>
-                <Text style={styles.commonText}>{item.title}</Text>
+                <Text style={[styles.commonText, {color: '#fff'}]}>
+                  {item.title}
+                </Text>
               </TouchableOpacity>
             );
           }}
@@ -686,13 +688,21 @@ const styles = StyleSheet.create({
   bookItem: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 12,
+    marginVertical: 16,
     marginHorizontal: 6,
     height: 100,
     width: 80,
     // borderWidth: 1,
     borderRadius: 8,
-    backgroundColor: COLOR_THEME_COMMON,
+    backgroundColor: '#613435',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
 
