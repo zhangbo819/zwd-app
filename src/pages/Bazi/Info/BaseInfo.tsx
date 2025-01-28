@@ -539,6 +539,7 @@ const BaseInfo: FC<{
             return (
               <TouchableOpacity
                 style={styles.bookItem}
+                activeOpacity={0.8}
                 onPress={() => {
                   props.navigation.navigate(StackPages.BaziBook, {
                     url: item.url,
