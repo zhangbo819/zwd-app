@@ -12,7 +12,7 @@ import {Row} from '../../../../components/Layout';
 import WuxingText from '../../components/WuxingText';
 import {COLOR_THEME_COMMON} from '../../../../constant/UI';
 import {DZ, JQ_12, JZ_60, TG, TG_10} from '../../../../util/wuxing';
-import paipan, {PaipanInfo} from '../../../../util/paipan';
+import paipan, {LiuYueItem, PaipanInfo} from '../../../../util/paipan';
 import NaYin from '../../../../util/Nayin';
 import Shensha from '../../../../util/shensha';
 import {PillarItem, PillarTitle} from '..';
@@ -63,16 +63,7 @@ const DaYunLiuNian: FC<{
   const [activeLyIndex, setActiveLyIndex] = useState(0);
   const [activeLrIndex, setActiveLrIndex] = useState(0);
   const [activeLsIndex, setActiveLsIndex] = useState(0);
-  const [lyData, setLyData] = useState<
-    | null
-    | {
-        name: JZ_60;
-        year: number;
-        mouth: number;
-        day: number;
-        days: {name: JZ_60; mouth: number; day: number; week: string}[];
-      }[]
-  >(null);
+  const [lyData, setLyData] = useState<null | LiuYueItem[]>(null);
   const [lsData, setLsData] = useState<
     | null
     | {
@@ -697,6 +688,7 @@ const DaYunLiuNian: FC<{
                 </Text>
                 <WuxingText disabled text={item.name[0]} size="mini" />
                 <WuxingText disabled text={item.name[1]} size="mini" />
+                <Text style={styles.jqText}>{item.jq_text}</Text>
               </TouchableOpacity>
             );
           }}
@@ -872,6 +864,13 @@ const styles = StyleSheet.create({
   },
   dayunItemActive: {
     backgroundColor: '#EEEEEE',
+  },
+  jqText: {
+    marginTop: 4,
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#F7540E',
+    // backgroundColor: '#F7540E',
   },
 });
 

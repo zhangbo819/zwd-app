@@ -9,7 +9,17 @@
  * 儒略日历(Julian day),以西元前4713年(或-4712年)1月1日12時為起點,方便各历法间的转换
  */
 
-import {DZ_12, JQ_24, JZ_60, Ten, TG, TG_10, WuXing5} from './wuxing';
+import {
+  DZ_12,
+  JQ_24,
+  JQ_4JUE,
+  JQ_4LI,
+  JZ_60,
+  Ten,
+  TG,
+  TG_10,
+  WuXing5,
+} from './wuxing';
 import {XZ, XZ_12} from './XingZuo';
 
 /**
@@ -1130,8 +1140,8 @@ class Paipan {
     return jq;
   }
 
-  // 根据传入时间找到对应的24节气
-  public Get24JieQiText(dateObj: Date) {
+  // 获取某一年的24节气时间表
+  public Get24JieQiByYear(dateObj: Date) {
     const yy = dateObj.getFullYear();
     let jqs = this.Get24JieQi(yy);
 
@@ -1149,17 +1159,22 @@ class Paipan {
     ) {
       jqs = this.Get24JieQi(yy - 1);
     }
-    const jq_text = jqs.reduce((r, i, index) => {
-      const times =
-        dateObj.getTime() -
-        new Date(i[0], i[1] - 1, i[2], i[3], i[4], i[5]).getTime();
-      // console.log(yy, this.jq[index], new Date(i[0], i[1] - 1, i[2], i[3], i[4], i[5]).toLocaleString())
+    return jqs.map((i, index) => ({
+      t: new Date(i[0], i[1] - 1, i[2], i[3], i[4], i[5]),
+      name: this.jq[index],
+    }));
+  }
+
+  // 根据传入时间找到对应的24节气
+  private Get24JieQiText(dateObj: Date) {
+    const jqs = this.Get24JieQiByYear(dateObj);
+    const jq_text = jqs.reduce((r, i) => {
+      const times = dateObj.getTime() - i.t.getTime();
+      // console.log(i.name, i.toLocaleString());
       if (times > 0) {
         const dayNums = Math.floor(times / (24 * 3600 * 1000));
         const hours = Math.floor((times % (24 * 3600 * 1000)) / (3600 * 1000));
-        r =
-          this.jq[index] +
-          `(之后${dayNums <= 0 ? '' : dayNums + '天'}${hours}小时)`;
+        r = i.name + `(之后${dayNums <= 0 ? '' : dayNums + '天'}${hours}小时)`;
       }
       return r;
     }, '');
@@ -1418,7 +1433,7 @@ class Paipan {
     // 十神对应关系表
     res.tenMap = this.getTenGodMap(res.bazi[2][0]);
 
-    // 24节气
+    // 24节气描述
     res.jq_text = this.Get24JieQiText(dateObj);
 
     return res;
@@ -1426,20 +1441,7 @@ class Paipan {
 
   // 根据公历年获取流月流日
   public getLiuYueByYear(yy: number, tgdz: JZ_60) {
-    const res: {
-      name: JZ_60;
-      year: number;
-      mouth: number;
-      day: number;
-      days: {
-        name: JZ_60;
-        year: number;
-        mouth: number;
-        day: number;
-        week: string;
-      }[];
-      // days: JZ_60[];
-    }[] = [];
+    const res: LiuYueItem[] = [];
     const days: number[][] = [];
     const rest_days: number[][] = [];
     GetPureJQsinceSpring(yy).forEach(i => {
@@ -1477,13 +1479,7 @@ class Paipan {
       }
     });
     // console.log('days', days);
-    const days_JZ_60: {
-      name: JZ_60;
-      year: number;
-      mouth: number;
-      day: number;
-      week: string;
-    }[][] = [];
+    const days_JZ_60: LiuRiItem[][] = [];
     // const days_JZ_60: JZ_60[][] = [];
     for (let i = 0; i < days.length; i++) {
       const start = days[i];
@@ -1570,6 +1566,42 @@ class Paipan {
         }
         item.week = WEEKS[last_day];
       });
+    });
+
+    // 流日24节气补充
+    const jqs = this.Get24JieQiByYear(new Date(yy, 7, 1)); // 取年中
+    let jq_index = 0;
+    res.forEach((i, yue_index) => {
+      i.days.forEach((item, index) => {
+        if (
+          jqs[jq_index] &&
+          jqs[jq_index].t.getFullYear() === item.year &&
+          jqs[jq_index].t.getMonth() + 1 === item.mouth &&
+          jqs[jq_index].t.getDate() === item.day
+        ) {
+          console.log(jqs[jq_index].name, jqs[jq_index].t.toLocaleString());
+          item.jq_text = jqs[jq_index].name;
+          if (i.days[index - 1]) {
+            // i.days[index - 1].jq_text = jqs[jq_index].name + '前一天';
+            if (JQ_4LI.includes(jqs[jq_index].name)) {
+              i.days[index - 1].jq_text = '四离日';
+            } else if (JQ_4JUE.includes(jqs[jq_index].name)) {
+              i.days[index - 1].jq_text = '四绝日';
+            }
+          } else if (res[yue_index - 1]) {
+            // 当绝日每个月的第一天时，则取前一个月的最后一天 (离日一般在月中，绝日一般在前一个月的最后一天)
+            const lastMouth = res[yue_index - 1];
+            if (JQ_4JUE.includes(jqs[jq_index].name)) {
+              lastMouth.days[lastMouth.days.length - 1].jq_text = '四绝日';
+            }
+          }
+          jq_index++;
+        }
+      });
+      // 最后一天是下一年的立春前一天也是绝日
+      if (yue_index === res.length - 1) {
+        i.days[i.days.length - 1].jq_text = '四绝日';
+      }
     });
 
     // console.log(
@@ -1803,4 +1835,21 @@ export type PaipanInfo = {
   yangli: (string | number)[]; // 阳历
   tenMap: Ten[]; // 十神关系对应表
   jq_text: string; // 24节气
+};
+
+export type LiuYueItem = {
+  name: JZ_60;
+  year: number;
+  mouth: number;
+  day: number;
+  days: LiuRiItem[];
+  // days: JZ_60[];
+};
+type LiuRiItem = {
+  name: JZ_60;
+  year: number;
+  mouth: number;
+  day: number;
+  week: string;
+  jq_text?: string;
 };

@@ -182,7 +182,9 @@ export const ZhangSheng12 = [
   ZhangSheng.养,
 ];
 
-//　TODO 春分，夏至，秋分，冬至，的前一日离日。立春，立夏，立秋，立冬，前一日绝日。
+// 春分，夏至，秋分，冬至，的前一日离日。立春，立夏，立秋，立冬，前一日绝日。
+export const JQ_4LI = ['春分', '夏至', '秋分', '冬至'];
+export const JQ_4JUE = ['立春', '立夏', '立秋', '立冬'];
 export const JQ_24 = [
   '立春',
   '雨水',
@@ -1204,7 +1206,7 @@ class WuXingClass {
       allScore += score;
     });
     res.forEach(i => {
-      const score = i.power_number
+      const score = i.power_number;
       i.power_number = ((+score / allScore) * 100).toFixed(2);
       i.power_text =
         +score >= 180
