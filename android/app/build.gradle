@@ -93,8 +93,8 @@ android {
         applicationId "com.zwd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 43
-        versionName "0.2.42"
+        versionCode 44
+        versionName "0.2.43"
     }
     signingConfigs {
         debug {
