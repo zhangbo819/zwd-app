@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import * as Progress from 'react-native-progress';
 import Icon5 from 'react-native-vector-icons/Ionicons';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 import ShowColors from '../../../components/ShowColors';
 import {Col, Row} from '../../../components/Layout';
@@ -24,7 +25,6 @@ import {
   WuXing,
   WX,
   sizhuDetailsItem,
-  getTMS,
 } from '../../../util/wuxing';
 import WuxingText from '../components/WuxingText';
 import {
@@ -36,8 +36,8 @@ import XingZuo, {XingZuoGetDataRes} from '../../../util/XingZuo';
 import TabWuXingLi from './components/TabWuXingLi';
 import {TouchModal} from './components/BaziModal';
 import {RootStackParamList, StackPages} from '../../../types/interface';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Books} from '../Book';
+import NaYin from '../../../util/Nayin';
 
 const SHOW_DZ_12 = [
   [DZ_12[11]].concat(DZ_12.slice(0, 2)),
@@ -59,6 +59,7 @@ export type PageDataType = {
   wu_numbs_text: string; // 五行数量描述文字
   cg_numbs_text: string; // 藏干五行数量描述文字
   ally: number; // 同党
+  tms?: {taiyuan: string; minggong: string; shengong: string};
 };
 
 const BaseInfo: FC<{
@@ -212,9 +213,7 @@ const BaseInfo: FC<{
 
     const tiaohou = WuXing.getTiaohou(infoBazi);
 
-    const tms = getTMS(infoBazi)
-
-    console.log('tms', tms)
+    const {taiyuan, minggong, shengong} = WuXing.getTMS(infoBazi);
 
     setPageData({
       xz: XingZuo.getData(paipanInfo.xz),
@@ -229,6 +228,11 @@ const BaseInfo: FC<{
       wu_numbs_text: _getWXNumbText(wuxingNumber),
       cg_numbs_text: _getWXNumbText(wuxingCgNumber, true),
       ally,
+      tms: {
+        taiyuan: `${taiyuan} (${NaYin.getNayin(taiyuan)})`,
+        minggong: `${minggong} (${NaYin.getNayin(minggong)})`,
+        shengong: `${shengong} (${NaYin.getNayin(shengong)})`,
+      },
     });
   }, [paipanInfo]);
 
@@ -399,10 +403,28 @@ const BaseInfo: FC<{
           <Col>
             <Text style={styles.commonText}>属相：{paipanInfo.sx}</Text>
           </Col>
-          <Col>
+          {/* <Col>
             <Text style={[styles.commonText]}>
               阴阳：
               <Text>{paipanInfo.tg[2] % 2 === 0 ? '阳' : '阴'}</Text>
+            </Text>
+          </Col> */}
+          <Col>
+            <Text style={[styles.commonText]}>
+              胎元：
+              <Text>{pageData.tms?.taiyuan}</Text>
+            </Text>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Text style={styles.commonText}>
+              命宫：{pageData.tms?.minggong}
+            </Text>
+          </Col>
+          <Col>
+            <Text style={[styles.commonText]}>
+              身宫：{pageData.tms?.shengong}
             </Text>
           </Col>
         </Row>

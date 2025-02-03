@@ -1472,135 +1472,145 @@ class WuXingClass {
     // console.log('wu_numbs, arr_wu_nums', wu_numbs, arr_wu_nums);
     return {arr_wu_nums, wu_numbs};
   }
+
+  // 胎元
+  private getTaiyuan(yuegan: TG, yuezhi: DZ) {
+    const yuegan_index = TG_10.indexOf(yuegan);
+    const res_tg = TG_10[(yuegan_index + 1) % 10];
+
+    const yuezhi_index = DZ_12.indexOf(yuezhi);
+    const res_dz = DZ_12[(yuezhi_index + 3) % 12];
+
+    return (res_tg + res_dz) as JZ_60;
+  }
+
+  // 命宫
+  private getMingGong(yuegan: TG, yuezhi: DZ, shizhi: DZ) {
+    // 10 寅 0
+    // 9 卯 1
+    // 8 辰 2
+    // 7 巳 3
+    // 6 午 4
+    // 5 未 5
+    // 4 申 6
+    // 3 酉 7
+    // 2 戌 8
+    // 1 亥 9
+    // 0 子 10
+    // 11 丑 11
+
+    // 第一步：从子开始逆查到生月
+    const birthMonth = DZ_SHEN_MING.indexOf(yuezhi);
+    const zi_index = DZ_SHEN_MING.indexOf(DZ.子);
+    let mingGongIndex = (12 - birthMonth + zi_index) % 12;
+    // console.log('命宫 step 1', DZ_SHEN_MING[mingGongIndex]);
+
+    // 1 寅 0
+    // 12 卯 1
+    // 11 辰 2
+    // 10 巳 3
+    // 9 午 4
+    // 8 未 5
+    // 7 申 6
+    // 6 酉 7
+    // 5 戌 8
+    // 4 亥 9
+    // 3 子 10
+    // 2 丑 11
+
+    // 第二步：从 step1 起生时，顺查到卯, 得命宫地支
+    const mao_index = DZ_SHEN_MING.indexOf(DZ.卯);
+    const shizhi_index = DZ_SHEN_MING.indexOf(shizhi);
+    const step_move = (12 - shizhi_index + mao_index) % 12;
+    // console.log('命宫 step_move', step_move);
+    mingGongIndex = (mingGongIndex + step_move) % 12;
+    const mingGongDizhi = DZ_SHEN_MING[mingGongIndex];
+    // console.log('命宫 step 2', mingGongDizhi);
+
+    // 第三步：确定命宫的天干
+    const yuegan_index = TG_10.indexOf(yuegan);
+    const yuezhi_index = DZ_SHEN_MING.indexOf(yuezhi);
+    let mingGongStemIndex;
+    // console.log('命宫', mingGongIndex > yuezhi_index ? '顺' : '逆');
+
+    if (mingGongIndex > yuezhi_index) {
+      // 顺查天干
+      mingGongStemIndex = (yuegan_index + (mingGongIndex - yuezhi_index)) % 10;
+    } else {
+      // 逆查天干
+      mingGongStemIndex =
+        (yuegan_index - (yuezhi_index - mingGongIndex) + 10) % 10;
+    }
+
+    const mingGongTiangan = TG_10[mingGongStemIndex];
+
+    return (mingGongTiangan + mingGongDizhi) as JZ_60;
+  }
+
+  // 身宫
+  private getShenGong(yuegan: TG, yuezhi: DZ, shizhi: DZ) {
+    // 第一步：从子开始顺查到生月
+    const birthMonth = DZ_SHEN_MING.indexOf(yuezhi);
+    const zi_index = DZ_SHEN_MING.indexOf(DZ.子);
+    let mingGongIndex = (zi_index + birthMonth + 12) % 12;
+    // console.log('身宫 step 1', DZ_SHEN_MING[mingGongIndex]);
+
+    // 第二步：从生月支起生时，逆查到酉
+    const you_index = DZ_SHEN_MING.indexOf(DZ.酉);
+    const shizhi_index = DZ_SHEN_MING.indexOf(shizhi);
+    const step2_move = (12 + shizhi_index - you_index) % 12;
+    // console.log('身宫 step_move', step2_move, mingGongIndex);
+    mingGongIndex = (mingGongIndex + step2_move) % 12;
+    const shenGongDizhi = DZ_SHEN_MING[mingGongIndex];
+    // console.log('身宫 step 2', shenGongDizhi);
+
+    // 第三步：确定命宫的天干
+    let yuegan_index = TG_10.indexOf(yuegan);
+    const yuezhi_index = DZ_SHEN_MING.indexOf(yuezhi);
+    let mingGongStemIndex;
+    // console.log('身宫', mingGongIndex > yuezhi_index ? '顺' : '逆');
+
+    if (mingGongIndex > yuezhi_index) {
+      // 顺查天干
+      mingGongStemIndex = (yuegan_index + (mingGongIndex - yuezhi_index)) % 10;
+    } else {
+      // 逆查天干
+      mingGongStemIndex =
+        (yuegan_index - (yuezhi_index - mingGongIndex) + 10) % 10;
+    }
+
+    const shenGongTiangan = TG_10[mingGongStemIndex];
+
+    return (shenGongTiangan + shenGongDizhi) as JZ_60;
+  }
+
+  // 获取胎命身
+  public getTMS(bazi: JZ_60[]) {
+    const [, [yuegan, yuezhi], , [, shizhi]] = bazi;
+    const taiyuan = this.getTaiyuan(yuegan as TG, yuezhi as DZ);
+    const minggong = this.getMingGong(yuegan as TG, yuezhi as DZ, shizhi as DZ);
+    const shengong = this.getShenGong(yuegan as TG, yuezhi as DZ, shizhi as DZ);
+    // console.log('胎命身', taiyuan, minggong, shengong);
+
+    return {
+      taiyuan,
+      minggong,
+      shengong,
+    };
+  }
 }
 
 export const WuXing = new WuXingClass();
 
-// 胎元
-function getTaiyuan(yuegan: TG, yuezhi: DZ) {
-  const yuegan_index = TG_10.indexOf(yuegan);
-  const res_tg = TG_10[(yuegan_index + 1) % 10];
-
-  const yuezhi_index = DZ_12.indexOf(yuezhi);
-  const res_dz = DZ_12[(yuezhi_index + 3) % 12];
-
-  return (res_tg + res_dz) as JZ_60;
-}
-
 // console.log(getTaiyuan(TG.辛, DZ.酉));
 // console.log(getTaiyuan(TG.壬, DZ.申));
 
-// 命宫
-function calculateMingGong(
-  // birthMonth: number,
-  yuegan: TG,
-  yuezhi: DZ,
-  shizhi: DZ,
-) {
-  // 2 寅 1
-  // 3 卯 2
-  // 4 辰 3
-  // ...
-  // 0 子 11
-  // 1 丑 12
-  // const birthMonth = (DZ_12.indexOf(yuezhi) - 1 + 12) % 12;
-  const birthMonth = DZ_SHEN_MING.indexOf(yuezhi) + 1;
-  // 第一步：从子开始逆查到生月
-  let mingGongIndex = 12 - birthMonth + 1;
-  // console.log('命宫 step 1', DZ_12[mingGongIndex]);
-
-  // 第二步：从生月支起生时，顺查到卯
-  const mao_index = DZ_12.indexOf(DZ.卯);
-  const shizhi_index = DZ_12.indexOf(shizhi);
-  const step_move = (12 + mao_index - shizhi_index) % 12;
-  // console.log('命宫 step_move', DZ_12[step_move]);
-  mingGongIndex = (mingGongIndex + step_move) % 12;
-  const mingGongDizhi = DZ_12[mingGongIndex];
-  // console.log('命宫 step 2', mingGongBranch);
-
-  // 第三步：确定命宫的天干
-  const yuegan_index = TG_10.indexOf(yuegan);
-  const yuezhi_index = DZ_SHEN_MING.indexOf(yuezhi);
-  mingGongIndex = DZ_SHEN_MING.indexOf(mingGongDizhi);
-  let mingGongStemIndex;
-  // console.log('命宫', mingGongIndex > yuezhi_index ? '顺' : '逆');
-
-  if (mingGongIndex > yuezhi_index) {
-    // 顺查天干
-    mingGongStemIndex = (yuegan_index + (mingGongIndex - yuezhi_index)) % 10;
-  } else {
-    // 逆查天干
-    mingGongStemIndex =
-      (yuegan_index - (yuezhi_index - mingGongIndex) + 10) % 10;
-  }
-
-  const mingGongTiangan = TG_10[mingGongStemIndex];
-
-  return mingGongTiangan + mingGongDizhi;
-}
 // 示例
-// console.log(calculateMingGong(7, TG.壬, DZ.申, DZ.卯)); // 计算命宫
-// console.log(calculateMingGong(3, TG.甲, DZ.辰, DZ.申)); // 计算命宫
-// console.log(calculateMingGong(3, TG.甲, DZ.辰, DZ.丑)); // 计算命宫
-
-// 身宫
-function calculateShenGong(
-  // birthMonth: number,
-  yuegan: TG,
-  yuezhi: DZ,
-  shizhi: DZ,
-) {
-  const birthMonth = (DZ_12.indexOf(yuezhi) - 1 + 12) % 12;
-
-  // 第一步：从子开始顺查到生月
-  let mingGongIndex = birthMonth - 1;
-  // console.log('身宫 step 1', DZ_12[mingGongIndex]);
-
-  // 第二步：从生月支起生时，逆查到酉
-  const you_index = DZ_12.indexOf(DZ.酉);
-  let shizhi_index = DZ_12.indexOf(shizhi);
-  // console.log('身宫 shizhi_index', DZ_12[shizhi_index]);
-  const step_move = (12 + shizhi_index - you_index) % 12;
-  // console.log('身宫 step_move', DZ_12[step_move]);
-  mingGongIndex = (mingGongIndex + step_move) % 12;
-  let mingGongBranch = DZ_12[mingGongIndex];
-  // console.log('身宫 step 2', mingGongBranch);
-
-  // 第三步：确定命宫的天干
-  let yuegan_index = TG_10.indexOf(yuegan);
-  let yuezhi_index = DZ_12.indexOf(yuezhi);
-  let mingGongStemIndex;
-  console.log(
-    '身宫',
-    mingGongIndex > yuezhi_index ? '顺' : '逆',
-    yuezhi_index - mingGongIndex,
-  );
-
-  if (mingGongIndex > yuezhi_index) {
-    // 顺查天干
-    mingGongStemIndex = (yuegan_index + (mingGongIndex - yuezhi_index)) % 10;
-  } else {
-    // 逆查天干
-    mingGongStemIndex =
-      (yuegan_index - (yuezhi_index - mingGongIndex) + 10) % 10;
-  }
-
-  let mingGongStem = TG_10[mingGongStemIndex];
-
-  return mingGongStem + mingGongBranch;
-}
+// console.log(getMingGong(TG.壬, DZ.申, DZ.卯)); // 计算命宫
+// console.log(getMingGong(TG.甲, DZ.辰, DZ.申)); // 计算命宫
+// console.log(getMingGong(TG.甲, DZ.辰, DZ.丑)); // 计算命宫
 
 // 示例
-// console.log(calculateShenGong(7, TG.壬, DZ.申, DZ.卯)); // 计算身宫
-// console.log(calculateShenGong(3, TG.甲, DZ.辰, DZ.丑)); // 计算身宫
-// console.log(calculateShenGong(2, TG.壬, DZ.寅, DZ.午)); // 计算身宫
-
-export function getTMS(bazi: JZ_60[]) {
-  const [, [yuegan, yuezhi], , [, shizhi]] = bazi;
-  const taiyuan = getTaiyuan(yuegan as TG, yuezhi as DZ);
-  const minggong = calculateMingGong(yuegan as TG, yuezhi as DZ, shizhi as DZ);
-  const shengong = calculateShenGong(yuegan as TG, yuezhi as DZ, shizhi as DZ);
-  console.log(bazi, '胎命身', taiyuan, minggong, shengong);
-}
-
-// getTMS([JZ_60.壬子, JZ_60.癸卯, JZ_60.壬寅, JZ_60.丙午]);
+// console.log(getShenGong(TG.壬, DZ.申, DZ.卯)); // 计算身宫
+// console.log(getShenGong(TG.甲, DZ.辰, DZ.丑)); // 计算身宫
+// console.log(getShenGong(TG.壬, DZ.寅, DZ.午)); // 计算身宫
