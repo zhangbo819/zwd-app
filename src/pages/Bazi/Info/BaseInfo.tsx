@@ -24,6 +24,7 @@ import {
   WuXing,
   WX,
   sizhuDetailsItem,
+  getTMS,
 } from '../../../util/wuxing';
 import WuxingText from '../components/WuxingText';
 import {
@@ -210,6 +211,10 @@ const BaseInfo: FC<{
     // console.log(JSON.stringify(wx_info, null, 4))
 
     const tiaohou = WuXing.getTiaohou(infoBazi);
+
+    const tms = getTMS(infoBazi)
+
+    console.log('tms', tms)
 
     setPageData({
       xz: XingZuo.getData(paipanInfo.xz),

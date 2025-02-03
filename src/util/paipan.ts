@@ -1170,7 +1170,7 @@ class Paipan {
     const jqs = this.Get24JieQiByYear(dateObj);
     const jq_text = jqs.reduce((r, i) => {
       const times = dateObj.getTime() - i.t.getTime();
-      // console.log(i.name, i.toLocaleString());
+      // console.log(i.name, i.t.toLocaleString());
       if (times > 0) {
         const dayNums = Math.floor(times / (24 * 3600 * 1000));
         const hours = Math.floor((times % (24 * 3600 * 1000)) / (3600 * 1000));
@@ -1579,7 +1579,7 @@ class Paipan {
           jqs[jq_index].t.getMonth() + 1 === item.mouth &&
           jqs[jq_index].t.getDate() === item.day
         ) {
-          console.log(jqs[jq_index].name, jqs[jq_index].t.toLocaleString());
+          // console.log(jqs[jq_index].name, jqs[jq_index].t.toLocaleString());
           item.jq_text = jqs[jq_index].name;
           if (i.days[index - 1]) {
             // i.days[index - 1].jq_text = jqs[jq_index].name + '前一天';
