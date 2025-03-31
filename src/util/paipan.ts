@@ -1593,6 +1593,8 @@ class Paipan {
             const lastMouth = res[yue_index - 1];
             if (JQ_4JUE.includes(jqs[jq_index].name)) {
               lastMouth.days[lastMouth.days.length - 1].jq_text = '四绝日';
+            } else if (jqs[jq_index]) {
+              lastMouth.days[lastMouth.days.length - 1].jq_text = jqs[jq_index].name + '前';
             }
           }
           jq_index++;
