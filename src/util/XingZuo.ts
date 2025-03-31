@@ -52,7 +52,7 @@ export default class XingZuo {
       return r;
     }, '');
     const map_palace: Record<string, XZ[]> = {
-      基本宫: [XZ.白羊座, XZ.巨蟹座, XZ.天秤座, XZ.摩羯座],
+      创始宫: [XZ.白羊座, XZ.巨蟹座, XZ.天秤座, XZ.摩羯座],
       固定宫: [XZ.金牛座, XZ.狮子座, XZ.天蝎座, XZ.水瓶座],
       变动宫: [XZ.双子座, XZ.处女座, XZ.射手座, XZ.双鱼座],
     };
