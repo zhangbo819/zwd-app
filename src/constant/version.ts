@@ -1,4 +1,4 @@
 export default {
-  newVersionCode: 46,
-  newVersionName: '0.2.45',
+  newVersionCode: 47,
+  newVersionName: '0.2.46',
 };
