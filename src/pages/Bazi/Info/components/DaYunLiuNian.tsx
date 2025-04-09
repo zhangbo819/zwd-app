@@ -190,7 +190,7 @@ const DaYunLiuNian: FC<{
           const lsIndex = s.findIndex(i => i.title === PillarTitle.流时);
           const lsItem = getListDataItem(ls_tgdz, PillarTitle.流时, paipanInfo);
 
-          if (lrIndex < 0) {
+          if (lsIndex < 0) {
             s.push(lsItem);
           } else {
             lsItem.isShow = s[lsIndex].isShow;
